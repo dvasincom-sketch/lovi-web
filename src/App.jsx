@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Nav from './components/Nav'
+import HeroNew from './components/HeroNew'
 import Hero from './components/Hero'
 import BentoGrid from './components/BentoGrid'
 import AllSlots from './components/AllSlots'
@@ -10,9 +11,10 @@ function Home() {
   return (
     <div style={{background:'var(--bg)',minHeight:'100vh',paddingBottom:60}}>
       <Nav />
-      <Hero />
+      <HeroNew />
       <BentoGrid />
       <AllSlots />
+      <Hero />
       <Ticker />
     </div>
   )

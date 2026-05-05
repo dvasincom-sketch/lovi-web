@@ -299,6 +299,47 @@ export default function UI() {
         </Row>
       </Section>
 
+      {/* LIVE STATUS */}
+      <Section title="Live Status / Статус в реальном времени">
+        <div style={{display:"flex",flexDirection:"column",gap:12,maxWidth:440}}>
+          <div style={{display:"inline-flex",alignItems:"center",gap:8,background:"var(--dark)",color:"#fff",fontSize:11,fontWeight:600,letterSpacing:"0.07em",textTransform:"uppercase",padding:"5px 12px",borderRadius:20,alignSelf:"flex-start"}}>
+            <span style={{width:6,height:6,borderRadius:"50%",background:"var(--accent)",animation:"pulse 1.6s ease-in-out infinite",flexShrink:0}}/>
+            Прямо сейчас
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:1,background:"var(--border)",border:"1px solid var(--border)",borderRadius:16,overflow:"hidden"}}>
+            {[{value:342,label:"горящих окна"},{value:52,label:"салонов"},{value:7,label:"районов"}].map(({value,label})=>(
+              <div key={label} style={{background:"var(--bg)",padding:"16px 20px",display:"flex",flexDirection:"column",gap:4}}>
+                <span style={{fontSize:28,fontWeight:500,color:"var(--dark)",lineHeight:1}}>{value}</span>
+                <span style={{fontSize:12,color:"var(--secondary)"}}>{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* SLOT CARD */}
+      <Section title="Карточка горящего слота / Slot Card">
+        <div style={{position:"relative",width:360,height:210}}>
+          <div style={{position:"absolute",bottom:-14,left:"50%",transform:"translateX(-50%)",width:"calc(100% - 32px)",height:"100%",background:"#fff",border:"1px solid var(--border)",borderRadius:20,zIndex:0}}/>
+          <div style={{position:"absolute",bottom:-7,left:"50%",transform:"translateX(-50%)",width:"calc(100% - 16px)",height:"100%",background:"#fff",border:"1px solid var(--border)",borderRadius:20,zIndex:1}}/>
+          <div style={{position:"absolute",inset:0,background:"#fff",border:"1px solid var(--border)",borderRadius:20,padding:"22px 24px",zIndex:2}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+              <span style={{fontSize:11,fontWeight:600,letterSpacing:"0.07em",textTransform:"uppercase",color:"var(--secondary)"}}>Патриаршие пруды</span>
+              <span style={{fontSize:11,fontWeight:500,color:"var(--accent)",background:"rgba(249,115,22,0.08)",padding:"3px 10px",borderRadius:8}}>38 мин</span>
+            </div>
+            <div style={{fontFamily:"Playfair Display,serif",fontSize:18,color:"var(--dark)",lineHeight:1.3,marginBottom:8}}>«Массаж лица» Сияние</div>
+            <div style={{fontSize:12,color:"var(--secondary)",fontStyle:"italic",marginBottom:18}}>Мастер освободился на 17:00</div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+              <div>
+                <div style={{fontSize:12,color:"var(--secondary)"}}>4 500 ₽ в салоне</div>
+                <div style={{fontSize:22,fontWeight:500,color:"var(--dark)",lineHeight:1.2}}>2 025 ₽</div>
+              </div>
+              <div style={{fontSize:13,fontWeight:600,color:"#fff",background:"var(--accent)",padding:"5px 14px",borderRadius:10}}>-55%</div>
+            </div>
+          </div>
+        </div>
+      </Section>
+
       {/* SHADCN PLANNED */}
       <Section title="Запланировано из shadcn / Planned shadcn components">
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:12}}>

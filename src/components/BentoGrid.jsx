@@ -55,7 +55,7 @@ function SubCard({slot, tag}){
       <div>
         <div style={{fontSize:10,letterSpacing:'0.15em',textTransform:'uppercase',
           color:'rgba(18,26,18,0.35)',marginBottom:8}}>
-          Available at {slot.time}
+          Запись на {slot.time}
         </div>
         <div style={{fontFamily:'Playfair Display,serif',fontSize:isMobile?18:21,
           marginBottom:3,lineHeight:1.2}}>{slot.service_name}</div>
@@ -66,7 +66,7 @@ function SubCard({slot, tag}){
         <div>
           <div style={{fontSize:11,color:'var(--secondary)',display:'flex',
             alignItems:'center',gap:5,marginBottom:4}}>
-            <span style={{fontSize:10}}>👁</span><LiveDot/>
+            <LiveDot/>
             <span style={{color:urgent?'var(--accent)':'var(--secondary)',fontWeight:urgent?600:400}}>
               1 слот · {str} до исчезновения
             </span>
@@ -317,7 +317,7 @@ export default function BentoGrid(){
                   {fmt(slot1.base_price)}
                 </span>
                 <span style={{fontSize:12,color:'rgba(255,255,255,0.3)',marginLeft:10}}>
-                  на сайте салона напрямую
+                  <br/>на сайте салона напрямую
                 </span>
               </div>
 
@@ -364,13 +364,13 @@ export default function BentoGrid(){
           <SubCard slot={slot3}/>
         </div>
 
-        <PassCard isMobile={isMobile}/>
+
 
         <div style={{
           gridColumn: isMobile?'span 1':'span 4',
           background:'var(--dark)',color:'#fff',
           borderRadius:isMobile?24:40,padding:isMobile?'24px 22px':32,
-          display:'flex',flexDirection:'column',cursor:'pointer',
+          display:'none',flexDirection:'column',cursor:'pointer',
           transition:'all 0.4s cubic-bezier(0.2,1,0.2,1)'
         }}
         onMouseEnter={e=>{if(!isMobile){e.currentTarget.style.transform='translateY(-4px)';e.currentTarget.style.boxShadow='0 24px 48px rgba(18,26,18,0.15)'}}}
