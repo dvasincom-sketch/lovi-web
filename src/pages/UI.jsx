@@ -234,7 +234,7 @@ export default function UI() {
           {/* Sub card */}
           <div style={{
             background:'#fff',border:'1px solid var(--border)',
-            borderRadius:32,padding:'24px 28px',width:280,borderLeft:'3px solid var(--accent)',
+            borderRadius:32,padding:'24px 28px',width:280,
             position:'relative',overflow:'hidden',cursor:'pointer',
             transition:'all 0.4s cubic-bezier(0.2,1,0.2,1)'
           }}
