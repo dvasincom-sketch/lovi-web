@@ -394,3 +394,8 @@ cd ~/insalon && source venv/bin/activate && uvicorn app.main:app --reload --port
 - **Крупные изменения** (новый компонент, рефактор, новая логика) — создаём файл через артефакт, скачиваем
 - Контекст проекта держим в `LOVI_AI_BRIEF.md` в корне репозитория
 - Перед новой сессией — закидываем `LOVI_AI_BRIEF.md` в чат чтобы Claude знал весь контекст
+
+### Важно про деплой
+- `dist/` должен быть в git (убран из `.gitignore`)
+- После любых изменений: `npm run build` → `git add -A` → `git commit` → `git push`
+- Render деплоит статику из `dist/`, автосборки нет
