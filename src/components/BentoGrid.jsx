@@ -46,10 +46,6 @@ function SubCard({time,name,salon,price,discount,seconds,tag}){
           {tag}
         </div>
       )}
-      <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:'rgba(18,26,18,0.04)'}}>
-        <div style={{height:'100%',background:urgent?'var(--accent)':'rgba(18,26,18,0.1)',
-          width:`${pct}%`,transition:'width 1s linear'}}/>
-      </div>
       <div>
         <div style={{fontSize:10,letterSpacing:'0.15em',textTransform:'uppercase',
           color:'rgba(18,26,18,0.35)',marginBottom:8}}>
