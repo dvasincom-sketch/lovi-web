@@ -275,28 +275,25 @@ export default function BentoGrid(){
             opacity:hov1?1:0.6,transition:'opacity 0.5s'}}/>
 
           <div style={{position:'relative'}}>
+            {/* Eyebrow */}
             <div style={{display:'flex',alignItems:'center',gap:8,fontSize:10,fontWeight:600,
               letterSpacing:'0.1em',textTransform:'uppercase',
-              color:'rgba(255,255,255,0.38)',marginBottom:12}}>
+              color:'rgba(255,255,255,0.38)',marginBottom:16}}>
               <LiveDot light/> Лучшее предложение
             </div>
-            <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:12}}>
-              <div style={{fontSize:isMobile?56:80,fontWeight:600,letterSpacing:'-0.04em',
-                color:'var(--accent)',lineHeight:1}}>
-                {slot1.time}
-              </div>
-              <div style={{fontSize:12,color:'rgba(255,255,255,0.45)',lineHeight:1.6,maxWidth:180}}>
-                Сегодня · Ещё больше часа в запасе<br/>
-                <span style={{fontSize:11,color:'rgba(255,255,255,0.28)'}}>Успеете доехать и подготовиться</span>
-              </div>
+            {/* Время — главный акцент */}
+            <div style={{fontSize:isMobile?64:96,fontWeight:600,letterSpacing:'-0.04em',
+              color:'var(--accent)',lineHeight:0.9,marginBottom:16}}>
+              {slot1.time}
             </div>
+            {/* Название */}
             <div style={{fontFamily:'Playfair Display,serif',
-              fontSize:isMobile?22:32,marginBottom:8,fontWeight:500,lineHeight:1.1}}>
+              fontSize:isMobile?20:28,marginBottom:10,fontWeight:500,lineHeight:1.2}}>
               {slot1.service_name}
             </div>
-            <div style={{fontSize:11,color:'rgba(255,255,255,0.45)',
-              letterSpacing:'0.03em'}}>
-              📍 Head Spa Beauty · ул. Миклухо-Маклая 37 · 5 мин пешком от м. Беляево
+            {/* Адрес */}
+            <div style={{fontSize:12,color:'rgba(255,255,255,0.4)',letterSpacing:'0.02em'}}>
+              📍 Head Spa Beauty · ул. Миклухо-Маклая 37 · 5 мин от м. Беляево
             </div>
           </div>
 
@@ -304,13 +301,21 @@ export default function BentoGrid(){
             justifyContent:'space-between',gap:16,position:'relative',
             marginTop:isMobile?24:0}}>
             <div>
-              <div style={{fontSize:11,color:'rgba(255,255,255,0.25)',
-                textDecoration:'line-through',marginBottom:4}}>{fmt(slot1.base_price)}</div>
-              <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',marginBottom:6,letterSpacing:'0.03em'}}>Цена в салоне напрямую</div>
-              <div style={{fontSize:isMobile?28:34,fontWeight:600,
-                letterSpacing:'-0.02em',lineHeight:1}}>{fmt(slot1.lovi_price)}</div>
-              <div style={{display:'flex',alignItems:'center',gap:6,fontSize:10,
-                color:'rgba(255,255,255,0.4)',marginTop:8}}>
+              {/* Старая цена + подпись */}
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
+                <div style={{fontSize:15,color:'rgba(255,255,255,0.5)',textDecoration:'line-through',letterSpacing:'-0.01em'}}>
+                  {fmt(slot1.base_price)}
+                </div>
+                <div style={{fontSize:10,color:'rgba(255,255,255,0.25)',letterSpacing:'0.02em'}}>
+                  в салоне напрямую
+                </div>
+              </div>
+              {/* Цена Lovi */}
+              <div style={{fontSize:isMobile?28:38,fontWeight:600,
+                letterSpacing:'-0.02em',lineHeight:1,marginBottom:10}}>{fmt(slot1.lovi_price)}</div>
+              {/* Таймер + подсказка */}
+              <div style={{display:'flex',alignItems:'center',gap:6,fontSize:11,
+                color:'rgba(255,255,255,0.35)',marginTop:0}}>
                 <LiveDot light/>
                 <span style={{color:t1.urgent?'var(--accent)':'rgba(255,255,255,0.4)'}}>
                   {t1.str} до исчезновения окошка, если никто не заберёт
