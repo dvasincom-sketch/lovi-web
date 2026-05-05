@@ -303,18 +303,18 @@ export default function BentoGrid(){
             justifyContent:'space-between',gap:16,position:'relative',
             marginTop:isMobile?24:0}}>
             <div>
-              {/* Старая цена + подпись */}
-              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
-                <div style={{fontSize:15,color:'rgba(255,255,255,0.5)',textDecoration:'line-through',letterSpacing:'-0.01em'}}>
-                  {fmt(slot1.base_price)}
-                </div>
-                <div style={{fontSize:10,color:'rgba(255,255,255,0.25)',letterSpacing:'0.02em'}}>
-                  в салоне напрямую
-                </div>
-              </div>
-              {/* Цена Lovi */}
+              {/* Цена Lovi — главная */}
               <div style={{fontSize:isMobile?28:38,fontWeight:600,
-                letterSpacing:'-0.02em',lineHeight:1,marginBottom:10}}>{fmt(slot1.lovi_price)}</div>
+                letterSpacing:'-0.02em',lineHeight:1,marginBottom:8}}>{fmt(slot1.lovi_price)}</div>
+              {/* Сравнение inline */}
+              <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:4}}>
+                <span style={{fontSize:13,color:'rgba(255,255,255,0.35)',textDecoration:'line-through'}}>
+                  {fmt(slot1.base_price)}
+                </span>
+                <span style={{fontSize:12,color:'rgba(255,255,255,0.28)'}}>
+                  на сайте салона напрямую
+                </span>
+              </div>
               {/* Таймер + подсказка */}
               <div style={{display:'flex',alignItems:'center',gap:6,fontSize:11,
                 color:'rgba(255,255,255,0.35)',marginTop:0}}>
