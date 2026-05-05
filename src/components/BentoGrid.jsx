@@ -295,7 +295,7 @@ export default function BentoGrid(){
                     style={{transition:'stroke-dashoffset 1s linear'}}/>
                 </svg>
                 <div style={{fontSize:8,color:'rgba(255,255,255,0.28)',textTransform:'uppercase',
-                  letterSpacing:'0.06em',textAlign:'center',lineHeight:1.3,display:'none'}}>
+                  letterSpacing:'0.06em',textAlign:'center',lineHeight:1.3}}>
                   до<br/>исчезновения
                 </div>
               </div>
@@ -329,11 +329,12 @@ export default function BentoGrid(){
             </div>
             {!isMobile && (
               <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:8}}>
-                <div style={{background:'rgba(249,115,22,0.18)',color:'var(--accent)',
-                  padding:'4px 12px',borderRadius:10,fontSize:12,fontWeight:600}}>
-                  -{slot1.discount_pct}%
-                </div>
-                <button onClick={handleBook} style={{
+                <div style={{display:'flex',alignItems:'center',gap:10}}>
+                  <div style={{background:'rgba(249,115,22,0.18)',color:'var(--accent)',
+                    padding:'12px 16px',borderRadius:14,fontSize:14,fontWeight:700,whiteSpace:'nowrap'}}>
+                    -{slot1.discount_pct}%
+                  </div>
+                  <button onClick={handleBook} style={{
                   background: booked?'rgba(255,255,255,0.15)':'var(--accent)',
                   color:'#fff',border:'none',padding:'14px 28px',borderRadius:18,
                   fontWeight:600,cursor:'pointer',fontSize:14,
@@ -343,6 +344,7 @@ export default function BentoGrid(){
                 }}>
                   {booked ? '⏳ Проверяем...' : `Забрать за ${fmt(slot1.lovi_price)}`}
                 </button>
+                </div>
                 <div style={{display:'flex',alignItems:'center',gap:4}}>
                   <span style={{fontSize:9,color:'rgba(255,255,255,0.35)',letterSpacing:'0.04em'}}>100% предоплата</span>
                   {['СБП','Apple Pay','T-Pay'].map(p=>(
