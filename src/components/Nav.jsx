@@ -50,7 +50,6 @@ const CITIES = [
   {"name":"Владивосток","moscow_area":false,"lat":43.1155,"lon":131.8855},
   {"name":"Ярославль","moscow_area":false,"lat":57.6261,"lon":39.8845},
   {"name":"Ставрополь","moscow_area":false,"lat":45.0440,"lon":41.9690},
-  {"name":"Казань","moscow_area":false,"lat":55.8304,"lon":49.0661},
   {"name":"Калининград","moscow_area":false,"lat":54.7104,"lon":20.4522},
   {"name":"Пенза","moscow_area":false,"lat":53.2007,"lon":44.9977},
 ]
@@ -58,27 +57,131 @@ const CITIES = [
 const MOSCOW_CITIES = CITIES.filter(c => c.moscow_area)
 const OTHER_CITIES  = CITIES.filter(c => !c.moscow_area)
 
-export default function Nav() {
-  const isMobile = useIsMobile()
-  const [city, setCity] = useState('Москва')
-  const [open, setOpen] = useState(false)
-  const [search, setSearch] = useState('')
-  const [locating, setLocating] = useState(false)
-  const popupRef = useRef(null)
+function AuthModal({ onClose }) {
+  const [tab, setTab] = useState('login') // 'login' | 'register'
+  const ref = useRef(null)
 
-  // Закрыть по клику снаружи
   useEffect(() => {
-    if (!open) return
     function handle(e) {
-      if (popupRef.current && !popupRef.current.contains(e.target)) setOpen(false)
+      if (ref.current && !ref.current.contains(e.target)) onClose()
     }
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
-  }, [open])
+  }, [])
+
+  const inputStyle = {
+    width:'100%', border:'1px solid var(--border)', borderRadius:12,
+    padding:'12px 14px', fontSize:14, outline:'none',
+    background:'#FDFCF9', boxSizing:'border-box',
+    fontFamily:'Inter,sans-serif', color:'var(--dark)',
+    transition:'border-color 0.2s',
+  }
+
+  return (
+    <div style={{
+      position:'fixed', inset:0, zIndex:1000,
+      background:'rgba(18,26,18,0.4)', backdropFilter:'blur(4px)',
+      display:'flex', alignItems:'center', justifyContent:'center',
+      padding:16,
+    }}>
+      <div ref={ref} style={{
+        background:'#fff', borderRadius:24, padding:'32px',
+        width:'100%', maxWidth:400,
+        boxShadow:'0 32px 80px rgba(18,26,18,0.14)',
+        animation:'fadeUp 0.3s ease both',
+      }}>
+        {/* Закрыть */}
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}>
+          <img src="/logo.svg" alt="LOVI" style={{height:22}} />
+          <button onClick={onClose} style={{
+            background:'transparent', border:'none', cursor:'pointer',
+            fontSize:18, color:'var(--secondary)', lineHeight:1
+          }}>✕</button>
+        </div>
+
+        {/* Вкладки */}
+        <div style={{
+          display:'grid', gridTemplateColumns:'1fr 1fr',
+          background:'#F1F0EC', borderRadius:12, padding:4, marginBottom:24
+        }}>
+          {[['login','Войти'],['register','Регистрация']].map(([id,label])=>(
+            <button key={id} onClick={()=>setTab(id)} style={{
+              padding:'8px', borderRadius:9, fontSize:13, fontWeight:500,
+              border:'none', cursor:'pointer', fontFamily:'Inter,sans-serif',
+              background: tab===id ? '#fff' : 'transparent',
+              color: tab===id ? 'var(--dark)' : 'var(--secondary)',
+              boxShadow: tab===id ? '0 1px 4px rgba(18,26,18,0.08)' : 'none',
+              transition:'all 0.2s',
+            }}>{label}</button>
+          ))}
+        </div>
+
+        {tab === 'login' ? (
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            <input style={inputStyle} type="tel" placeholder="Телефон или email" />
+            <input style={inputStyle} type="password" placeholder="Пароль" />
+            <button style={{
+              width:'100%', background:'var(--dark)', color:'#fff', border:'none',
+              padding:'14px', borderRadius:14, fontSize:14, fontWeight:600,
+              cursor:'pointer', marginTop:4, fontFamily:'Inter,sans-serif',
+            }}>
+              Войти
+            </button>
+            <button style={{
+              background:'transparent', border:'none', fontSize:12,
+              color:'var(--secondary)', cursor:'pointer', fontFamily:'Inter,sans-serif',
+              textAlign:'center', marginTop:4,
+            }}>
+              Забыли пароль?
+            </button>
+          </div>
+        ) : (
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            <input style={inputStyle} type="text" placeholder="Имя" />
+            <input style={inputStyle} type="tel" placeholder="Телефон" />
+            <input style={inputStyle} type="email" placeholder="Email" />
+            <input style={inputStyle} type="password" placeholder="Пароль" />
+            <button style={{
+              width:'100%', background:'var(--dark)', color:'#fff', border:'none',
+              padding:'14px', borderRadius:14, fontSize:14, fontWeight:600,
+              cursor:'pointer', marginTop:4, fontFamily:'Inter,sans-serif',
+            }}>
+              Создать аккаунт
+            </button>
+            <p style={{fontSize:11,color:'var(--secondary)',textAlign:'center',margin:0,lineHeight:1.6}}>
+              Регистрируясь, вы соглашаетесь с{' '}
+              <span style={{color:'var(--dark)',textDecoration:'underline',cursor:'pointer'}}>условиями</span>
+              {' '}и{' '}
+              <span style={{color:'var(--dark)',textDecoration:'underline',cursor:'pointer'}}>политикой</span>
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default function Nav() {
+  const isMobile = useIsMobile()
+  const [city, setCity] = useState('Москва')
+  const [cityOpen, setCityOpen] = useState(false)
+  const [authOpen, setAuthOpen] = useState(false)
+  const [search, setSearch] = useState('')
+  const [locating, setLocating] = useState(false)
+  const cityRef = useRef(null)
+
+  useEffect(() => {
+    if (!cityOpen) return
+    function handle(e) {
+      if (cityRef.current && !cityRef.current.contains(e.target)) setCityOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [cityOpen])
 
   function selectCity(name) {
     setCity(name)
-    setOpen(false)
+    setCityOpen(false)
     setSearch('')
   }
 
@@ -88,15 +191,13 @@ export default function Nav() {
     navigator.geolocation.getCurrentPosition(
       pos => {
         const { latitude, longitude } = pos.coords
-        // Найдём ближайший город
-        let closest = CITIES[0]
-        let minDist = Infinity
+        let closest = CITIES[0], minDist = Infinity
         CITIES.forEach(c => {
           const d = Math.sqrt(Math.pow(c.lat - latitude, 2) + Math.pow(c.lon - longitude, 2))
           if (d < minDist) { minDist = d; closest = c }
         })
         setCity(closest.name)
-        setOpen(false)
+        setCityOpen(false)
         setLocating(false)
       },
       () => setLocating(false)
@@ -108,98 +209,99 @@ export default function Nav() {
     : OTHER_CITIES
 
   return (
-    <nav style={{
-      display:'flex', justifyContent:'space-between', alignItems:'center',
-      padding: isMobile ? '14px 16px' : '20px 40px',
-      position:'sticky', top:0, zIndex:100,
-      background:'rgba(253,252,249,0.92)', backdropFilter:'blur(12px)',
-      borderBottom:'1px solid var(--border)'
-    }}>
-      <img src="/logo.svg" alt="LOVI.today" style={{height:28}} />
+    <>
+      <nav style={{
+        display:'flex', justifyContent:'space-between', alignItems:'center',
+        padding: isMobile ? '14px 16px' : '20px 40px',
+        position:'sticky', top:0, zIndex:100,
+        background:'rgba(253,252,249,0.92)', backdropFilter:'blur(12px)',
+        borderBottom:'1px solid var(--border)'
+      }}>
+        <img src="/logo.svg" alt="LOVI.today" style={{height:28}} />
 
-      {/* Выбор города */}
-      <div ref={popupRef} style={{position:'relative'}}>
-        <button onClick={()=>setOpen(v=>!v)} style={{
-          fontSize:13, fontWeight:500, cursor:'pointer',
-          background:'transparent', border:'1px solid var(--border)',
-          padding:'6px 14px', borderRadius:20, color:'var(--dark)',
-          display:'flex', alignItems:'center', gap:6,
-          transition:'border-color 0.2s',
-          borderColor: open ? 'var(--dark)' : 'var(--border)'
-        }}>
-          <span style={{width:6,height:6,borderRadius:'50%',background:'var(--accent)',flexShrink:0}}/>
-          {city}
-          <span style={{fontSize:10,opacity:0.5,transform:open?'rotate(180deg)':'none',transition:'transform 0.2s'}}>▼</span>
-        </button>
-
-        {open && (
-          <div style={{
-            position:'absolute', top:'calc(100% + 10px)', right:0,
-            width: isMobile ? 'calc(100vw - 32px)' : 320,
-            background:'#fff', border:'1px solid var(--border)',
-            borderRadius:20, padding:'20px',
-            boxShadow:'0 24px 64px rgba(18,26,18,0.10)',
-            zIndex:200,
-          }}>
-            {/* Определить локацию */}
-            <button onClick={detectLocation} style={{
-              width:'100%', display:'flex', alignItems:'center', justifyContent:'center', gap:8,
-              background:'var(--dark)', color:'#fff', border:'none',
-              padding:'10px', borderRadius:12, fontSize:13, fontWeight:500,
-              cursor:'pointer', marginBottom:16, opacity: locating ? 0.6 : 1
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          {/* Выбор города */}
+          <div ref={cityRef} style={{position:'relative'}}>
+            <button onClick={()=>setCityOpen(v=>!v)} style={{
+              fontSize:13, fontWeight:500, cursor:'pointer',
+              background:'transparent', border:'1px solid var(--border)',
+              padding:'6px 14px', borderRadius:20, color:'var(--dark)',
+              display:'flex', alignItems:'center', gap:6,
+              borderColor: cityOpen ? 'var(--dark)' : 'var(--border)',
+              transition:'border-color 0.2s',
             }}>
-              {locating ? '⏳ Определяем...' : '📍 Определить моё местоположение'}
+              <span style={{width:6,height:6,borderRadius:'50%',background:'var(--accent)',flexShrink:0}}/>
+              {city}
+              <span style={{fontSize:10,opacity:0.5,transform:cityOpen?'rotate(180deg)':'none',transition:'transform 0.2s'}}>▼</span>
             </button>
 
-            {/* Москва и область */}
-            <div style={{fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',
-              color:'var(--secondary)',marginBottom:10}}>
-              Москва и область
-            </div>
-            <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:16}}>
-              {MOSCOW_CITIES.map(c=>(
-                <button key={c.name} onClick={()=>selectCity(c.name)} style={{
-                  padding:'5px 12px', borderRadius:16, fontSize:12, cursor:'pointer',
-                  border:'1px solid var(--border)',
-                  background: city===c.name ? 'var(--dark)' : 'transparent',
-                  color: city===c.name ? '#fff' : 'var(--dark)',
-                  fontFamily:'Inter,sans-serif'
-                }}>{c.name}</button>
-              ))}
-            </div>
-
-            {/* Разделитель */}
-            <div style={{height:1,background:'var(--border)',marginBottom:16}}/>
-
-            {/* Поиск по другим городам */}
-            <div style={{fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',
-              color:'var(--secondary)',marginBottom:8}}>
-              Другие города
-            </div>
-            <input
-              value={search}
-              onChange={e=>setSearch(e.target.value)}
-              placeholder="Поиск города..."
-              style={{
-                width:'100%', border:'1px solid var(--border)', borderRadius:10,
-                padding:'8px 12px', fontSize:13, outline:'none',
-                background:'#FDFCF9', marginBottom:8, boxSizing:'border-box',
-                fontFamily:'Inter,sans-serif'
-              }}
-            />
-            <div style={{maxHeight:180,overflowY:'auto',display:'flex',flexDirection:'column',gap:2}}>
-              {filtered.map(c=>(
-                <button key={c.name} onClick={()=>selectCity(c.name)} style={{
-                  textAlign:'left', padding:'7px 10px', borderRadius:8, fontSize:13,
-                  border:'none', cursor:'pointer', fontFamily:'Inter,sans-serif',
-                  background: city===c.name ? 'rgba(18,26,18,0.06)' : 'transparent',
-                  color:'var(--dark)'
-                }}>{c.name}</button>
-              ))}
-            </div>
+            {cityOpen && (
+              <div style={{
+                position:'absolute', top:'calc(100% + 10px)', right:0,
+                width: isMobile ? 'calc(100vw - 32px)' : 320,
+                background:'#fff', border:'1px solid var(--border)',
+                borderRadius:20, padding:'20px',
+                boxShadow:'0 24px 64px rgba(18,26,18,0.10)',
+                zIndex:200,
+              }}>
+                <button onClick={detectLocation} style={{
+                  width:'100%', display:'flex', alignItems:'center', justifyContent:'center', gap:8,
+                  background:'var(--dark)', color:'#fff', border:'none',
+                  padding:'10px', borderRadius:12, fontSize:13, fontWeight:500,
+                  cursor:'pointer', marginBottom:16, opacity: locating ? 0.6 : 1,
+                  fontFamily:'Inter,sans-serif',
+                }}>
+                  {locating ? '⏳ Определяем...' : '📍 Определить моё местоположение'}
+                </button>
+                <div style={{fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',
+                  color:'var(--secondary)',marginBottom:10}}>Москва и область</div>
+                <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:16}}>
+                  {MOSCOW_CITIES.map(c=>(
+                    <button key={c.name} onClick={()=>selectCity(c.name)} style={{
+                      padding:'5px 12px', borderRadius:16, fontSize:12, cursor:'pointer',
+                      border:'1px solid var(--border)', fontFamily:'Inter,sans-serif',
+                      background: city===c.name ? 'var(--dark)' : 'transparent',
+                      color: city===c.name ? '#fff' : 'var(--dark)',
+                    }}>{c.name}</button>
+                  ))}
+                </div>
+                <div style={{height:1,background:'var(--border)',marginBottom:16}}/>
+                <div style={{fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',
+                  color:'var(--secondary)',marginBottom:8}}>Другие города</div>
+                <input value={search} onChange={e=>setSearch(e.target.value)}
+                  placeholder="Поиск города..." style={{
+                    width:'100%', border:'1px solid var(--border)', borderRadius:10,
+                    padding:'8px 12px', fontSize:13, outline:'none',
+                    background:'#FDFCF9', marginBottom:8, boxSizing:'border-box',
+                    fontFamily:'Inter,sans-serif',
+                  }}/>
+                <div style={{maxHeight:180,overflowY:'auto',display:'flex',flexDirection:'column',gap:2}}>
+                  {filtered.map(c=>(
+                    <button key={c.name} onClick={()=>selectCity(c.name)} style={{
+                      textAlign:'left', padding:'7px 10px', borderRadius:8, fontSize:13,
+                      border:'none', cursor:'pointer', fontFamily:'Inter,sans-serif',
+                      background: city===c.name ? 'rgba(18,26,18,0.06)' : 'transparent',
+                      color:'var(--dark)',
+                    }}>{c.name}</button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </nav>
+
+          {/* Войти */}
+          <button onClick={()=>setAuthOpen(true)} style={{
+            fontSize:13, fontWeight:500, cursor:'pointer',
+            background:'var(--dark)', color:'#fff',
+            border:'none', padding:'7px 18px', borderRadius:20,
+            fontFamily:'Inter,sans-serif',
+          }}>
+            Войти
+          </button>
+        </div>
+      </nav>
+
+      {authOpen && <AuthModal onClose={()=>setAuthOpen(false)} />}
+    </>
   )
 }
