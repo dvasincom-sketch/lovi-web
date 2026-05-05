@@ -48,11 +48,7 @@ export default function Hero() {
       </div>
       <div style={{display:'flex',justifyContent:'center',gap:8,marginTop:20,flexWrap:'wrap'}}>
         {['Рядом со мной','Для двоих','Тайский','С душем','До 3 000 ₽'].map(c=>(
-          <button key={c} style={{
-            padding:'6px 14px',borderRadius:20,
-            border:'1px solid var(--border)',
-            fontSize:12,color:'var(--secondary)',background:'transparent',cursor:'pointer'
-          }}>{c}</button>
+          <button key={c} className="chip">{c}</button>
         ))}
       </div>
     </section>

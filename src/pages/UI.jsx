@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 const Section = ({title, children}) => (
   <div style={{marginBottom:60}}>
@@ -197,43 +199,31 @@ export default function UI() {
       <Section title="Поля ввода / Inputs">
         <Row gap={16} wrap>
           <div>
-            <div style={{fontSize:11,color:'var(--secondary)',marginBottom:8}}>Search Bar</div>
+            <div style={{fontSize:11,color:'var(--secondary)',marginBottom:8}}>Search Bar (shadcn)</div>
             <div style={{
-              background:'#fff',padding:10,borderRadius:28,
+              background:'#fff',padding:6,borderRadius:28,
               display:'flex',alignItems:'center',gap:0,
               boxShadow:'0 10px 30px rgba(0,0,0,0.04)',
               border:'1px solid var(--border)',maxWidth:500
             }}>
-              <input placeholder="Район или метро" style={{
-                border:'none',padding:'14px 18px',fontSize:15,flex:1,
-                outline:'none',background:'transparent',
-                borderRight:'1px solid var(--border)'
-              }}/>
-              <input placeholder="Услуга или тип" style={{
-                border:'none',padding:'14px 18px',fontSize:15,flex:1,
-                outline:'none',background:'transparent'
-              }}/>
-              <button style={{
-                background:'var(--dark)',color:'#fff',border:'none',
-                padding:'12px 24px',borderRadius:20,fontWeight:600,
-                cursor:'pointer',fontSize:13,whiteSpace:'nowrap'
-              }}>Найти окна</button>
+              <Input placeholder="Район или метро"
+                className="border-0 shadow-none rounded-none focus-visible:ring-0 text-sm h-12 px-5"
+                style={{borderRight:'1px solid var(--border)',flex:1,background:'transparent'}}/>
+              <Input placeholder="Услуга или тип"
+                className="border-0 shadow-none rounded-none focus-visible:ring-0 text-sm h-12 px-5"
+                style={{flex:1,background:'transparent'}}/>
+              <Button
+                className="h-12 px-6 rounded-2xl font-semibold text-sm"
+                style={{background:'var(--dark)',color:'#fff',border:'none',whiteSpace:'nowrap',flexShrink:0}}>
+                Найти окна
+              </Button>
             </div>
           </div>
         </Row>
         <Row gap={8} wrap>
           <div style={{fontSize:11,color:'var(--secondary)',marginBottom:0,width:'100%'}}>Chips / Tags</div>
           {['Рядом со мной','Для двоих','Тайский','С душем','До 3 000 ₽'].map(c=>(
-            <button key={c} style={{
-              padding:'7px 16px',borderRadius:20,
-              border:'1px solid var(--border)',fontSize:12,
-              color:'var(--secondary)',background:'transparent',cursor:'pointer',
-              transition:'all 0.2s'
-            }}
-            onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--dark)';e.currentTarget.style.color='var(--dark)'}}
-            onMouseLeave={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--secondary)'}}>
-              {c}
-            </button>
+            <button key={c} className="chip">{c}</button>
           ))}
         </Row>
       </Section>
