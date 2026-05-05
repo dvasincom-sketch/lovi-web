@@ -245,7 +245,7 @@ export default function BentoGrid(){
                 </svg>
                 <div style={{fontSize:8,color:'rgba(255,255,255,0.28)',textTransform:'uppercase',
                   letterSpacing:'0.06em',textAlign:'center',lineHeight:1.3}}>
-                  до роста<br/>цены
+                  до<br/>исчезновения
                 </div>
               </div>
             </div>
@@ -253,9 +253,9 @@ export default function BentoGrid(){
               fontSize:isMobile?22:32,marginBottom:8,fontWeight:500,lineHeight:1.1}}>
               {slot1.service_name}
             </div>
-            <div style={{fontSize:11,color:'rgba(255,255,255,0.45)',textTransform:'uppercase',
-              letterSpacing:'0.06em'}}>
-              📍 HEAD SPA BEAUTY · ул. Миклухо-Маклая 37 · 5 мин пешком от м. Беляево
+            <div style={{fontSize:11,color:'rgba(255,255,255,0.45)',
+              letterSpacing:'0.03em'}}>
+              📍 Head Spa Beauty · ул. Миклухо-Маклая 37 · 5 мин пешком от м. Беляево
             </div>
           </div>
 
