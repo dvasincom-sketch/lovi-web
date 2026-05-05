@@ -322,14 +322,7 @@ export default function BentoGrid(){
                   на сайте салона напрямую
                 </span>
               </div>
-              {/* Таймер + подсказка */}
-              <div style={{display:'flex',alignItems:'center',gap:6,fontSize:11,
-                color:'rgba(255,255,255,0.35)',marginTop:0}}>
-                <LiveDot light/>
-                <span style={{color:t1.urgent?'var(--accent)':'rgba(255,255,255,0.4)'}}>
-                  {t1.str} до исчезновения окошка
-                </span>
-              </div>
+
             </div>
             {!isMobile && (
               <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:8}}>
