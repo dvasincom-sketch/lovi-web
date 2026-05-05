@@ -99,8 +99,8 @@ export default function AllSlots(){
     : slots.filter(s => s.category === activeCategory)
 
   return(
-    <div style={{maxWidth:1200,margin:'0 auto',padding:isMobile?'0 16px 40px':'0 40px 60px'}}>
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16,flexWrap:'wrap',gap:10}}>
+    <div style={{padding:isMobile?'0 0 40px':'0 0 60px'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16,flexWrap:'wrap',gap:10,padding:isMobile?'0 16px':'0 40px'}}>
         <div style={{fontSize:11,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--secondary)'}}>
           Все окошки сегодня
         </div>
@@ -128,7 +128,7 @@ export default function AllSlots(){
       ) : (
         <div style={{
           display:'flex', gap:12, overflowX:'auto', paddingBottom:12,
-          scrollbarWidth:'none'
+          scrollbarWidth:'none', padding:isMobile?'0 16px 12px':'0 40px 12px'
         }}>
           {filtered.map((slot,i)=>(
             <SlotPill key={i} slot={slot}/>
