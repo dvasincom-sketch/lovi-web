@@ -310,15 +310,13 @@ export default function BentoGrid(){
             justifyContent:'space-between',gap:16,position:'relative',
             marginTop:isMobile?24:0}}>
             <div>
-              {/* Цена Lovi — главная */}
-              <div style={{fontSize:isMobile?28:38,fontWeight:600,
-                letterSpacing:'-0.02em',lineHeight:1,marginBottom:8}}>{fmt(slot1.lovi_price)}</div>
-              {/* Сравнение inline */}
-              <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:4}}>
-                <span style={{fontSize:13,color:'rgba(255,255,255,0.4)'}}>
+              {/* Цена салона — реальная точка отсчёта */}
+              <div style={{marginBottom:4}}>
+                <span style={{fontSize:isMobile?28:36,fontWeight:600,letterSpacing:'-0.02em',
+                  color:'rgba(255,255,255,0.9)'}}>
                   {fmt(slot1.base_price)}
                 </span>
-                <span style={{fontSize:12,color:'rgba(255,255,255,0.28)'}}>
+                <span style={{fontSize:12,color:'rgba(255,255,255,0.3)',marginLeft:10}}>
                   на сайте салона напрямую
                 </span>
               </div>
