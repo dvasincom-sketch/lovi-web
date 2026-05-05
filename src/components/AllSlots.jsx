@@ -70,7 +70,7 @@ export default function AllSlots(){
     fetch(`https://insalon.onrender.com/api/lovi/featured?date=${today}`)
       .then(r=>r.json())
       .then(data=>{
-        if(data.slots && data.slots.length >= 3){
+        if(data.slots && data.slots.length >= 1){
           setSlots(data.slots)
         } else {
           return fetch(`https://insalon.onrender.com/api/lovi/featured?date=${tomorrow}`)
@@ -82,7 +82,8 @@ export default function AllSlots(){
       .finally(()=>setLoading(false))
   },[])
 
-  if(loading || slots.length === 0) return null
+  if(loading) return null
+if(slots.length === 0) return null
 
   return(
     <div style={{maxWidth:1200,margin:'0 auto',padding:isMobile?'0 16px 40px':'0 40px 60px'}}>
