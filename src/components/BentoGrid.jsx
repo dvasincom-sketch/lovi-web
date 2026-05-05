@@ -9,9 +9,10 @@ function useTimer(sec) {
     const t=setInterval(()=>setS(v=>v>0?v-1:0),1000)
     return()=>clearInterval(t)
   },[sec])
-  const m=Math.floor((s%3600)/60),ss=s%60
+  const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60
   const pct=sec?Math.max(0,(s/sec)*100):0
-  return { str: String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0'), pct, urgent: s<=900 }
+  const str=h>0?h+':'+String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0'):String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0')
+  return { str, pct, urgent: s<=900 }
 }
 
 function LiveDot({light}){
