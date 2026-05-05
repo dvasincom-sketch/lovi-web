@@ -139,7 +139,7 @@ export default function Confirm() {
           </div>
         </div>
 
-        {isPaid && (
+        {(isPaid || booking?.status === 'waiting_payment') && (
           <>
             {/* Карточка брони */}
             <div style={{
