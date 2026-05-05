@@ -244,15 +244,13 @@ export default function UI() {
           {/* Sub card */}
           <div style={{
             background:'#fff',border:'1px solid var(--border)',
-            borderRadius:32,padding:'24px 28px',width:280,
+            borderRadius:32,padding:'24px 28px',width:280,borderLeft:'3px solid var(--accent)',
             position:'relative',overflow:'hidden',cursor:'pointer',
             transition:'all 0.4s cubic-bezier(0.2,1,0.2,1)'
           }}
           onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-4px)';e.currentTarget.style.boxShadow='0 24px 48px rgba(18,26,18,0.08)';e.currentTarget.style.borderColor='rgba(249,115,22,0.3)'}}
           onMouseLeave={e=>{e.currentTarget.style.transform='none';e.currentTarget.style.boxShadow='none';e.currentTarget.style.borderColor='var(--border)'}}>
-            <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:'rgba(18,26,18,0.04)'}}>
-              <div style={{height:'100%',background:'var(--accent)',width:'62%',transition:'width 1s linear'}}/>
-            </div>
+            
             <div style={{fontSize:10,letterSpacing:'0.15em',textTransform:'uppercase',color:'rgba(18,26,18,0.35)',marginBottom:10}}>Available at 19:00</div>
             <div style={{fontFamily:'Playfair Display,serif',fontSize:21,marginBottom:4}}>SPA для двоих</div>
             <div style={{fontSize:11,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:16}}>LuxeSpa · Патриаршие</div>
