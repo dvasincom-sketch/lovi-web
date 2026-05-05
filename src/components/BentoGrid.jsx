@@ -66,7 +66,7 @@ function SubCard({slot, tag}){
             alignItems:'center',gap:5,marginBottom:4}}>
             <span style={{fontSize:10}}>👁</span><LiveDot/>
             <span style={{color:urgent?'var(--accent)':'var(--secondary)',fontWeight:urgent?600:400}}>
-              {str} до роста цены
+              1 слот · {str} до исчезновения
             </span>
           </div>
           <div style={{fontSize:isMobile?20:22,fontWeight:600,letterSpacing:'-0.02em'}}>{fmt(slot.lovi_price)}</div>
@@ -271,7 +271,7 @@ export default function BentoGrid(){
                 color:'rgba(255,255,255,0.4)',marginTop:8}}>
                 <span>👁</span><LiveDot light/>
                 <span style={{color:t1.urgent?'var(--accent)':'rgba(255,255,255,0.4)'}}>
-                  {t1.str} до роста цены
+                  1 слот · {t1.str} до исчезновения
                 </span>
               </div>
             </div>
@@ -292,7 +292,7 @@ export default function BentoGrid(){
                   {booked ? '⏳ Проверяем...' : `Забрать за ${fmt(slot1.lovi_price)}`}
                 </button>
                 <div style={{display:'flex',alignItems:'center',gap:4}}>
-                  <span style={{fontSize:9,color:'rgba(255,255,255,0.25)',textTransform:'uppercase',letterSpacing:'0.06em'}}>Оплата:</span>
+                  <span style={{fontSize:9,color:'rgba(255,255,255,0.35)',letterSpacing:'0.04em'}}>100% предоплата</span>
                   {['СБП','Apple Pay','T-Pay'].map(p=>(
                     <span key={p} style={{fontSize:9,fontWeight:600,
                       color:'rgba(255,255,255,0.4)',background:'rgba(255,255,255,0.07)',
