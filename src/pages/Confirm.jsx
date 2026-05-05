@@ -59,6 +59,7 @@ export default function Confirm() {
     const poll = async () => {
       const r = await fetch(`${API}/api/booking/${bookingId}`)
       const data = await r.json()
+      if (data.error) { setBooking({ notFound: true }); return }
       setBooking(data)
       if (data.status !== 'paid' && attempts < 12) {
         attempts++
@@ -97,6 +98,23 @@ export default function Confirm() {
       fontFamily: 'Inter, sans-serif', color: 'var(--secondary)', fontSize: 14,
     }}>
       Загружаем детали брони...
+    </div>
+  )
+
+  if (booking.notFound) return (
+    <div style={{
+      minHeight: '100dvh', background: 'var(--bg)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      fontFamily: 'Inter, sans-serif', gap: 12, padding: 24,
+    }}>
+      <img src="/logo.svg" alt="LOVI" style={{height: 24, marginBottom: 8}} />
+      <div style={{fontFamily: 'Playfair Display, serif', fontSize: 22, color: 'var(--dark)'}}>Бронь не найдена</div>
+      <div style={{fontSize: 14, color: 'var(--secondary)', textAlign: 'center'}}>Проверьте ссылку или вернитесь на главную</div>
+      <button onClick={() => window.location.href = 'https://lovi-web.onrender.com'} style={{
+        marginTop: 8, padding: '12px 28px', borderRadius: 20,
+        background: 'var(--dark)', color: '#fff', border: 'none',
+        fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif',
+      }}>На главную</button>
     </div>
   )
 
