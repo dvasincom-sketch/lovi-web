@@ -1,0 +1,27 @@
+import { useState } from 'react'
+const moods = ['Всё','Глубокий отдых','Перезагрузка','Вдвоём']
+
+export default function Nav() {
+  const [active, setActive] = useState('Всё')
+  return (
+    <nav style={{
+      display:'flex', justifyContent:'space-between', alignItems:'center',
+      padding:'20px 40px', position:'sticky', top:0, zIndex:100,
+      background:'rgba(249,248,246,0.85)', backdropFilter:'blur(12px)',
+      borderBottom:'1px solid var(--border)'
+    }}>
+      <div style={{fontWeight:600,fontSize:20,letterSpacing:'-1px'}}>LOVI.today</div>
+      <div style={{display:'flex',gap:8}}>
+        {moods.map(m=>(
+          <button key={m} onClick={()=>setActive(m)} style={{
+            padding:'8px 18px', borderRadius:20, fontSize:13, fontWeight:500,
+            cursor:'pointer', transition:'all 0.25s', border:'1px solid var(--border)',
+            background: active===m ? 'var(--dark)' : 'transparent',
+            color: active===m ? '#fff' : 'var(--dark)'
+          }}>{m}</button>
+        ))}
+      </div>
+      <div style={{fontSize:13,fontWeight:500,cursor:'pointer'}}>Москва →</div>
+    </nav>
+  )
+}
