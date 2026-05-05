@@ -8,9 +8,12 @@ export default function Hero() {
     }, 3000)
     return () => clearInterval(t)
   },[])
+  const isMobile = window.innerWidth < 768
+
   return (
     <section style={{
-      maxWidth:1200, margin:'0 auto', padding:'80px 40px 60px',
+      maxWidth:1200, margin:'0 auto',
+      padding: isMobile ? '40px 16px 40px' : '80px 40px 60px',
       textAlign:'center', animation:'fadeUp 0.8s ease both'
     }}>
       <div style={{display:'inline-flex',alignItems:'center',gap:8,marginBottom:24,fontSize:11,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.12em',color:'var(--accent)'}}>
@@ -28,12 +31,14 @@ export default function Hero() {
       </h1>
       <div style={{
         maxWidth:760, margin:'0 auto',
-        background:'#fff', padding:10, borderRadius:28,
-        display:'grid', gridTemplateColumns:'1fr 1fr auto', gap:0,
+        background:'#fff', padding:10, borderRadius:isMobile?16:28,
+        display:'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr auto',
+        gap: isMobile ? 8 : 0,
         boxShadow:'0 40px 100px rgba(15,23,15,0.05)',
         border:'1px solid var(--border)'
       }}>
-        <input placeholder="Район или метро" style={{border:'none',padding:'16px 24px',fontSize:16,outline:'none',background:'transparent',borderRight:'1px solid var(--border)'}}/>
+        <input placeholder="Район или метро" style={{border:'none',padding:'16px 24px',fontSize:16,outline:'none',background:'transparent',borderRight: isMobile ? 'none' : '1px solid var(--border)', borderBottom: isMobile ? '1px solid var(--border)' : 'none'}}/>
         <input placeholder="Услуга или тип" style={{border:'none',padding:'16px 24px',fontSize:16,outline:'none',background:'transparent'}}/>
         <button style={{
           background:'var(--dark)',color:'#fff',border:'none',
