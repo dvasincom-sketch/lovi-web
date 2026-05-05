@@ -14,6 +14,15 @@ function useTimer(sec) {
 
 function fmt(price){ return price.toLocaleString('ru-RU') + ' ₽' }
 
+const CATEGORIES = [
+  { id: 'all', label: 'Все' },
+  { id: 'spa', label: 'SPA' },
+  { id: 'head', label: 'Голова' },
+  { id: 'face', label: 'Лицо' },
+  { id: 'back', label: 'Спина' },
+  { id: 'body', label: 'Всё тело' },
+]
+
 function SlotPill({slot}){
   const {str, urgent} = useTimer(slot.minutes_to_slot * 60)
   const [hov, setHov] = useState(false)
@@ -51,7 +60,7 @@ function SlotPill({slot}){
           <div style={{fontSize:18,fontWeight:600,color:'var(--dark)'}}>{fmt(slot.lovi_price)}</div>
         </div>
         <div style={{fontSize:10,color:urgent?'var(--accent)':'var(--secondary)',
-          fontWeight:urgent?600:400,textAlign:'right'}}>
+          fontWeight:urgent?600:400}}>
           {str}
         </div>
       </div>
@@ -62,6 +71,7 @@ function SlotPill({slot}){
 export default function AllSlots(){
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
+  const [activeCategory, setActiveCategory] = useState('all')
   const isMobile = useIsMobile()
 
   useEffect(()=>{
@@ -82,43 +92,49 @@ export default function AllSlots(){
       .finally(()=>setLoading(false))
   },[])
 
-  if(loading) return null
-if(slots.length === 0) return null
+  if(loading || slots.length === 0) return null
+
+  const filtered = activeCategory === 'all'
+    ? slots
+    : slots.filter(s => s.category === activeCategory)
 
   return(
     <div style={{maxWidth:1200,margin:'0 auto',padding:isMobile?'0 16px 40px':'0 40px 60px'}}>
-      <div style={{fontSize:11,letterSpacing:'0.1em',textTransform:'uppercase',
-        color:'var(--secondary)',marginBottom:16}}>
-        Все окошки сегодня
-      </div>
-      <div style={{
-        display:'flex', gap:12, overflowX:'auto', paddingBottom:12,
-        scrollbarWidth:'none', msOverflowStyle:'none'
-      }}>
-        <style>{`.allslots-scroll::-webkit-scrollbar{display:none}`}</style>
-        {slots.map((slot,i)=>(
-          <SlotPill key={i} slot={slot}/>
-        ))}
-        {/* CTA карточка в конце */}
-        <div style={{
-          flexShrink:0, width:180,
-          background:'var(--dark)', color:'#fff',
-          borderRadius:24, padding:'20px 22px',
-          display:'flex', flexDirection:'column',
-          justifyContent:'space-between', cursor:'pointer'
-        }}>
-          <div style={{fontSize:12,color:'rgba(255,255,255,0.4)',
-            textTransform:'uppercase',letterSpacing:'0.08em'}}>Хочешь больше?</div>
-          <div>
-            <div style={{fontFamily:'Playfair Display,serif',fontSize:16,
-              marginBottom:12,lineHeight:1.3}}>Подключи свой салон</div>
-            <div style={{color:'var(--accent)',fontSize:12,fontWeight:600,
-              textTransform:'uppercase',letterSpacing:'0.06em'}}>
-              Подключить →
-            </div>
-          </div>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16,flexWrap:'wrap',gap:10}}>
+        <div style={{fontSize:11,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--secondary)'}}>
+          Все окошки сегодня
+        </div>
+        <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+          {CATEGORIES.map(cat=>(
+            <button key={cat.id} className="chip"
+              onClick={()=>setActiveCategory(cat.id)}
+              style={{
+                background: activeCategory===cat.id ? 'var(--dark)' : 'transparent',
+                color: activeCategory===cat.id ? '#fff' : 'var(--secondary)',
+                borderColor: activeCategory===cat.id ? 'var(--dark)' : 'var(--border)',
+                padding:'5px 12px',fontSize:11
+              }}>
+              {cat.label}
+            </button>
+          ))}
         </div>
       </div>
+
+      {filtered.length === 0 ? (
+        <div style={{padding:'24px',color:'var(--secondary)',fontSize:13,textAlign:'center',
+          background:'rgba(18,26,18,0.02)',borderRadius:16}}>
+          В этой категории пока нет свободных окошек
+        </div>
+      ) : (
+        <div style={{
+          display:'flex', gap:12, overflowX:'auto', paddingBottom:12,
+          scrollbarWidth:'none'
+        }}>
+          {filtered.map((slot,i)=>(
+            <SlotPill key={i} slot={slot}/>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
