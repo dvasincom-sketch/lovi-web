@@ -1,15 +1,11 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 function useTimer(sec) {
   const [s, setS] = useState(0)
-  const initialRef = useRef(false)
   useEffect(()=>{
     if(!sec) return
-    if(!initialRef.current) {
-      setS(sec)
-      initialRef.current = true
-    }
+    setS(sec)
     const t=setInterval(()=>setS(v=>v>0?v-1:0),1000)
     return()=>clearInterval(t)
   },[sec])
