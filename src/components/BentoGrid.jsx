@@ -141,13 +141,64 @@ function PassCard({isMobile}){
 }
 
 function Skeleton({isMobile}){
+  const [step, setStep] = useState(0)
+  const steps = [
+    {text:'Подключаемся к расписанию', detail:'Проверяем свободные окна на сегодня...'},
+    {text:'Анализируем спрос', detail:'Смотрим сколько людей уже смотрят эти слоты...'},
+    {text:'Считаем скидку', detail:'Определяем лучшую цену для этого момента...'},
+    {text:'Готовим лучшее предложение', detail:'Отбираем самый выгодный вариант для вас...'},
+  ]
+  useEffect(()=>{
+    const t = setInterval(()=>setStep(v=>(v+1)%steps.length), 1200)
+    return()=>clearInterval(t)
+  },[])
   return(
     <div style={{
       gridColumn: isMobile?'span 1':'span 8',gridRow: isMobile?'span 1':'span 2',
       background:'#121A12',borderRadius:isMobile?28:40,padding:isMobile?'28px 24px':48,
-      display:'flex',alignItems:'center',justifyContent:'center',minHeight:isMobile?200:300
+      display:'flex',flexDirection:'column',justifyContent:'center',minHeight:isMobile?200:300,
+      position:'relative',overflow:'hidden'
     }}>
-      <div style={{color:'rgba(255,255,255,0.3)',fontSize:14}}>Загружаем горящие окошки...</div>
+      <div style={{position:'absolute',top:-60,right:-60,width:240,height:240,borderRadius:'50%',
+        background:'radial-gradient(circle,rgba(249,115,22,0.1),transparent 70%)'}}/>
+      <div style={{position:'relative'}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:24}}>
+          <div style={{width:6,height:6,borderRadius:'50%',background:'var(--accent)',
+            animation:'pulse 1s ease-in-out infinite'}}/>
+          <div style={{fontSize:11,color:'rgba(255,255,255,0.4)',textTransform:'uppercase',
+            letterSpacing:'0.1em'}}>Yield Management · В процессе</div>
+        </div>
+        <div style={{marginBottom:32}}>
+          <div style={{fontSize:isMobile?18:24,fontWeight:500,color:'#fff',
+            fontFamily:'Playfair Display,serif',marginBottom:8,
+            transition:'all 0.4s ease'}}>
+            {steps[step].text}
+          </div>
+          <div style={{fontSize:13,color:'rgba(255,255,255,0.35)',
+            transition:'all 0.4s ease'}}>
+            {steps[step].detail}
+          </div>
+        </div>
+        <div style={{display:'flex',gap:6}}>
+          {steps.map((_,i)=>(
+            <div key={i} style={{
+              height:2,flex:1,borderRadius:1,
+              background: i===step ? 'var(--accent)' : 'rgba(255,255,255,0.1)',
+              transition:'background 0.4s ease'
+            }}/>
+          ))}
+        </div>
+        <div style={{marginTop:20,display:'flex',gap:16,flexWrap:'wrap'}}>
+          {['Анализ расписания','Цены в реальном времени','Персональная скидка'].map((tag,i)=>(
+            <div key={i} style={{
+              fontSize:10,color:'rgba(255,255,255,0.3)',
+              background:'rgba(255,255,255,0.05)',
+              padding:'4px 10px',borderRadius:20,
+              letterSpacing:'0.05em'
+            }}>{tag}</div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
@@ -244,7 +295,7 @@ export default function BentoGrid(){
                     style={{transition:'stroke-dashoffset 1s linear'}}/>
                 </svg>
                 <div style={{fontSize:8,color:'rgba(255,255,255,0.28)',textTransform:'uppercase',
-                  letterSpacing:'0.06em',textAlign:'center',lineHeight:1.3}}>
+                  letterSpacing:'0.06em',textAlign:'center',lineHeight:1.3,display:'none'}}>
                   до<br/>исчезновения
                 </div>
               </div>
@@ -265,13 +316,14 @@ export default function BentoGrid(){
             <div>
               <div style={{fontSize:11,color:'rgba(255,255,255,0.25)',
                 textDecoration:'line-through',marginBottom:4}}>{fmt(slot1.base_price)}</div>
+              <div style={{fontSize:10,color:'rgba(255,255,255,0.3)',marginBottom:6,letterSpacing:'0.03em'}}>Цена в салоне напрямую</div>
               <div style={{fontSize:isMobile?28:34,fontWeight:600,
                 letterSpacing:'-0.02em',lineHeight:1}}>{fmt(slot1.lovi_price)}</div>
               <div style={{display:'flex',alignItems:'center',gap:6,fontSize:10,
                 color:'rgba(255,255,255,0.4)',marginTop:8}}>
-                <span>👁</span><LiveDot light/>
+                <LiveDot light/>
                 <span style={{color:t1.urgent?'var(--accent)':'rgba(255,255,255,0.4)'}}>
-                  1 слот · {t1.str} до исчезновения
+                  {t1.str} до исчезновения окошка, если никто не заберёт
                 </span>
               </div>
             </div>
