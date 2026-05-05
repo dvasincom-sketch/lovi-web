@@ -231,13 +231,7 @@ export default function BentoGrid(){
   const slot1 = slots[0]
   const slot2 = slots[1]
   const slot3 = slots[2]
-  const getSecsToSlot = (slot) => {
-    if (!slot) return 0
-    const slotTime = new Date(slot.datetime)
-    const now = new Date()
-    return Math.max(0, Math.floor((slotTime - now) / 1000))
-  }
-  const t1 = useTimer(slot1 ? getSecsToSlot(slot1) : 0)
+  const t1 = useTimer(slot1 ? slot1.minutes_to_slot * 60 : 0)
 
   const handleBook = () => {
     if(navigator.vibrate) navigator.vibrate([10,50,10])
