@@ -285,19 +285,9 @@ export default function BentoGrid(){
                 color:'var(--accent)',lineHeight:1}}>
                 {slot1.time}
               </div>
-              <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3}}>
-                <svg width="32" height="32" style={{transform:'rotate(-90deg)'}}>
-                  <circle cx="16" cy="16" r="12" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="2"/>
-                  <circle cx="16" cy="16" r="12" fill="none" stroke="var(--accent)" strokeWidth="2"
-                    strokeDasharray={`${2*Math.PI*12}`}
-                    strokeDashoffset={`${2*Math.PI*12*(1-t1.pct/100)}`}
-                    strokeLinecap="round"
-                    style={{transition:'stroke-dashoffset 1s linear'}}/>
-                </svg>
-                <div style={{fontSize:8,color:'rgba(255,255,255,0.28)',textTransform:'uppercase',
-                  letterSpacing:'0.06em',textAlign:'center',lineHeight:1.3}}>
-                  до<br/>исчезновения
-                </div>
+              <div style={{fontSize:12,color:'rgba(255,255,255,0.45)',lineHeight:1.6,maxWidth:180}}>
+                Сегодня · Ещё больше часа в запасе<br/>
+                <span style={{fontSize:11,color:'rgba(255,255,255,0.28)'}}>Успеете доехать и подготовиться</span>
               </div>
             </div>
             <div style={{fontFamily:'Playfair Display,serif',
