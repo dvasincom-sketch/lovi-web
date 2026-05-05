@@ -227,7 +227,7 @@ export default function BentoGrid(){
             <div style={{display:'flex',alignItems:'center',gap:8,fontSize:10,fontWeight:600,
               letterSpacing:'0.1em',textTransform:'uppercase',
               color:'rgba(255,255,255,0.38)',marginBottom:12}}>
-              <LiveDot light/> Next Available Slot
+              <LiveDot light/> Лучшее предложение
             </div>
             <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:12}}>
               <div style={{fontSize:isMobile?56:80,fontWeight:600,letterSpacing:'-0.04em',
@@ -255,7 +255,7 @@ export default function BentoGrid(){
             </div>
             <div style={{fontSize:11,color:'rgba(255,255,255,0.45)',textTransform:'uppercase',
               letterSpacing:'0.06em'}}>
-              📍 HeadSPA · Москва · {slot1.duration_min} мин
+              📍 HEAD SPA BEAUTY · ул. Миклухо-Маклая 37 · 5 мин пешком от м. Беляево
             </div>
           </div>
 
