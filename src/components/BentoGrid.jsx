@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useIsMobile } from '../hooks/useIsMobile'
+import SlotDrawer from './SlotDrawer'
 
 function useTimer(sec) {
   const [s, setS] = useState(0)
@@ -26,14 +27,14 @@ function LiveDot({light}){
 
 function fmt(price){ return price.toLocaleString('ru-RU') + ' ₽' }
 
-function SubCard({slot, tag}){
+function SubCard({slot, tag, onBook}){
   const sec = slot ? slot.minutes_to_slot * 60 : 0
   const {str,urgent}=useTimer(sec)
   const [hov,setHov]=useState(false)
   const isMobile=useIsMobile()
   if(!slot) return null
   return(
-    <div onClick={()=>{ if(navigator.vibrate) navigator.vibrate(10) }}
+    <div onClick={()=>{ if(navigator.vibrate) navigator.vibrate(10); if(onBook) onBook(slot) }}
       onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
       style={{
         background:'#fff',border:'1px solid var(--border)',
@@ -210,6 +211,7 @@ export default function BentoGrid(){
   const [loading, setLoading] = useState(true)
   const [hov1,setHov1]=useState(false)
   const [booked,setBooked]=useState(false)
+  const [drawerSlot, setDrawerSlot]=useState(null)
   const isMobile=useIsMobile()
 
   useEffect(()=>{
@@ -237,8 +239,7 @@ export default function BentoGrid(){
 
   const handleBook = () => {
     if(navigator.vibrate) navigator.vibrate([10,50,10])
-    setBooked(true)
-    setTimeout(()=>setBooked(false), 3000)
+    if(slot1) setDrawerSlot(slot1)
   }
 
   const pad = isMobile ? '0 16px 80px' : '0 40px 60px'
@@ -360,8 +361,8 @@ export default function BentoGrid(){
           gridRow: isMobile?'span 1':'span 2',
           display:'flex',flexDirection:'column',gap:isMobile?14:20
         }}>
-          <SubCard slot={slot2} tag="Топ по отзывам"/>
-          <SubCard slot={slot3}/>
+          <SubCard slot={slot2} tag="Топ по отзывам" onBook={s=>setDrawerSlot(s)}/>
+          <SubCard slot={slot3} onBook={s=>setDrawerSlot(s)}/>
         </div>
 
 
@@ -390,6 +391,8 @@ export default function BentoGrid(){
         </div>
 
       </div>
+
+      {drawerSlot && <SlotDrawer slot={drawerSlot} onClose={()=>setDrawerSlot(null)}/>}
 
       {isMobile && slot1 && (
         <div style={{

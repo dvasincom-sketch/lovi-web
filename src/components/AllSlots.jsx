@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useIsMobile } from '../hooks/useIsMobile'
+import SlotDrawer from './SlotDrawer'
 
 function useTimer(sec) {
   const [s, setS] = useState(sec || 0)
@@ -33,11 +34,11 @@ const CATEGORIES = [
   { id: 'body', label: 'Всё тело' },
 ]
 
-function SlotPill({ slot, isNextDay }) {
+function SlotPill({ slot, isNextDay, onBook }) {
   const {str, urgent} = useTimer(slot.minutes_to_slot * 60)
   const [hov, setHov] = useState(false)
   return (
-    <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+    <div onClick={()=>onBook&&onBook(slot)} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
       style={{
         flexShrink: 0, width: 200,
         background: isNextDay ? '#F1F0EC' : '#fff',
@@ -81,6 +82,7 @@ function SlotPill({ slot, isNextDay }) {
           {str}
         </div>
       </div>
+    {drawerSlot && <SlotDrawer slot={drawerSlot} onClose={()=>setDrawerSlot(null)}/>}
     </div>
   )
 }
@@ -89,6 +91,7 @@ export default function AllSlots() {
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState('all')
+  const [drawerSlot, setDrawerSlot] = useState(null)
   const isMobile = useIsMobile()
   const today = new Date().toISOString().split('T')[0]
 
@@ -147,7 +150,7 @@ export default function AllSlots() {
         <div style={{display:'flex',gap:12,overflowX:'auto',
           scrollbarWidth:'none',padding:isMobile?'0 16px 12px':'0 40px 12px'}}>
           {filtered.map((slot,i)=>(
-            <SlotPill key={i} slot={slot} isNextDay={slot.slot_date && slot.slot_date !== today}/>
+            <SlotPill key={i} slot={slot} isNextDay={slot.slot_date && slot.slot_date !== today} onBook={s=>setDrawerSlot(s)}/>
           ))}
         </div>
       )}
