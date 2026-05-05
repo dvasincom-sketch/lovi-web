@@ -278,10 +278,17 @@ export default function BentoGrid(){
 
           <div style={{position:'relative'}}>
             {/* Eyebrow */}
-            <div style={{display:'flex',alignItems:'center',gap:8,fontSize:10,fontWeight:600,
-              letterSpacing:'0.1em',textTransform:'uppercase',
-              color:'rgba(255,255,255,0.38)',marginBottom:16}}>
-              <LiveDot light/> Лучшее предложение
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+              <div style={{display:'flex',alignItems:'center',gap:8,fontSize:10,fontWeight:600,
+                letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.38)'}}>
+                <LiveDot light/> Лучшее предложение
+              </div>
+              <div style={{fontSize:12,color:'rgba(255,255,255,0.4)',display:'flex',alignItems:'center',gap:6}}>
+                <LiveDot light/>
+                <span style={{color:t1.urgent?'var(--accent)':'rgba(255,255,255,0.4)'}}>
+                  {t1.str} до исчезновения окошка
+                </span>
+              </div>
             </div>
             {/* Время — главный акцент */}
             <div style={{fontSize:isMobile?64:96,fontWeight:600,letterSpacing:'-0.04em',
@@ -308,7 +315,7 @@ export default function BentoGrid(){
                 letterSpacing:'-0.02em',lineHeight:1,marginBottom:8}}>{fmt(slot1.lovi_price)}</div>
               {/* Сравнение inline */}
               <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:4}}>
-                <span style={{fontSize:13,color:'rgba(255,255,255,0.35)',textDecoration:'line-through'}}>
+                <span style={{fontSize:13,color:'rgba(255,255,255,0.4)'}}>
                   {fmt(slot1.base_price)}
                 </span>
                 <span style={{fontSize:12,color:'rgba(255,255,255,0.28)'}}>
