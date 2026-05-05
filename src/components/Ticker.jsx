@@ -16,7 +16,7 @@ const items = [
 export default function Ticker() {
   return (
     <div style={{
-      position:'fixed',bottom:0,left:0,right:0,zIndex:50,
+      position:'sticky',bottom:0,left:0,right:0,zIndex:50,
       borderTop:'1px solid var(--border)',
       background:'rgba(245,244,240,0.92)',
       backdropFilter:'blur(12px)',

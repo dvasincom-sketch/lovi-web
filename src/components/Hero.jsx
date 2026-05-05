@@ -1,4 +1,13 @@
+import { useState, useEffect } from 'react'
+
 export default function Hero() {
+  const [count, setCount] = useState(342)
+  useEffect(()=>{
+    const t = setInterval(()=>{
+      setCount(v => v + (Math.random() > 0.5 ? -1 : 1))
+    }, 3000)
+    return () => clearInterval(t)
+  },[])
   return (
     <section style={{
       maxWidth:1200, margin:'0 auto', padding:'80px 40px 60px',
@@ -9,7 +18,7 @@ export default function Hero() {
           <div style={{width:6,height:6,background:'var(--accent)',borderRadius:'50%'}}/>
           <div style={{position:'absolute',inset:0,background:'var(--accent)',borderRadius:'50%',animation:'pulse 2s infinite'}}/>
         </div>
-        В эфире: 342 окна
+        В эфире: {count} окна
       </div>
       <h1 style={{
         fontFamily:'Playfair Display, serif', fontSize:'clamp(36px,4.5vw,58px)',
