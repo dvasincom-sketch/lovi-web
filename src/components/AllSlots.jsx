@@ -16,10 +16,10 @@ function fmt(price){ return price.toLocaleString('ru-RU') + ' ₽' }
 
 const CATEGORIES = [
   { id: 'all', label: 'Все' },
-  { id: 'spa', label: 'SPA' },
   { id: 'head', label: 'Голова' },
-  { id: 'face', label: 'Лицо' },
+  { id: 'spa', label: 'SPA' },
   { id: 'back', label: 'Спина' },
+  { id: 'neck', label: 'Шея' },
   { id: 'body', label: 'Всё тело' },
 ]
 
