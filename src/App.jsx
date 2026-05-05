@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import BentoGrid from './components/BentoGrid'
+import AllSlots from './components/AllSlots'
 import Ticker from './components/Ticker'
 import UI from './pages/UI'
 
@@ -11,6 +12,7 @@ function Home() {
       <Nav />
       <Hero />
       <BentoGrid />
+      <AllSlots />
       <Ticker />
     </div>
   )
