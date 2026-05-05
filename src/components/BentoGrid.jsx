@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 function useTimer(sec) {
-  const [s, setS] = useState(sec)
+  const [s, setS] = useState(sec || 0)
   useEffect(()=>{
     if(!sec)return
     const t=setInterval(()=>setS(v=>v>0?v-1:0),1000)
     return()=>clearInterval(t)
-  },[])
+  },[sec])
   const m=Math.floor((s%3600)/60),ss=s%60
-  const pct=Math.max(0,(s/sec)*100)
+  const pct=sec?Math.max(0,(s/sec)*100):0
   return { str: String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0'), pct, urgent: s<=900 }
 }
 
@@ -22,10 +22,14 @@ function LiveDot({light}){
   )
 }
 
-function SubCard({time,name,salon,price,discount,seconds,tag}){
-  const {str,pct,urgent}=useTimer(seconds)
+function fmt(price){ return price.toLocaleString('ru-RU') + ' ₽' }
+
+function SubCard({slot, tag}){
+  const sec = slot ? slot.minutes_to_slot * 60 : 0
+  const {str,urgent}=useTimer(sec)
   const [hov,setHov]=useState(false)
   const isMobile=useIsMobile()
+  if(!slot) return null
   return(
     <div onClick={()=>{ if(navigator.vibrate) navigator.vibrate(10) }}
       onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
@@ -49,12 +53,12 @@ function SubCard({time,name,salon,price,discount,seconds,tag}){
       <div>
         <div style={{fontSize:10,letterSpacing:'0.15em',textTransform:'uppercase',
           color:'rgba(18,26,18,0.35)',marginBottom:8}}>
-          Available at {time}
+          Available at {slot.time}
         </div>
         <div style={{fontFamily:'Playfair Display,serif',fontSize:isMobile?18:21,
-          marginBottom:3,lineHeight:1.2}}>{name}</div>
+          marginBottom:3,lineHeight:1.2}}>{slot.service_name}</div>
         <div style={{fontSize:11,color:'var(--secondary)',textTransform:'uppercase',
-          letterSpacing:'0.06em'}}>{salon}</div>
+          letterSpacing:'0.06em'}}>HeadSPA · Москва</div>
       </div>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',marginTop:14}}>
         <div>
@@ -65,12 +69,12 @@ function SubCard({time,name,salon,price,discount,seconds,tag}){
               {str} до роста цены
             </span>
           </div>
-          <div style={{fontSize:isMobile?20:22,fontWeight:600,letterSpacing:'-0.02em'}}>{price}</div>
+          <div style={{fontSize:isMobile?20:22,fontWeight:600,letterSpacing:'-0.02em'}}>{fmt(slot.lovi_price)}</div>
         </div>
         <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:5}}>
           <div style={{background:'rgba(249,115,22,0.09)',color:'var(--accent)',
             padding:'3px 10px',borderRadius:8,fontSize:11,fontWeight:700}}>
-            ⚡ -{discount}%
+            ⚡ -{slot.discount_pct}%
           </div>
           <div style={{
             background:hov?'var(--accent)':'var(--dark)',color:'#fff',
@@ -136,11 +140,47 @@ function PassCard({isMobile}){
   )
 }
 
+function Skeleton({isMobile}){
+  return(
+    <div style={{
+      gridColumn: isMobile?'span 1':'span 8',gridRow: isMobile?'span 1':'span 2',
+      background:'#121A12',borderRadius:isMobile?28:40,padding:isMobile?'28px 24px':48,
+      display:'flex',alignItems:'center',justifyContent:'center',minHeight:isMobile?200:300
+    }}>
+      <div style={{color:'rgba(255,255,255,0.3)',fontSize:14}}>Загружаем горящие окошки...</div>
+    </div>
+  )
+}
+
 export default function BentoGrid(){
-  const t1=useTimer(522)
+  const [slots, setSlots] = useState([])
+  const [loading, setLoading] = useState(true)
   const [hov1,setHov1]=useState(false)
   const [booked,setBooked]=useState(false)
   const isMobile=useIsMobile()
+
+  useEffect(()=>{
+    const today = new Date().toISOString().split('T')[0]
+    const tomorrow = new Date(Date.now()+86400000).toISOString().split('T')[0]
+    fetch(`https://insalon.onrender.com/api/lovi/featured?date=${today}`)
+      .then(r=>r.json())
+      .then(data=>{
+        if(data.slots && data.slots.length >= 2){
+          setSlots(data.slots)
+        } else {
+          return fetch(`https://insalon.onrender.com/api/lovi/featured?date=${tomorrow}`)
+            .then(r=>r.json())
+            .then(d=>setSlots(d.slots||[]))
+        }
+      })
+      .catch(()=>setSlots([]))
+      .finally(()=>setLoading(false))
+  },[])
+
+  const slot1 = slots[0]
+  const slot2 = slots[1]
+  const slot3 = slots[2]
+  const t1 = useTimer(slot1 ? slot1.minutes_to_slot * 60 : 0)
 
   const handleBook = () => {
     if(navigator.vibrate) navigator.vibrate([10,50,10])
@@ -156,15 +196,15 @@ export default function BentoGrid(){
         color:'var(--secondary)',marginBottom:isMobile?16:24}}>
         Ближайшие слоты
       </div>
-
       <div style={{
-        display:'grid', background:'var(--bg)',
+        display:'grid',
         gridTemplateColumns: isMobile ? '1fr' : 'repeat(12,1fr)',
         gap:isMobile?14:20,
         gridAutoRows: isMobile ? 'auto' : 'minmax(160px,auto)'
       }}>
 
         {/* FEATURED */}
+        {loading ? <Skeleton isMobile={isMobile}/> : slot1 ? (
         <div onMouseEnter={()=>setHov1(true)} onMouseLeave={()=>setHov1(false)}
           style={{
             gridColumn: isMobile?'span 1':'span 8',
@@ -192,7 +232,7 @@ export default function BentoGrid(){
             <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:12}}>
               <div style={{fontSize:isMobile?56:80,fontWeight:600,letterSpacing:'-0.04em',
                 color:'var(--accent)',lineHeight:1}}>
-                18:30
+                {slot1.time}
               </div>
               <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3}}>
                 <svg width="32" height="32" style={{transform:'rotate(-90deg)'}}>
@@ -211,14 +251,12 @@ export default function BentoGrid(){
             </div>
             <div style={{fontFamily:'Playfair Display,serif',
               fontSize:isMobile?22:32,marginBottom:8,fontWeight:500,lineHeight:1.1}}>
-              Гималайский дзен
+              {slot1.service_name}
             </div>
-            <a href="https://yandex.ru/maps/?text=HeadSPA+Арбат" target="_blank"
-              style={{fontSize:11,color:'rgba(255,255,255,0.45)',textTransform:'uppercase',
-              letterSpacing:'0.06em',textDecoration:'none',
-              borderBottom:'1px solid rgba(255,255,255,0.15)',paddingBottom:1,display:'inline-block'}}>
-              📍 HeadSPA · Арбат · 350 м · 4 мин пешком
-            </a>
+            <div style={{fontSize:11,color:'rgba(255,255,255,0.45)',textTransform:'uppercase',
+              letterSpacing:'0.06em'}}>
+              📍 HeadSPA · Москва · {slot1.duration_min} мин
+            </div>
           </div>
 
           <div style={{display:'flex',alignItems:'flex-end',
@@ -226,21 +264,23 @@ export default function BentoGrid(){
             marginTop:isMobile?24:0}}>
             <div>
               <div style={{fontSize:11,color:'rgba(255,255,255,0.25)',
-                textDecoration:'line-through',marginBottom:4}}>5 500 ₽</div>
+                textDecoration:'line-through',marginBottom:4}}>{fmt(slot1.base_price)}</div>
               <div style={{fontSize:isMobile?28:34,fontWeight:600,
-                letterSpacing:'-0.02em',lineHeight:1}}>3 300 ₽</div>
+                letterSpacing:'-0.02em',lineHeight:1}}>{fmt(slot1.lovi_price)}</div>
               <div style={{display:'flex',alignItems:'center',gap:6,fontSize:10,
                 color:'rgba(255,255,255,0.4)',marginTop:8}}>
                 <span>👁</span><LiveDot light/>
                 <span style={{color:t1.urgent?'var(--accent)':'rgba(255,255,255,0.4)'}}>
-                  {t1.str} · 4 смотрят
+                  {t1.str} до роста цены
                 </span>
               </div>
             </div>
             {!isMobile && (
               <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:8}}>
                 <div style={{background:'rgba(249,115,22,0.18)',color:'var(--accent)',
-                  padding:'4px 12px',borderRadius:10,fontSize:12,fontWeight:600}}>-40%</div>
+                  padding:'4px 12px',borderRadius:10,fontSize:12,fontWeight:600}}>
+                  -{slot1.discount_pct}%
+                </div>
                 <button onClick={handleBook} style={{
                   background: booked?'rgba(255,255,255,0.15)':'var(--accent)',
                   color:'#fff',border:'none',padding:'14px 28px',borderRadius:18,
@@ -249,7 +289,7 @@ export default function BentoGrid(){
                   transition:'all 0.3s',
                   transform:hov1?'scale(1.04)':'scale(1)'
                 }}>
-                  {booked ? '⏳ Проверяем...' : 'Забрать за 3 300 ₽'}
+                  {booked ? '⏳ Проверяем...' : `Забрать за ${fmt(slot1.lovi_price)}`}
                 </button>
                 <div style={{display:'flex',alignItems:'center',gap:4}}>
                   <span style={{fontSize:9,color:'rgba(255,255,255,0.25)',textTransform:'uppercase',letterSpacing:'0.06em'}}>Оплата:</span>
@@ -263,6 +303,7 @@ export default function BentoGrid(){
             )}
           </div>
         </div>
+        ) : <Skeleton isMobile={isMobile}/>}
 
         {/* RIGHT COLUMN */}
         <div style={{
@@ -270,16 +311,12 @@ export default function BentoGrid(){
           gridRow: isMobile?'span 1':'span 2',
           display:'flex',flexDirection:'column',gap:isMobile?14:20
         }}>
-          <SubCard time="19:00" name="SPA для двоих" salon="LuxeSpa · Патриаршие"
-            price="9 000 ₽" discount={25} seconds={2322} tag="Топ по отзывам"/>
-          <SubCard time="20:00" name="Массаж спины" salon="Relax · Чистые пруды"
-            price="2 975 ₽" discount={15} seconds={5922}/>
+          <SubCard slot={slot2} tag="Топ по отзывам"/>
+          <SubCard slot={slot3}/>
         </div>
 
-        {/* PASS */}
         <PassCard isMobile={isMobile}/>
 
-        {/* B2B */}
         <div style={{
           gridColumn: isMobile?'span 1':'span 4',
           background:'var(--dark)',color:'#fff',
@@ -305,8 +342,7 @@ export default function BentoGrid(){
 
       </div>
 
-      {/* MOBILE STICKY CTA */}
-      {isMobile && (
+      {isMobile && slot1 && (
         <div style={{
           position:'fixed',bottom:0,left:0,right:0,zIndex:100,
           padding:'12px 16px 24px',
@@ -321,7 +357,7 @@ export default function BentoGrid(){
             boxShadow:'0 8px 24px rgba(249,115,22,0.3)',
             transition:'all 0.3s'
           }}>
-            {booked ? '⏳ Проверяем доступность...' : 'Забрать за 3 300 ₽'}
+            {booked ? '⏳ Проверяем...' : `Забрать за ${fmt(slot1.lovi_price)}`}
           </button>
           <div style={{display:'flex',justifyContent:'center',gap:6,marginTop:8}}>
             {['СБП','Apple Pay','T-Pay'].map(p=>(
