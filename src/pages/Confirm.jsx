@@ -57,13 +57,17 @@ export default function Confirm() {
     if (!bookingId) return
     let attempts = 0
     const poll = async () => {
-      const r = await fetch(`${API}/api/booking/${bookingId}`)
-      const data = await r.json()
-      if (data.error) { setBooking({ notFound: true }); return }
-      setBooking(data)
-      if (data.status !== 'paid' && attempts < 12) {
-        attempts++
-        setTimeout(poll, 2500)
+      try {
+        const r = await fetch(`${API}/api/booking/${bookingId}`)
+        const data = await r.json()
+        if (data.error || data.detail) { setBooking({ notFound: true }); return }
+        setBooking(data)
+        if (data.status !== 'paid' && attempts < 12) {
+          attempts++
+          setTimeout(poll, 2500)
+        }
+      } catch (e) {
+        setBooking({ notFound: true })
       }
     }
     poll()
@@ -110,11 +114,11 @@ export default function Confirm() {
       <img src="/logo.svg" alt="LOVI" style={{height: 24, marginBottom: 8}} />
       <div style={{fontFamily: 'Playfair Display, serif', fontSize: 22, color: 'var(--dark)'}}>Бронь не найдена</div>
       <div style={{fontSize: 14, color: 'var(--secondary)', textAlign: 'center'}}>Проверьте ссылку или вернитесь на главную</div>
-      <button onClick={() => window.location.href = 'https://lovi-web.onrender.com'} style={{
+      <button onClick={() => window.location.href = '/'} style={{
         marginTop: 8, padding: '12px 28px', borderRadius: 20,
         background: 'var(--dark)', color: '#fff', border: 'none',
         fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif',
-      }}>На главную</button>
+      }}>На главную → найти новое окошко</button>
     </div>
   )
 
@@ -302,7 +306,7 @@ export default function Confirm() {
             </div>
 
             {/* CTA — вернуться */}
-            <button onClick={() => window.location.href = 'https://lovi-web.onrender.com'}
+            <button onClick={() => window.location.href = '/'}
               style={{
                 width: '100%', padding: '16px', borderRadius: 20,
                 background: 'var(--dark)', color: '#fff', border: 'none',
