@@ -500,3 +500,55 @@ cd ~/lovi-web && npm run build && git add -A && git commit -m "..." && git push
 ```
 `dist/` убран из `.gitignore` — Render деплоит статику из него напрямую.
 
+
+---
+
+## 17. ИТОГИ СЕССИИ 05.05.2026 (часть 2)
+
+### SlotDrawer.jsx — новый компонент
+- Файл: `src/components/SlotDrawer.jsx`
+- Открывается по клику «Забрать» в BentoGrid и AllSlots
+- Десктоп: модал справа (slideRight), мобайл: drawer снизу (slideUp)
+- Закрывается по Escape, клику на оверлей, кнопке ✕
+- Блокирует скролл страницы пока открыт
+
+### SlotDrawer — содержимое
+- Название услуги, дата/время, длительность
+- Таймер исчезновения (urgent < 15 мин → оранжевый)
+- Мастер — загружается отдельным запросом `GET /api/booking/staff`
+- Цена салона (зачёркнута) → Lovi цена + бейдж скидки
+- Форма: имя + телефон (временно — пока нет авторизации)
+- Кнопка «Оплатить X ₽» → `POST /api/lovi/book` → redirect YooKassa
+
+### SlotDrawer — expired state
+Если таймер истёк пока drawer открыт:
+> «Такое бывает, но окошко уже недоступно, сейчас поищем похожие!»
+Кнопка «Смотреть другие окошки» → закрывает drawer
+
+### /api/lovi/book — новый эндпоинт
+- Создаёт бронь в Supabase (`source: "lovi"`)
+- Создаёт/находит клиента в YCLIENTS
+- Создаёт запись в YCLIENTS (fire-and-forget)
+- Создаёт платёж YooKassa с `return_url: lovi-web.onrender.com/confirm?booking_id=...`
+
+### Confirm.jsx — страница подтверждения
+- Файл: `src/pages/Confirm.jsx`
+- Роут: `/confirm?booking_id=...`
+- Polling каждые 2.5с пока статус не `paid` (макс 12 попыток)
+- Показывает детали брони при статусе `paid` и `waiting_payment`
+- Мастер загружается отдельным запросом
+- Кнопки: маршрут в Яндекс Картах, перенос/отмена через WhatsApp
+- Обработка ошибок: `data.error`, `data.detail`, сетевые ошибки → экран «Бронь не найдена»
+
+### Беклог — разобрать в следующей сессии
+- Ошибка «Ошибка создания платежа» в SlotDrawer — `BOOKING_BASE_URL` указывает на localhost, нужно поменять на `https://lovi-web.onrender.com` в env на Render
+- Форма имя/телефон в drawer — убрать после реализации авторизации
+- Авторизация — данные клиента брать из профиля автоматически
+- SlotDrawer — проверить передачу `datetime` в правильном формате для `/api/booking/staff`
+
+### Env переменные на Render (insalon)
+Нужно проверить и обновить:
+- `BOOKING_BASE_URL` → `https://lovi-web.onrender.com`
+- `YOOKASSA_SHOP_ID` → боевой ID (сейчас test_)
+- `YOOKASSA_SECRET_KEY` → боевой ключ (сейчас test_)
+
