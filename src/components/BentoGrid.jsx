@@ -242,7 +242,7 @@ export default function BentoGrid(){
     if(slot1) setDrawerSlot(slot1)
   }
 
-  const pad = isMobile ? '0 16px 80px' : '0 40px 60px'
+  const pad = isMobile ? '32px 16px 80px' : '48px 40px 60px'
 
   return(
     <div style={{maxWidth:1200,margin:'0 auto',padding:pad}}>
