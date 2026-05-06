@@ -206,7 +206,6 @@ export default function BentoGrid(){
   const [drawerSlot, setDrawerSlot]=useState(null)
   const [infoSlot, setInfoSlot]=useState(null)
   const isMobile=useIsMobile()
-
   useEffect(()=>{
     const today = new Date().toISOString().split('T')[0]
     const tomorrow = new Date(Date.now()+86400000).toISOString().split('T')[0]
@@ -392,7 +391,6 @@ export default function BentoGrid(){
 
       {drawerSlot && <SlotDrawer slot={drawerSlot} onClose={()=>setDrawerSlot(null)}/>}
       {infoSlot && <SlotInfoDrawer slot={infoSlot} onClose={()=>setInfoSlot(null)} onBook={()=>{setDrawerSlot(infoSlot);setInfoSlot(null)}}/>}
-
 
     </div>
   )

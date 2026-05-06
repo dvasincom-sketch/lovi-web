@@ -612,3 +612,84 @@ cd ~/lovi-web && npm run build && git add -A && git commit -m "..." && git push
 - Авторизация — убрать форму из SlotDrawer когда будет профиль
 - Поиск и фильтры в HeroNew — пока не функциональны
 - Топ по отзывам — рейтинги из YCLIENTS в Supabase
+
+---
+
+## 20. ИТОГИ СЕССИИ 06.05.2026 — Frontend рефакторинг + города + ValueCard
+
+### Что сделано
+
+#### CityPicker → Modal
+- Дропдаун заменён на полноценное модальное окно (паттерн SlotDrawer)
+- Мобайл: drawer снизу + хэндл + `slideUp` анимация
+- Десктоп: центрированный modal + `fadeIn` анимация
+- Поиск фильтрует оба раздела одновременно, Escape закрывает, скролл блокируется
+- Новый prop `onCityChange` в Nav → прокидывается из App
+
+#### Мультигород
+- `city` state в `App.jsx → Home`, прокидывается в `Nav` и `HeroNew`
+- `isMoscow = city === 'Москва'` — при других городах скрываются BentoGrid, AllSlots, Hero, Ticker
+- В HeroNew: заголовок и подзаголовок меняются динамически
+- `ComingSoonBlock` для не-Москвы: плашка «На стадии подключения» + форма email + форма для бизнеса
+
+#### Новые таблицы Supabase (файл: `migrations_city_tables.sql`)
+| Таблица | Назначение |
+|---------|-----------|
+| `city_waitlist` | Email-подписки «Узнать первым» об открытии города |
+| `city_partner_requests` | Заявки владельцев салонов на подключение |
+
+#### Новые API эндпоинты (lovi.py)
+- `POST /api/lovi/city-waitlist` — подписка на город
+- `POST /api/lovi/city-partner` — заявка салона
+
+#### Hero.jsx — поиск с аналитикой
+- Кнопка переименована в «Проверить доступность»
+- Loading state: 4 сменяющиеся фразы каждые 500мс (1.8с)
+- После — smooth scroll к `#value-card-section`
+- `onSearch({ location, service })` → App → ValueCard
+- Чипы заполняют нужное поле (район или услуга)
+- `POST /api/lovi/search-intent` — fire-and-forget аналитика запросов (эндпоинт нужно добавить, таблица `search_intents`)
+
+#### ValueCard.jsx — новый компонент
+Место в дереве: `HeroNew → BentoGrid → AllSlots → Hero → ValueCard → Ticker`
+- Появляется только после поиска (`searchQuery !== null`), анимация `fadeUp`
+- Тёмный фон `#121A12` с оранжевым glow — в стиле featured-карточки
+- Двухколоночный layout на десктопе:
+  - Левая: три аргумента (Снайпер локаций, Свобода выбора, Закрытый доступ) с SVG-иконками
+  - Правая: депозитный блок (`rgba(255,255,255,0.04)`) + CTA оранжевая кнопка
+- Депозитный блок: шапка «Депозит, не расход» + бейдж `+10% на остаток` + 3 строки
+
+#### SVG-иконки
+Все эмодзи в компонентах заменены на inline SVG (stroke-based, 16×16):
+- Pin, Grid, Lock — для аргументов ValueCard
+- Vault, Infinity, Trend — для депозитного блока
+
+### Автотесты (запланировано, не реализовано)
+- Инструмент: `pytest + httpx`
+- Структура: `tests/test_city_forms.py`, `tests/test_booking_flow.py`, `conftest.py`
+- Три уровня: терминал → GitHub Actions (03:00 ночью) → Telegram алерт
+- Принцип: тест всегда чистит за собой
+- Email для тестов: `autotest@lovi.today`
+- Добавить в следующей сессии вместе с `/api/lovi/search-intent`
+
+### Структура файлов (актуально на 06.05.2026)
+```
+src/components/
+  Nav.jsx          — навигация + CityModal + AuthModal
+  HeroNew.jsx      — первый экран + ComingSoonBlock для не-Москвы
+  BentoGrid.jsx    — сетка слотов (без overlay логики)
+  AllSlots.jsx     — полный список слотов
+  Hero.jsx         — поиск с loading state + аналитика
+  ValueCard.jsx    — карточка Lovi Pass (появляется после поиска)
+  Ticker.jsx       — бегущая строка
+  SlotDrawer.jsx   — боковой drawer бронирования
+  SlotInfoDrawer.jsx
+```
+
+### Беклог (обновлён)
+- `POST /api/lovi/search-intent` + таблица `search_intents` — аналитика поисковых запросов
+- Автотесты city-forms (pytest + httpx)
+- Подключить кнопку «Активировать Lovi Pass» к реальному flow
+- Описания услуг перенести из хардкода в Supabase
+- Реальные фото салона
+- Топ по отзывам — рейтинги из YCLIENTS
