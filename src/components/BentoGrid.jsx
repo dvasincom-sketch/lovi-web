@@ -28,8 +28,6 @@ function LiveDot({light}){
 function fmt(price){ return price.toLocaleString('ru-RU') + ' ₽' }
 
 function SubCard({slot, tag, onBook}){
-  const sec = slot ? slot.minutes_to_slot * 60 : 0
-  const {str,urgent}=useTimer(sec)
   const [hov,setHov]=useState(false)
   const isMobile=useIsMobile()
   if(!slot) return null
@@ -53,39 +51,32 @@ function SubCard({slot, tag, onBook}){
           {tag}
         </div>
       )}
-      <div>
-        <div style={{fontSize:10,letterSpacing:'0.15em',textTransform:'uppercase',
-          color:'rgba(18,26,18,0.35)',marginBottom:8}}>
-          Запись на {slot.time}
-        </div>
-        <div style={{fontFamily:'Playfair Display,serif',fontSize:isMobile?18:21,
-          marginBottom:3,lineHeight:1.2}}>{slot.service_name}</div>
-        <div style={{fontSize:11,color:'var(--secondary)',textTransform:'uppercase',
-          letterSpacing:'0.06em'}}>HeadSPA · Москва</div>
+      {/* Время — крупный акцент */}
+      <div style={{fontFamily:'Playfair Display,serif',fontSize:isMobile?36:44,fontWeight:600,
+        letterSpacing:'-0.03em',color:'var(--dark)',lineHeight:1,marginBottom:10}}>
+        {slot.time}
       </div>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',marginTop:14}}>
-        <div>
-          <div style={{fontSize:11,color:'var(--secondary)',display:'flex',
-            alignItems:'center',gap:5,marginBottom:4}}>
-            <LiveDot/>
-            <span style={{color:urgent?'var(--accent)':'var(--secondary)',fontWeight:urgent?600:400}}>
-              1 слот · {str} до исчезновения
-            </span>
-          </div>
-          <div style={{fontSize:isMobile?20:22,fontWeight:600,letterSpacing:'-0.02em'}}>{fmt(slot.lovi_price)}</div>
+      {/* Услуга и локация */}
+      <div style={{marginBottom:14}}>
+        <div style={{fontFamily:'Playfair Display,serif',fontSize:isMobile?15:17,
+          marginBottom:4,lineHeight:1.25,color:'var(--dark)'}}>{slot.service_name}</div>
+        <div style={{fontSize:11,color:'var(--secondary)',letterSpacing:'0.04em'}}>
+          м. Беляево
         </div>
-        <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:5}}>
-          <div style={{background:'rgba(249,115,22,0.09)',color:'var(--accent)',
-            padding:'3px 10px',borderRadius:8,fontSize:11,fontWeight:700}}>
-            ⚡ -{slot.discount_pct}%
-          </div>
-          <div style={{
-            background:hov?'var(--accent)':'var(--dark)',color:'#fff',
-            fontSize:11,fontWeight:500,padding:'7px 14px',borderRadius:10,
-            transition:'background 0.25s'
-          }}>
-            Забрать →
-          </div>
+      </div>
+      {/* Цена со скидкой + кнопка */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:8}}>
+        <div style={{fontSize:12,color:'var(--secondary)'}}>
+          <span style={{textDecoration:'line-through'}}>{fmt(slot.base_price)}</span>
+          {' '}
+          <span style={{color:'var(--accent)',fontWeight:600}}>-{slot.discount_pct}%</span>
+        </div>
+        <div style={{
+          background:hov?'var(--accent)':'var(--dark)',color:'#fff',
+          fontSize:12,fontWeight:600,padding:'8px 14px',borderRadius:12,
+          transition:'background 0.25s',whiteSpace:'nowrap',
+        }}>
+          {fmt(slot.lovi_price)} →
         </div>
       </div>
     </div>
@@ -286,9 +277,15 @@ export default function BentoGrid(){
               </div>
               <div style={{fontSize:12,color:'rgba(255,255,255,0.4)',display:'flex',alignItems:'center',gap:6}}>
                 <LiveDot light/>
-                <span style={{color:t1.urgent?'var(--accent)':'rgba(255,255,255,0.4)'}}>
-                  {t1.str} до исчезновения окошка
-                </span>
+                {slot1.minutes_to_slot > 240 ? (
+                  <span style={{color:'var(--accent)'}}>
+                    Окошки улетают за 10 мин
+                  </span>
+                ) : (
+                  <span style={{color:t1.urgent?'var(--accent)':'rgba(255,255,255,0.4)'}}>
+                    {t1.str} до исчезновения окошка
+                  </span>
+                )}
               </div>
             </div>
             {/* Время — главный акцент */}
@@ -307,24 +304,24 @@ export default function BentoGrid(){
             </div>
           </div>
 
-          <div style={{display:'flex',alignItems:'flex-end',
+          <div style={{display:'flex',alignItems:'center',
             justifyContent:'space-between',gap:16,position:'relative',
             marginTop:isMobile?24:0}}>
             <div>
               {/* Цена салона — реальная точка отсчёта */}
-              <div style={{marginBottom:4}}>
+              <div style={{display:'flex',flexDirection:'column',gap:2}}>
                 <span style={{fontSize:isMobile?28:36,fontWeight:600,letterSpacing:'-0.02em',
-                  color:'rgba(255,255,255,0.9)'}}>
+                  color:'rgba(255,255,255,0.9)',lineHeight:1.1}}>
                   {fmt(slot1.base_price)}
                 </span>
-                <span style={{fontSize:12,color:'rgba(255,255,255,0.3)',marginLeft:10}}>
-                  <br/>на сайте салона напрямую
+                <span style={{fontSize:11,color:'rgba(255,255,255,0.3)'}}>
+                  на сайте салона напрямую
                 </span>
               </div>
 
             </div>
             {!isMobile && (
-              <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:8}}>
+              <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:8}}>
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{background:'rgba(249,115,22,0.15)',color:'var(--accent)',
                     padding:'12px 16px',borderRadius:14,fontSize:14,fontWeight:700,whiteSpace:'nowrap',border:'1px solid rgba(249,115,22,0.3)'}}>
@@ -394,33 +391,7 @@ export default function BentoGrid(){
 
       {drawerSlot && <SlotDrawer slot={drawerSlot} onClose={()=>setDrawerSlot(null)}/>}
 
-      {isMobile && slot1 && (
-        <div style={{
-          position:'fixed',bottom:0,left:0,right:0,zIndex:100,
-          padding:'12px 16px 24px',
-          background:'rgba(249,248,246,0.95)',
-          backdropFilter:'blur(12px)',
-          borderTop:'1px solid var(--border)'
-        }}>
-          <button onClick={handleBook} style={{
-            width:'100%',background:booked?'rgba(18,26,18,0.5)':'var(--accent)',
-            color:'#fff',border:'none',padding:'16px',borderRadius:18,
-            fontWeight:600,fontSize:16,cursor:'pointer',
-            boxShadow:'0 8px 24px rgba(249,115,22,0.3)',
-            transition:'all 0.3s'
-          }}>
-            {booked ? '⏳ Проверяем...' : `Забрать за ${fmt(slot1.lovi_price)}`}
-          </button>
-          <div style={{display:'flex',justifyContent:'center',gap:6,marginTop:8}}>
-            {['СБП','Apple Pay','T-Pay'].map(p=>(
-              <span key={p} style={{fontSize:10,color:'var(--secondary)',
-                background:'rgba(18,26,18,0.06)',padding:'2px 8px',borderRadius:4,fontWeight:500}}>
-                {p}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+
     </div>
   )
 }

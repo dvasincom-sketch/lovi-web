@@ -97,7 +97,7 @@ export default function AllSlots() {
   useEffect(()=>{
     fetch(`https://insalon.onrender.com/api/lovi/featured?date=${today}`)
       .then(r=>r.json())
-      .then(data=>setSlots(data.slots||[]))
+      .then(data=>setSlots((data.slots||[]).sort((a,b)=>a.minutes_to_slot-b.minutes_to_slot)))
       .catch(()=>{})
       .finally(()=>setLoading(false))
   },[])
