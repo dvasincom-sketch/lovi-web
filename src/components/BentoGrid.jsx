@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useIsMobile } from '../hooks/useIsMobile'
 import SlotDrawer from './SlotDrawer'
+import SlotInfoDrawer from './SlotInfoDrawer'
 
 function useTimer(sec) {
   const [s, setS] = useState(0)
@@ -203,6 +204,7 @@ export default function BentoGrid(){
   const [hov1,setHov1]=useState(false)
   const [booked,setBooked]=useState(false)
   const [drawerSlot, setDrawerSlot]=useState(null)
+  const [infoSlot, setInfoSlot]=useState(null)
   const isMobile=useIsMobile()
 
   useEffect(()=>{
@@ -230,7 +232,7 @@ export default function BentoGrid(){
 
   const handleBook = () => {
     if(navigator.vibrate) navigator.vibrate([10,50,10])
-    if(slot1) setDrawerSlot(slot1)
+    if(slot1) setInfoSlot(slot1)
   }
 
   const pad = isMobile ? '32px 16px 80px' : '48px 40px 60px'
@@ -304,8 +306,9 @@ export default function BentoGrid(){
             </div>
           </div>
 
-          <div style={{display:'flex',alignItems:'center',
+          <div style={{display:'flex',alignItems:'flex-start',
             justifyContent:'space-between',gap:16,position:'relative',
+            flexDirection:isMobile?'column':'row',
             marginTop:isMobile?24:0}}>
             <div>
               {/* Цена салона — реальная точка отсчёта */}
@@ -320,8 +323,7 @@ export default function BentoGrid(){
               </div>
 
             </div>
-            {!isMobile && (
-              <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:8}}>
+            <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:8,marginTop:isMobile?16:0}}>
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{background:'rgba(249,115,22,0.15)',color:'var(--accent)',
                     padding:'12px 16px',borderRadius:14,fontSize:14,fontWeight:700,whiteSpace:'nowrap',border:'1px solid rgba(249,115,22,0.3)'}}>
@@ -347,7 +349,6 @@ export default function BentoGrid(){
                   ))}
                 </div>
               </div>
-            )}
           </div>
         </div>
         ) : <Skeleton isMobile={isMobile}/>}
@@ -358,8 +359,8 @@ export default function BentoGrid(){
           gridRow: isMobile?'span 1':'span 2',
           display:'flex',flexDirection:'column',gap:isMobile?14:20
         }}>
-          <SubCard slot={slot2} tag="Топ по отзывам" onBook={s=>setDrawerSlot(s)}/>
-          <SubCard slot={slot3} onBook={s=>setDrawerSlot(s)}/>
+          <SubCard slot={slot2} tag="Топ по отзывам" onBook={s=>setInfoSlot(s)}/>
+          <SubCard slot={slot3} onBook={s=>setInfoSlot(s)}/>
         </div>
 
 
@@ -390,6 +391,7 @@ export default function BentoGrid(){
       </div>
 
       {drawerSlot && <SlotDrawer slot={drawerSlot} onClose={()=>setDrawerSlot(null)}/>}
+      {infoSlot && <SlotInfoDrawer slot={infoSlot} onClose={()=>setInfoSlot(null)} onBook={()=>{setDrawerSlot(infoSlot);setInfoSlot(null)}}/>}
 
 
     </div>

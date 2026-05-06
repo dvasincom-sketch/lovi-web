@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useIsMobile } from '../hooks/useIsMobile'
 import SlotDrawer from './SlotDrawer'
+import SlotInfoDrawer from './SlotInfoDrawer'
 
 function useTimer(sec) {
   const [s, setS] = useState(sec || 0)
@@ -91,6 +92,7 @@ export default function AllSlots() {
   const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState('all')
   const [drawerSlot, setDrawerSlot] = useState(null)
+  const [infoSlot, setInfoSlot] = useState(null)
   const isMobile = useIsMobile()
   const today = new Date().toISOString().split('T')[0]
 
@@ -150,12 +152,13 @@ export default function AllSlots() {
         <div style={{display:'flex',gap:12,overflowX:'auto',
           scrollbarWidth:'none',padding:isMobile?'0 16px 12px':'0 40px 12px'}}>
           {filtered.map((slot,i)=>(
-            <SlotPill key={i} slot={slot} isNextDay={slot.slot_date && slot.slot_date !== today} onBook={s=>setDrawerSlot(s)}/>
+            <SlotPill key={i} slot={slot} isNextDay={slot.slot_date && slot.slot_date !== today} onBook={s=>setInfoSlot(s)}/>
           ))}
         </div>
       )}
     </div>
     {drawerSlot && <SlotDrawer slot={drawerSlot} onClose={()=>setDrawerSlot(null)}/>}
+    {infoSlot && <SlotInfoDrawer slot={infoSlot} onClose={()=>setInfoSlot(null)} onBook={()=>{setDrawerSlot(infoSlot);setInfoSlot(null)}}/>}
     </>
   )
 }

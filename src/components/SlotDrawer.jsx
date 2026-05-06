@@ -291,8 +291,16 @@ export default function SlotDrawer({ slot, onClose }) {
               placeholder="Имя" style={inputStyle}
             />
             <input
-              value={phone} onChange={e => setPhone(e.target.value)}
-              placeholder="Телефон" type="tel" style={inputStyle}
+              value={phone}
+              onChange={e => {
+                let val = e.target.value.replace(/[^\d+]/g, '')
+                if (!val.startsWith('+7')) {
+                  val = '+7' + val.replace(/^\+?7?/, '')
+                }
+                if (val.length > 12) val = val.slice(0, 12)
+                setPhone(val)
+              }}
+              placeholder="+7 999 000 00 00" type="tel" style={inputStyle}
             />
           </div>
 
