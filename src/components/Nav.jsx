@@ -83,11 +83,96 @@ function getInitials(name = '') {
   return name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?'
 }
 
+
+// ─── ForgotModal ───────────────────────────────────────────────────────────────
+
+function ForgotModal({ onClose, onBack }) {
+  const [email, setEmail] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
+  const ref = useRef(null)
+
+  useEffect(() => {
+    function handle(e) { if (ref.current && !ref.current.contains(e.target)) onClose() }
+    const t = setTimeout(() => document.addEventListener('click', handle), 50)
+    return () => { clearTimeout(t); document.removeEventListener('click', handle) }
+  }, [])
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
+  async function submit() {
+    if (!email) return
+    setLoading(true); setError('')
+    try {
+      await fetch('https://insalon.onrender.com/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      setSent(true)
+    } catch { setError('Ошибка соединения') } finally { setLoading(false) }
+  }
+
+  const inputStyle = {
+    width: '100%', border: '1px solid var(--border)', borderRadius: 12,
+    padding: '12px 14px', fontSize: 14, outline: 'none',
+    background: '#FDFCF9', boxSizing: 'border-box',
+    fontFamily: 'Inter,sans-serif', color: 'var(--dark)', transition: 'border-color 0.2s',
+  }
+
+  return (
+    <div style={{ position:'fixed',inset:0,zIndex:1000,background:'rgba(18,26,18,0.4)',backdropFilter:'blur(4px)',display:'flex',alignItems:'center',justifyContent:'center',padding:16 }}>
+      <div ref={ref} style={{ background:'#fff',borderRadius:24,padding:'32px',width:'100%',maxWidth:400,boxShadow:'0 32px 80px rgba(18,26,18,0.14)',animation:'authFadeUp 0.28s cubic-bezier(0.2,1,0.2,1) both' }}>
+        <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24 }}>
+          <img src="/logo.svg" alt="LOVI" style={{ height:22 }} />
+          <button onClick={onClose} style={{ background:'rgba(18,26,18,0.06)',border:'none',cursor:'pointer',width:32,height:32,borderRadius:'50%',fontSize:16,color:'var(--secondary)',display:'flex',alignItems:'center',justifyContent:'center' }}>✕</button>
+        </div>
+
+        {sent ? (
+          <div style={{ textAlign:'center',padding:'16px 0' }}>
+            <div style={{ fontSize:32,marginBottom:16 }}>📬</div>
+            <div style={{ fontSize:16,fontWeight:700,color:'var(--dark)',marginBottom:8 }}>Письмо отправлено</div>
+            <div style={{ fontSize:13,color:'var(--secondary)',lineHeight:1.6,marginBottom:24 }}>Проверьте почту — ссылка для сброса пароля действительна 2 часа.</div>
+            <button onClick={onClose} style={{ width:'100%',background:'var(--dark)',color:'#fff',border:'none',padding:'14px',borderRadius:14,fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:'Inter,sans-serif' }}>Закрыть</button>
+          </div>
+        ) : (
+          <>
+            <div style={{ marginBottom:20 }}>
+              <div style={{ fontSize:18,fontWeight:700,color:'var(--dark)',marginBottom:6,fontFamily:'Playfair Display,serif' }}>Забыли пароль?</div>
+              <div style={{ fontSize:13,color:'var(--secondary)',lineHeight:1.5 }}>Введите email — пришлём ссылку для сброса.</div>
+            </div>
+            <div style={{ display:'flex',flexDirection:'column',gap:12 }}>
+              <input style={inputStyle} type="email" placeholder="Email" value={email}
+                onChange={e => setEmail(e.target.value)}
+                onKeyDown={e => e.key==='Enter' && submit()}
+                onFocus={e => e.target.style.borderColor='var(--dark)'}
+                onBlur={e => e.target.style.borderColor='var(--border)'}
+              />
+              {error && <div style={{ background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:10,padding:'10px 14px',fontSize:13,color:'#DC2626' }}>{error}</div>}
+              <button onClick={submit} disabled={loading||!email} style={{ width:'100%',background:(!email||loading)?'rgba(18,26,18,0.4)':'var(--dark)',color:'#fff',border:'none',padding:'14px',borderRadius:14,fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:'Inter,sans-serif',transition:'background 0.2s' }}>
+                {loading ? 'Отправляем...' : 'Отправить ссылку'}
+              </button>
+              <button onClick={onBack} style={{ background:'transparent',border:'none',fontSize:12,color:'var(--secondary)',cursor:'pointer',fontFamily:'Inter,sans-serif',textAlign:'center' }}>
+                ← Вернуться ко входу
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── AuthModal ─────────────────────────────────────────────────────────────────
 
 function AuthModal({ onClose, onLogin }) {
   const isMobile = useIsMobile()
   const [tab, setTab]         = useState('login')
+  const [forgotOpen, setForgotOpen] = useState(false)
   const [name, setName]       = useState('')
   const [email, setEmail]     = useState('')
   const [password, setPassword] = useState('')
@@ -284,7 +369,7 @@ function AuthModal({ onClose, onLogin }) {
           </button>
 
           {tab === 'login' && (
-            <button style={{
+            <button onClick={() => setForgotOpen(true)} style={{
               background: 'transparent', border: 'none', fontSize: 12,
               color: 'var(--secondary)', cursor: 'pointer',
               fontFamily: 'Inter,sans-serif', textAlign: 'center', marginTop: 4,
@@ -589,12 +674,15 @@ export default function Nav({ onCityChange, user: userProp, onUserChange }) {
 
   function handleLogin(u) { onUserChange?.(u)
     setUser(u)
+    setAuthOpen(false)
+    navigate('/my-bookings')
   }
 
   function handleLogout() { onUserChange?.(null)
     clearUser()
     setUser(null)
     setDropOpen(false)
+    navigate('/')
   }
 
   return (
@@ -679,4 +767,5 @@ export default function Nav({ onCityChange, user: userProp, onUserChange }) {
       )}
     </>
   )
-}
+
+  {forgotOpen && <ForgotModal onClose={() => { setForgotOpen(false); onClose() }} onBack={() => setForgotOpen(false)} />}}

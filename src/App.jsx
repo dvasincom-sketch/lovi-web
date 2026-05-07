@@ -10,6 +10,7 @@ import ValueCard from './components/ValueCard'
 import MyBookings from './components/MyBookings'
 import UI from './pages/UI'
 import Confirm from './pages/Confirm'
+import ResetPassword from './pages/ResetPassword'
 
 function Home({ user, setUser }) {
   const [city, setCity] = useState('Москва')
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="/" element={<Home user={user} setUser={setUser} />} />
         <Route path="/ui" element={<UI />} />
         <Route path="/confirm" element={<Confirm />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/my-bookings" element={<MyBookings user={user} />} />
       </Routes>
     </BrowserRouter>
