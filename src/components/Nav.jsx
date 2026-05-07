@@ -178,6 +178,7 @@ function AuthModal({ onClose, onLogin }) {
   const [tab, setTab]           = useState('login')
   const [forgotOpen, setForgotOpen] = useState(false)
   const [name, setName]         = useState('')
+  const [phone, setPhone]       = useState('')
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading]   = useState(false)
@@ -203,7 +204,7 @@ function AuthModal({ onClose, onLogin }) {
 
   function switchTab(t) {
     setTab(t); setError('')
-    setName(''); setEmail(''); setPassword('')
+    setName(''); setEmail(''); setPassword(''); setPhone('')
   }
 
   async function handleSubmit() {
@@ -213,7 +214,7 @@ function AuthModal({ onClose, onLogin }) {
     setLoading(true)
     try {
       const endpoint = tab === 'login' ? '/api/auth/login' : '/api/auth/register'
-      const body = tab === 'login' ? { email, password } : { name: name.trim(), email, password }
+      const body = tab === 'login' ? { email, password } : { name: name.trim(), email, password, phone: phone.trim() }
       const res = await fetch(`https://insalon.onrender.com${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -290,11 +291,23 @@ function AuthModal({ onClose, onLogin }) {
 
           <div style={{ display:'flex',flexDirection:'column',gap:12 }}>
             {tab === 'register' && (
+              <>
               <input style={inputStyle} type="text" placeholder="Ваше имя"
                 value={name} onChange={e => setName(e.target.value)} onKeyDown={handleKey}
                 onFocus={e => e.target.style.borderColor='var(--dark)'}
                 onBlur={e => e.target.style.borderColor='var(--border)'}
               />
+              <input style={inputStyle} type="tel" placeholder="+7 999 000 00 00"
+                value={phone} onChange={e => {
+                  let val = e.target.value.replace(/[^\d+]/g,'')
+                  if (!val.startsWith('+7')) val = '+7' + val.replace(/^\+?7?/,'')
+                  if (val.length > 12) val = val.slice(0,12)
+                  setPhone(val)
+                }} onKeyDown={handleKey}
+                onFocus={e => e.target.style.borderColor='var(--dark)'}
+                onBlur={e => e.target.style.borderColor='var(--border)'}
+              />
+              </>
             )}
             <input style={inputStyle} type="email" placeholder="Email"
               value={email} onChange={e => setEmail(e.target.value)} onKeyDown={handleKey}
