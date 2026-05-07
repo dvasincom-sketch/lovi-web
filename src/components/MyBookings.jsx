@@ -326,13 +326,13 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
 
 function ProblemFAQ() {
   const items = [
-    { icon: '🚪', q: 'Салон закрыт', a: 'Заморозим выплату салону и вернём деньги в течение 24 часов.' },
-    { icon: '⏳', q: 'Просят ждать', a: 'Вы не обязаны ждать более 10 минут. Зафиксируем нарушение и компенсируем визит.' },
-    { icon: '👥', q: 'Двойная бронь', a: 'Покажите код чекина. Вернём деньги и начислим бонусы.' },
-    { icon: '⭐', q: 'Плохой сервис', a: 'Оставьте отзыв — это влияет на рейтинг салона в Lovi.' },
+    { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>, q: 'Салон закрыт', a: 'Заморозим выплату салону и вернём деньги в течение 24 часов.' },
+    { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>, q: 'Просят ждать', a: 'Вы не обязаны ждать более 10 минут. Зафиксируем нарушение и компенсируем визит.' },
+    { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>, q: 'Двойная бронь', a: 'Покажите код чекина. Вернём деньги и начислим бонусы.' },
+    { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, q: 'Плохой сервис', a: 'Оставьте отзыв — это влияет на рейтинг салона в Lovi.' },
   ]
   return (
-    <div style={{ marginTop: 40 }}>
+    <div style={{ marginTop: 40, background: '#F1F0EC', borderRadius: 24, padding: '24px' }}>
       <div style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.1)', borderRadius: 20, padding: '20px 24px', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
           <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(239,68,68,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>🛡</div>
@@ -345,7 +345,7 @@ function ProblemFAQ() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         {items.map((item, i) => (
           <div key={i} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 16, padding: '16px' }}>
-            <div style={{ fontSize: 24, marginBottom: 8 }}>{item.icon}</div>
+            <div style={{ marginBottom: 10, color: 'var(--secondary)' }}>{item.icon}</div>
             <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--dark)', marginBottom: 4 }}>{item.q}</div>
             <div style={{ fontSize: 12, color: 'var(--secondary)', lineHeight: 1.5, marginBottom: 12 }}>{item.a}</div>
             <a href={WHATSAPP} target="_blank" rel="noreferrer"
@@ -395,54 +395,49 @@ export default function MyBookings({ user, onUserChange }) {
 
       {/* Заголовок */}
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'Playfair Display,serif', fontSize: 28, fontWeight: 700, color: 'var(--dark)', margin: '0 0 4px' }}>
+        <h1 style={{ fontFamily: 'Playfair Display,serif', fontSize: 28, fontWeight: 700, color: 'var(--dark)', margin: 0 }}>
           Мои брони
         </h1>
-        <p style={{ fontSize: 14, color: 'var(--secondary)', margin: 0 }}>
-          {user?.name || 'Личный кабинет'}
-        </p>
       </div>
 
       {/* Bento Dashboard */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'auto auto', gap: 10, marginBottom: 28, alignItems: 'stretch' }}>
 
-        {/* Экономия — большой квадрат */}
-        <div style={{ gridColumn: '1 / 2', gridRow: '1 / 3', background: 'var(--dark)', borderRadius: 20, padding: '24px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignSelf: 'stretch' }}>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Ваша экономия</div>
-          <div>
-            <div style={{ fontSize: 36, fontWeight: 700, color: '#fff', fontFamily: 'Playfair Display,serif', lineHeight: 1.1 }}>
-              {totalSavings > 0 ? `${totalSavings.toLocaleString()}` : '0'}
-            </div>
-            <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.5)', fontWeight: 400 }}>₽ с LOVI</div>
+        {/* Экономия — светлая */}
+        <div style={{ gridColumn: '1 / 2', gridRow: '1 / 3', background: '#F1F0EC', borderRadius: 20, padding: '20px', display: 'flex', flexDirection: 'column', gap: 4, alignSelf: 'stretch' }}>
+          <div style={{ fontSize: 10, color: 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Ваша экономия</div>
+          <div style={{ fontSize: 30, fontWeight: 700, color: 'var(--dark)', fontFamily: 'Playfair Display,serif', lineHeight: 1 }}>
+            {totalSavings > 0 ? `${totalSavings.toLocaleString()} ₽` : '0 ₽'}
           </div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>за всё время</div>
+          <div style={{ fontSize: 12, color: 'var(--secondary)' }}>за {bookings.length} {bookings.length===1?'запись':bookings.length<5?'записи':'записей'}</div>
         </div>
 
-        {/* Lovi Pass — вытянутый */}
-        <div style={{ gridColumn: '2 / 4', gridRow: '1', background: 'rgba(249,115,22,0.07)', border: '1px solid rgba(249,115,22,0.18)', borderRadius: 20, padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Lovi Pass — тёмный */}
+        <div style={{ gridColumn: '2 / 4', gridRow: '1', background: 'var(--dark)', borderRadius: 20, padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 12 }}>
           <div>
-            <div style={{ fontSize: 10, color: 'rgba(249,115,22,0.7)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>Lovi Pass</div>
-            <div style={{ fontSize: 17, fontWeight: 600, color: 'var(--dark)' }}>Не активен</div>
-            <div style={{ fontSize: 12, color: 'var(--secondary)', marginTop: 3 }}>Единый абонемент · Скоро</div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 4 }}>Lovi Pass</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: '#fff' }}>Единый абонемент</div>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>Неограниченный доступ к горящим окошкам</div>
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(249,115,22,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>🎟</div>
+          <button style={{ background: '#F97316', border: 'none', borderRadius: 10, padding: '10px 16px', fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer', fontFamily: 'Inter,sans-serif', textAlign: 'left' }}>
+            Активировать — 15 000 ₽
+          </button>
         </div>
 
-        {/* Баллы */}
-        <div style={{ gridColumn: '2', gridRow: '2', background: '#F1F0EC', borderRadius: 20, padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: 10, color: 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Баллы</div>
-          <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--dark)', fontFamily: 'Playfair Display,serif' }}>0</div>
-          <div style={{ fontSize: 11, color: 'var(--secondary)' }}>кешбэк за брони</div>
+        {/* Следующий визит */}
+        <div style={{ gridColumn: '2 / 4', gridRow: '2', background: '#F1F0EC', borderRadius: 20, padding: '20px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div style={{ fontSize: 10, color: 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Следующий визит</div>
+          {upcoming.length > 0 ? (
+            <>
+              <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--dark)', fontFamily: 'Playfair Display,serif', lineHeight: 1 }}>
+                {new Date(upcoming[0].datetime).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--secondary)' }}>{upcoming[0].service_title.split('(')[0].trim()}</div>
+            </>
+          ) : (
+            <div style={{ fontSize: 13, color: 'var(--secondary)' }}>Нет записей</div>
+          )}
         </div>
-
-        {/* Визиты */}
-        <div style={{ gridColumn: '3', gridRow: '2', background: '#F1F0EC', borderRadius: 20, padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: 10, color: 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Визитов</div>
-          <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--dark)', fontFamily: 'Playfair Display,serif' }}>{bookings.length}</div>
-          <div style={{ fontSize: 11, color: 'var(--secondary)' }}>всего с Lovi</div>
-        </div>
-
-      </div>
 
       {/* Табы */}
       <div style={{
@@ -509,7 +504,20 @@ export default function MyBookings({ user, onUserChange }) {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {history.map(b => <BookingCard key={b.id} booking={b} />)}
+            <div style={{ display:'flex',flexDirection:'column',gap:10 }}>
+              {history.map(b => <BookingCard key={b.id} booking={b} />)}
+            </div>
+            {history.length > 0 && (
+              <div style={{ marginTop:16,background:'var(--dark)',borderRadius:20,padding:'20px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:16 }}>
+                <div>
+                  <div style={{ fontSize:13,fontWeight:600,color:'#fff',marginBottom:4 }}>Хотите снова?</div>
+                  <div style={{ fontSize:12,color:'rgba(255,255,255,0.5)' }}>Узнайте какую скидку можно получить на ближайшее окошко</div>
+                </div>
+                <a href="/" style={{ flexShrink:0,background:'#F97316',border:'none',borderRadius:10,padding:'10px 16px',fontSize:13,fontWeight:600,color:'#fff',textDecoration:'none',whiteSpace:'nowrap' }}>
+                  Смотреть →
+                </a>
+              </div>
+            )}
           </div>
         )
       )}
