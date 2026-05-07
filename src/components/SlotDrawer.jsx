@@ -33,6 +33,7 @@ function MasterAvatar({ name, avatar }) {
 export default function SlotDrawer({ slot, onClose }) {
   const isMobile = useIsMobile()
   const [staff, setStaff] = useState(null)
+  const staffRef = useRef(null)
   const [staffLoading, setStaffLoading] = useState(true)
   const [name, setName] = useState(() => {
     try { const u = JSON.parse(localStorage.getItem('lovi_user')); return u?.name || '' } catch { return '' }
@@ -86,7 +87,7 @@ export default function SlotDrawer({ slot, onClose }) {
     fetch(`${API}/api/booking/staff?datetime=${encodeURIComponent(dt)}&duration=${(slot.duration_min||60)*60}&service_id=${slot.service_id}`)
       .then(r => r.json())
       .then(data => {
-        if (Array.isArray(data) && data.length > 0) setStaff(data[0])
+        if (Array.isArray(data) && data.length > 0) { setStaff(data[0]); staffRef.current = data[0] }
       })
       .catch(() => {})
       .finally(() => setStaffLoading(false))
@@ -109,8 +110,8 @@ export default function SlotDrawer({ slot, onClose }) {
           duration: (slot.duration_min || 60) * 60,
           lovi_price: slot.lovi_price,
           base_price: slot.base_price,
-          staff_id: staff?.id,
-          staff_name: staff?.name,
+          staff_id: (staffRef.current || staff)?.id,
+          staff_name: (staffRef.current || staff)?.name,
           client_name: name.trim(),
           client_phone: phone.trim(),
           client_email: loviUser?.email || '',
