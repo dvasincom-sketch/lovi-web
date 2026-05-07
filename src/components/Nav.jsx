@@ -2,8 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useIsMobile } from '../hooks/useIsMobile'
 
-const API = 'https://insalon.onrender.com'
-
 const CITIES = [
   {"name":"Москва","moscow_area":true,"lat":55.7558,"lon":37.6173},
   {"name":"Зеленоград","moscow_area":true,"lat":55.9833,"lon":37.1833},
@@ -83,7 +81,6 @@ function getInitials(name = '') {
   return name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?'
 }
 
-
 // ─── ForgotModal ───────────────────────────────────────────────────────────────
 
 function ForgotModal({ onClose, onBack }) {
@@ -95,8 +92,8 @@ function ForgotModal({ onClose, onBack }) {
 
   useEffect(() => {
     function handle(e) { if (ref.current && !ref.current.contains(e.target)) onClose() }
-    const t = setTimeout(() => document.addEventListener('click', handle), 50)
-    return () => { clearTimeout(t); document.removeEventListener('click', handle) }
+    const t = setTimeout(() => document.addEventListener('mousedown', handle), 50)
+    return () => { clearTimeout(t); document.removeEventListener('mousedown', handle) }
   }, [])
 
   useEffect(() => {
@@ -125,7 +122,8 @@ function ForgotModal({ onClose, onBack }) {
   }
 
   return (
-    <div style={{ position:'fixed',inset:0,zIndex:1000,background:'rgba(18,26,18,0.4)',backdropFilter:'blur(4px)',display:'flex',alignItems:'center',justifyContent:'center',padding:16 }}>
+    <div style={{ position:'fixed',inset:0,zIndex:1100,background:'rgba(18,26,18,0.4)',backdropFilter:'blur(4px)',display:'flex',alignItems:'center',justifyContent:'center',padding:16 }}>
+      <style>{`@keyframes authFadeUp{from{transform:scale(0.96) translateY(8px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}`}</style>
       <div ref={ref} style={{ background:'#fff',borderRadius:24,padding:'32px',width:'100%',maxWidth:400,boxShadow:'0 32px 80px rgba(18,26,18,0.14)',animation:'authFadeUp 0.28s cubic-bezier(0.2,1,0.2,1) both' }}>
         <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24 }}>
           <img src="/logo.svg" alt="LOVI" style={{ height:22 }} />
@@ -136,7 +134,7 @@ function ForgotModal({ onClose, onBack }) {
           <div style={{ textAlign:'center',padding:'16px 0' }}>
             <div style={{ fontSize:32,marginBottom:16 }}>📬</div>
             <div style={{ fontSize:16,fontWeight:700,color:'var(--dark)',marginBottom:8 }}>Письмо отправлено</div>
-            <div style={{ fontSize:13,color:'var(--secondary)',lineHeight:1.6,marginBottom:24 }}>Проверьте почту — ссылка для сброса пароля действительна 2 часа.</div>
+            <div style={{ fontSize:13,color:'var(--secondary)',lineHeight:1.6,marginBottom:24 }}>Проверьте почту — ссылка действительна 2 часа.</div>
             <button onClick={onClose} style={{ width:'100%',background:'var(--dark)',color:'#fff',border:'none',padding:'14px',borderRadius:14,fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:'Inter,sans-serif' }}>Закрыть</button>
           </div>
         ) : (
@@ -153,10 +151,12 @@ function ForgotModal({ onClose, onBack }) {
                 onBlur={e => e.target.style.borderColor='var(--border)'}
               />
               {error && <div style={{ background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:10,padding:'10px 14px',fontSize:13,color:'#DC2626' }}>{error}</div>}
-              <button onClick={submit} disabled={loading||!email} style={{ width:'100%',background:(!email||loading)?'rgba(18,26,18,0.4)':'var(--dark)',color:'#fff',border:'none',padding:'14px',borderRadius:14,fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:'Inter,sans-serif',transition:'background 0.2s' }}>
+              <button onClick={submit} disabled={loading||!email}
+                style={{ width:'100%',background:(!email||loading)?'rgba(18,26,18,0.4)':'var(--dark)',color:'#fff',border:'none',padding:'14px',borderRadius:14,fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:'Inter,sans-serif',transition:'background 0.2s' }}>
                 {loading ? 'Отправляем...' : 'Отправить ссылку'}
               </button>
-              <button onClick={onBack} style={{ background:'transparent',border:'none',fontSize:12,color:'var(--secondary)',cursor:'pointer',fontFamily:'Inter,sans-serif',textAlign:'center' }}>
+              <button onClick={onBack}
+                style={{ background:'transparent',border:'none',fontSize:12,color:'var(--secondary)',cursor:'pointer',fontFamily:'Inter,sans-serif',textAlign:'center' }}>
                 ← Вернуться ко входу
               </button>
             </div>
@@ -171,20 +171,17 @@ function ForgotModal({ onClose, onBack }) {
 
 function AuthModal({ onClose, onLogin }) {
   const isMobile = useIsMobile()
-  const [tab, setTab]         = useState('login')
+  const [tab, setTab]           = useState('login')
   const [forgotOpen, setForgotOpen] = useState(false)
-  const [name, setName]       = useState('')
-  const [email, setEmail]     = useState('')
+  const [name, setName]         = useState('')
+  const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState('')
+  const [loading, setLoading]   = useState(false)
+  const [error, setError]       = useState('')
   const ref = useRef(null)
 
-  // Закрыть по клику вне / Escape
   useEffect(() => {
-    function handle(e) {
-      if (ref.current && !ref.current.contains(e.target)) onClose()
-    }
+    function handle(e) { if (ref.current && !ref.current.contains(e.target)) onClose() }
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
   }, [])
@@ -200,10 +197,8 @@ function AuthModal({ onClose, onLogin }) {
     return () => { document.body.style.overflow = '' }
   }, [])
 
-  // Сбрасываем ошибку при смене таба
   function switchTab(t) {
-    setTab(t)
-    setError('')
+    setTab(t); setError('')
     setName(''); setEmail(''); setPassword('')
   }
 
@@ -211,184 +206,138 @@ function AuthModal({ onClose, onLogin }) {
     setError('')
     if (!email || !password) { setError('Заполните все поля'); return }
     if (tab === 'register' && !name.trim()) { setError('Введите имя'); return }
-
     setLoading(true)
     try {
       const endpoint = tab === 'login' ? '/api/auth/login' : '/api/auth/register'
-      const body = tab === 'login'
-        ? { email, password }
-        : { name: name.trim(), email, password }
-
-      const res = await fetch(`${API}${endpoint}`, {
+      const body = tab === 'login' ? { email, password } : { name: name.trim(), email, password }
+      const res = await fetch(`https://insalon.onrender.com${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-
       const data = await res.json()
-
-      if (!res.ok) {
-        setError(data.detail || 'Ошибка сервера')
-        return
-      }
-
+      if (!res.ok) { setError(data.detail || 'Ошибка сервера'); return }
       storeUser(data.user, data.token)
       onLogin(data.user)
       onClose()
-    } catch {
-      setError('Нет соединения с сервером')
-    } finally {
-      setLoading(false)
-    }
+    } catch { setError('Нет соединения с сервером') } finally { setLoading(false) }
   }
 
-  function handleKey(e) {
-    if (e.key === 'Enter') handleSubmit()
-  }
+  function handleKey(e) { if (e.key === 'Enter') handleSubmit() }
 
   const inputStyle = {
     width: '100%', border: '1px solid var(--border)', borderRadius: 12,
     padding: '12px 14px', fontSize: 14, outline: 'none',
     background: '#FDFCF9', boxSizing: 'border-box',
-    fontFamily: 'Inter,sans-serif', color: 'var(--dark)',
-    transition: 'border-color 0.2s',
+    fontFamily: 'Inter,sans-serif', color: 'var(--dark)', transition: 'border-color 0.2s',
   }
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
-      background: 'rgba(18,26,18,0.4)', backdropFilter: 'blur(4px)',
-      display: 'flex',
-      alignItems: isMobile ? 'flex-end' : 'center',
-      justifyContent: 'center',
-      padding: isMobile ? 0 : 16,
-    }}>
-      <style>{`
-        @keyframes authSlideUp {
-          from { transform: translateY(40px); opacity: 0 }
-          to   { transform: translateY(0);   opacity: 1 }
-        }
-        @keyframes authFadeUp {
-          from { transform: scale(0.96) translateY(8px); opacity: 0 }
-          to   { transform: scale(1) translateY(0);      opacity: 1 }
-        }
-      `}</style>
-
-      <div ref={ref} style={{
-        background: '#fff',
-        borderRadius: isMobile ? '24px 24px 0 0' : 24,
-        padding: '32px',
-        width: '100%',
-        maxWidth: isMobile ? '100%' : 400,
-        boxShadow: '0 32px 80px rgba(18,26,18,0.14)',
-        animation: isMobile ? 'authSlideUp 0.32s cubic-bezier(0.2,1,0.2,1) both'
-                            : 'authFadeUp 0.28s cubic-bezier(0.2,1,0.2,1) both',
+    <>
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 1000,
+        background: 'rgba(18,26,18,0.4)', backdropFilter: 'blur(4px)',
+        display: 'flex',
+        alignItems: isMobile ? 'flex-end' : 'center',
+        justifyContent: 'center',
+        padding: isMobile ? 0 : 16,
       }}>
-        {isMobile && (
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-            <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--border)' }} />
-          </div>
-        )}
+        <style>{`
+          @keyframes authSlideUp { from{transform:translateY(40px);opacity:0} to{transform:translateY(0);opacity:1} }
+          @keyframes authFadeUp  { from{transform:scale(0.96) translateY(8px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+        `}</style>
 
-        {/* Шапка */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <img src="/logo.svg" alt="LOVI" style={{ height: 22 }} />
-          <button onClick={onClose} style={{
-            background: 'rgba(18,26,18,0.06)', border: 'none', cursor: 'pointer',
-            width: 32, height: 32, borderRadius: '50%',
-            fontSize: 16, color: 'var(--secondary)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>✕</button>
-        </div>
-
-        {/* Таб-переключатель */}
-        <div style={{
-          display: 'grid', gridTemplateColumns: '1fr 1fr',
-          background: '#F1F0EC', borderRadius: 12, padding: 4, marginBottom: 24,
+        <div ref={ref} style={{
+          background: '#fff',
+          borderRadius: isMobile ? '24px 24px 0 0' : 24,
+          padding: '32px',
+          width: '100%',
+          maxWidth: isMobile ? '100%' : 400,
+          boxShadow: '0 32px 80px rgba(18,26,18,0.14)',
+          animation: isMobile ? 'authSlideUp 0.32s cubic-bezier(0.2,1,0.2,1) both' : 'authFadeUp 0.28s cubic-bezier(0.2,1,0.2,1) both',
         }}>
-          {[['login', 'Войти'], ['register', 'Регистрация']].map(([id, label]) => (
-            <button key={id} onClick={() => switchTab(id)} style={{
-              padding: '8px', borderRadius: 9, fontSize: 13, fontWeight: 500,
-              border: 'none', cursor: 'pointer', fontFamily: 'Inter,sans-serif',
-              background: tab === id ? '#fff' : 'transparent',
-              color: tab === id ? 'var(--dark)' : 'var(--secondary)',
-              boxShadow: tab === id ? '0 1px 4px rgba(18,26,18,0.08)' : 'none',
-              transition: 'all 0.2s',
-            }}>{label}</button>
-          ))}
-        </div>
-
-        {/* Форма */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {tab === 'register' && (
-            <input
-              style={inputStyle} type="text" placeholder="Ваше имя"
-              value={name} onChange={e => setName(e.target.value)} onKeyDown={handleKey}
-              onFocus={e => e.target.style.borderColor = 'var(--dark)'}
-              onBlur={e => e.target.style.borderColor = 'var(--border)'}
-            />
-          )}
-          <input
-            style={inputStyle} type="email" placeholder="Email"
-            value={email} onChange={e => setEmail(e.target.value)} onKeyDown={handleKey}
-            onFocus={e => e.target.style.borderColor = 'var(--dark)'}
-            onBlur={e => e.target.style.borderColor = 'var(--border)'}
-          />
-          <input
-            style={inputStyle} type="password"
-            placeholder={tab === 'login' ? 'Пароль' : 'Придумайте пароль'}
-            value={password} onChange={e => setPassword(e.target.value)} onKeyDown={handleKey}
-            onFocus={e => e.target.style.borderColor = 'var(--dark)'}
-            onBlur={e => e.target.style.borderColor = 'var(--border)'}
-          />
-
-          {/* Ошибка */}
-          {error && (
-            <div style={{
-              background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
-              borderRadius: 10, padding: '10px 14px',
-              fontSize: 13, color: '#DC2626',
-            }}>
-              {error}
+          {isMobile && (
+            <div style={{ display:'flex',justifyContent:'center',marginBottom:20 }}>
+              <div style={{ width:36,height:4,borderRadius:2,background:'var(--border)' }} />
             </div>
           )}
 
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            style={{
-              width: '100%', background: loading ? 'rgba(18,26,18,0.4)' : 'var(--dark)',
-              color: '#fff', border: 'none',
-              padding: '14px', borderRadius: 14, fontSize: 14, fontWeight: 600,
-              cursor: loading ? 'default' : 'pointer',
-              marginTop: 4, fontFamily: 'Inter,sans-serif',
-              transition: 'background 0.2s',
-            }}
-          >
-            {loading ? '...' : tab === 'login' ? 'Войти' : 'Создать аккаунт'}
-          </button>
+          <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24 }}>
+            <img src="/logo.svg" alt="LOVI" style={{ height:22 }} />
+            <button onClick={onClose} style={{ background:'rgba(18,26,18,0.06)',border:'none',cursor:'pointer',width:32,height:32,borderRadius:'50%',fontSize:16,color:'var(--secondary)',display:'flex',alignItems:'center',justifyContent:'center' }}>✕</button>
+          </div>
 
-          {tab === 'login' && (
-            <button onClick={() => setForgotOpen(true)} style={{
-              background: 'transparent', border: 'none', fontSize: 12,
-              color: 'var(--secondary)', cursor: 'pointer',
-              fontFamily: 'Inter,sans-serif', textAlign: 'center', marginTop: 4,
-            }}>
-              Забыли пароль?
+          <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',background:'#F1F0EC',borderRadius:12,padding:4,marginBottom:24 }}>
+            {[['login','Войти'],['register','Регистрация']].map(([id,label]) => (
+              <button key={id} onClick={() => switchTab(id)} style={{
+                padding:'8px',borderRadius:9,fontSize:13,fontWeight:500,
+                border:'none',cursor:'pointer',fontFamily:'Inter,sans-serif',
+                background:tab===id?'#fff':'transparent',
+                color:tab===id?'var(--dark)':'var(--secondary)',
+                boxShadow:tab===id?'0 1px 4px rgba(18,26,18,0.08)':'none',
+                transition:'all 0.2s',
+              }}>{label}</button>
+            ))}
+          </div>
+
+          <div style={{ display:'flex',flexDirection:'column',gap:12 }}>
+            {tab === 'register' && (
+              <input style={inputStyle} type="text" placeholder="Ваше имя"
+                value={name} onChange={e => setName(e.target.value)} onKeyDown={handleKey}
+                onFocus={e => e.target.style.borderColor='var(--dark)'}
+                onBlur={e => e.target.style.borderColor='var(--border)'}
+              />
+            )}
+            <input style={inputStyle} type="email" placeholder="Email"
+              value={email} onChange={e => setEmail(e.target.value)} onKeyDown={handleKey}
+              onFocus={e => e.target.style.borderColor='var(--dark)'}
+              onBlur={e => e.target.style.borderColor='var(--border)'}
+            />
+            <input style={inputStyle} type="password"
+              placeholder={tab==='login'?'Пароль':'Придумайте пароль'}
+              value={password} onChange={e => setPassword(e.target.value)} onKeyDown={handleKey}
+              onFocus={e => e.target.style.borderColor='var(--dark)'}
+              onBlur={e => e.target.style.borderColor='var(--border)'}
+            />
+
+            {error && (
+              <div style={{ background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:10,padding:'10px 14px',fontSize:13,color:'#DC2626' }}>
+                {error}
+              </div>
+            )}
+
+            <button onClick={handleSubmit} disabled={loading}
+              style={{ width:'100%',background:loading?'rgba(18,26,18,0.4)':'var(--dark)',color:'#fff',border:'none',padding:'14px',borderRadius:14,fontSize:14,fontWeight:600,cursor:loading?'default':'pointer',marginTop:4,fontFamily:'Inter,sans-serif',transition:'background 0.2s' }}>
+              {loading ? '...' : tab==='login' ? 'Войти' : 'Создать аккаунт'}
             </button>
-          )}
 
-          {tab === 'register' && (
-            <p style={{ fontSize: 11, color: 'var(--secondary)', textAlign: 'center', margin: 0, lineHeight: 1.6 }}>
-              Регистрируясь, вы соглашаетесь с{' '}
-              <span style={{ color: 'var(--dark)', textDecoration: 'underline', cursor: 'pointer' }}>условиями</span>
-              {' '}и{' '}
-              <span style={{ color: 'var(--dark)', textDecoration: 'underline', cursor: 'pointer' }}>политикой</span>
-            </p>
-          )}
+            {tab === 'login' && (
+              <button onClick={() => setForgotOpen(true)}
+                style={{ background:'transparent',border:'none',fontSize:12,color:'var(--secondary)',cursor:'pointer',fontFamily:'Inter,sans-serif',textAlign:'center',marginTop:4 }}>
+                Забыли пароль?
+              </button>
+            )}
+
+            {tab === 'register' && (
+              <p style={{ fontSize:11,color:'var(--secondary)',textAlign:'center',margin:0,lineHeight:1.6 }}>
+                Регистрируясь, вы соглашаетесь с{' '}
+                <span style={{ color:'var(--dark)',textDecoration:'underline',cursor:'pointer' }}>условиями</span>
+                {' '}и{' '}
+                <span style={{ color:'var(--dark)',textDecoration:'underline',cursor:'pointer' }}>политикой</span>
+              </p>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* ForgotModal поверх AuthModal */}
+      {forgotOpen && (
+        <ForgotModal
+          onClose={() => { setForgotOpen(false); onClose() }}
+          onBack={() => setForgotOpen(false)}
+        />
+      )}
+    </>
   )
 }
 
@@ -398,61 +347,51 @@ function UserDropdown({ user, onClose, onLogout, onNavigate }) {
   const ref = useRef(null)
 
   useEffect(() => {
-    function handle(e) {
-      if (ref.current && !ref.current.contains(e.target)) onClose()
-    }
-    // Небольшой delay чтобы не закрылось сразу при открытии
-    const t = setTimeout(() => document.addEventListener('click', handle), 50)
-    return () => { clearTimeout(t); document.removeEventListener('click', handle) }
+    function handle(e) { if (ref.current && !ref.current.contains(e.target)) onClose() }
+    const t = setTimeout(() => document.addEventListener('mousedown', handle), 50)
+    return () => { clearTimeout(t); document.removeEventListener('mousedown', handle) }
   }, [])
 
   const itemStyle = {
-    display: 'block', width: '100%', textAlign: 'left',
-    padding: '10px 16px', fontSize: 13, fontFamily: 'Inter,sans-serif',
-    border: 'none', background: 'transparent', cursor: 'pointer',
-    color: 'var(--dark)', borderRadius: 8, transition: 'background 0.15s',
+    display:'block',width:'100%',textAlign:'left',
+    padding:'10px 16px',fontSize:13,fontFamily:'Inter,sans-serif',
+    border:'none',background:'transparent',cursor:'pointer',
+    color:'var(--dark)',borderRadius:8,transition:'background 0.15s',
   }
 
   return (
     <div ref={ref} style={{
-      position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-      background: '#fff', borderRadius: 16, minWidth: 200,
-      boxShadow: '0 8px 32px rgba(18,26,18,0.12)',
-      border: '1px solid var(--border)',
-      padding: '8px',
-      animation: 'authFadeUp 0.2s ease both',
-      zIndex: 200,
+      position:'absolute',top:'calc(100% + 8px)',right:0,
+      background:'#fff',borderRadius:16,minWidth:200,
+      boxShadow:'0 8px 32px rgba(18,26,18,0.12)',
+      border:'1px solid var(--border)',padding:'8px',
+      animation:'authFadeUp 0.2s ease both',zIndex:200,
     }}>
       <style>{`@keyframes authFadeUp{from{transform:scale(0.96) translateY(4px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}`}</style>
 
-      {/* Шапка с именем */}
-      <div style={{ padding: '8px 16px 12px', borderBottom: '1px solid var(--border)', marginBottom: 6 }}>
-        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--dark)' }}>{user.name}</div>
-        <div style={{ fontSize: 12, color: 'var(--secondary)', marginTop: 2 }}>{user.email}</div>
+      <div style={{ padding:'8px 16px 12px',borderBottom:'1px solid var(--border)',marginBottom:6 }}>
+        <div style={{ fontSize:14,fontWeight:600,color:'var(--dark)' }}>{user.name}</div>
+        <div style={{ fontSize:12,color:'var(--secondary)',marginTop:2 }}>{user.email}</div>
       </div>
 
-      <button
-        style={itemStyle}
-        onMouseEnter={e => e.currentTarget.style.background = 'rgba(18,26,18,0.04)'}
-        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-        onClick={() => { onClose(); onNavigate("/my-bookings") }}
-      >
+      <button style={itemStyle}
+        onMouseEnter={e => e.currentTarget.style.background='rgba(18,26,18,0.04)'}
+        onMouseLeave={e => e.currentTarget.style.background='transparent'}
+        onClick={() => { onClose(); onNavigate('/my-bookings') }}>
         📋 Мои брони
       </button>
 
-      <button
-        style={{ ...itemStyle, color: '#DC2626', marginTop: 4, borderTop: '1px solid var(--border)', paddingTop: 14 }}
-        onMouseEnter={e => e.currentTarget.style.background = 'rgba(220,38,38,0.06)'}
-        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-        onClick={onLogout}
-      >
+      <button style={{ ...itemStyle,color:'#DC2626',marginTop:4,borderTop:'1px solid var(--border)',paddingTop:14 }}
+        onMouseEnter={e => e.currentTarget.style.background='rgba(220,38,38,0.06)'}
+        onMouseLeave={e => e.currentTarget.style.background='transparent'}
+        onClick={onLogout}>
         Выйти
       </button>
     </div>
   )
 }
 
-// ─── CityModal (без изменений) ─────────────────────────────────────────────────
+// ─── CityModal ─────────────────────────────────────────────────────────────────
 
 function CityModal({ currentCity, onSelect, onClose }) {
   const isMobile = useIsMobile()
@@ -461,9 +400,7 @@ function CityModal({ currentCity, onSelect, onClose }) {
   const overlayRef = useRef(null)
   const searchRef = useRef(null)
 
-  function handleOverlay(e) {
-    if (e.target === overlayRef.current) onClose()
-  }
+  function handleOverlay(e) { if (e.target === overlayRef.current) onClose() }
 
   useEffect(() => {
     function handle(e) { if (e.key === 'Escape') onClose() }
@@ -489,7 +426,7 @@ function CityModal({ currentCity, onSelect, onClose }) {
         const { latitude, longitude } = pos.coords
         let closest = CITIES[0], minDist = Infinity
         CITIES.forEach(c => {
-          const d = Math.sqrt(Math.pow(c.lat - latitude, 2) + Math.pow(c.lon - longitude, 2))
+          const d = Math.sqrt(Math.pow(c.lat-latitude,2)+Math.pow(c.lon-longitude,2))
           if (d < minDist) { minDist = d; closest = c }
         })
         onSelect(closest.name)
@@ -498,116 +435,78 @@ function CityModal({ currentCity, onSelect, onClose }) {
     )
   }
 
-  const filteredOther = search.trim()
-    ? OTHER_CITIES.filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
-    : OTHER_CITIES
-
-  const filteredMoscow = search.trim()
-    ? MOSCOW_CITIES.filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
-    : MOSCOW_CITIES
-
+  const filteredOther  = search.trim() ? OTHER_CITIES.filter(c => c.name.toLowerCase().includes(search.toLowerCase())) : OTHER_CITIES
+  const filteredMoscow = search.trim() ? MOSCOW_CITIES.filter(c => c.name.toLowerCase().includes(search.toLowerCase())) : MOSCOW_CITIES
   const showMoscowSection = filteredMoscow.length > 0
-  const showOtherSection = filteredOther.length > 0
+  const showOtherSection  = filteredOther.length > 0
 
   return (
-    <div
-      ref={overlayRef}
-      onClick={handleOverlay}
-      style={{
-        position: 'fixed', inset: 0, zIndex: 1000,
-        background: 'rgba(18,26,18,0.45)', backdropFilter: 'blur(4px)',
-        display: 'flex',
-        alignItems: isMobile ? 'flex-end' : 'center',
-        justifyContent: 'center',
-      }}
-    >
+    <div ref={overlayRef} onClick={handleOverlay} style={{
+      position:'fixed',inset:0,zIndex:1000,
+      background:'rgba(18,26,18,0.45)',backdropFilter:'blur(4px)',
+      display:'flex',alignItems:isMobile?'flex-end':'center',justifyContent:'center',
+    }}>
       <style>{`
         @keyframes citySlideUp { from{transform:translateY(40px);opacity:0} to{transform:translateY(0);opacity:1} }
-        @keyframes cityFadeIn  { from{transform:scale(0.96);opacity:0}      to{transform:scale(1);opacity:1} }
+        @keyframes cityFadeIn  { from{transform:scale(0.96);opacity:0} to{transform:scale(1);opacity:1} }
       `}</style>
 
       <div style={{
-        background: '#fff',
-        borderRadius: isMobile ? '24px 24px 0 0' : 24,
-        width: isMobile ? '100%' : 480,
-        maxHeight: isMobile ? '88dvh' : '80vh',
-        display: 'flex', flexDirection: 'column',
-        boxShadow: '0 32px 80px rgba(18,26,18,0.16)',
-        animation: isMobile
-          ? 'citySlideUp 0.32s cubic-bezier(0.2,1,0.2,1) both'
-          : 'cityFadeIn 0.28s cubic-bezier(0.2,1,0.2,1) both',
-        overflow: 'hidden',
+        background:'#fff',
+        borderRadius:isMobile?'24px 24px 0 0':24,
+        width:isMobile?'100%':480,
+        maxHeight:isMobile?'88dvh':'80vh',
+        display:'flex',flexDirection:'column',
+        boxShadow:'0 32px 80px rgba(18,26,18,0.16)',
+        animation:isMobile?'citySlideUp 0.32s cubic-bezier(0.2,1,0.2,1) both':'cityFadeIn 0.28s cubic-bezier(0.2,1,0.2,1) both',
+        overflow:'hidden',
       }}>
         {isMobile && (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 0' }}>
-            <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--border)' }} />
+          <div style={{ display:'flex',justifyContent:'center',padding:'12px 0 0' }}>
+            <div style={{ width:36,height:4,borderRadius:2,background:'var(--border)' }} />
           </div>
         )}
 
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: isMobile ? '16px 20px 12px' : '24px 24px 16px', flexShrink: 0,
-        }}>
+        <div style={{ display:'flex',alignItems:'center',justifyContent:'space-between',padding:isMobile?'16px 20px 12px':'24px 24px 16px',flexShrink:0 }}>
           <div>
-            <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--dark)', fontFamily: 'Playfair Display, serif' }}>
-              Выберите город
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--secondary)', marginTop: 2 }}>
-              Показываем горящие окошки рядом с вами
-            </div>
+            <div style={{ fontSize:18,fontWeight:600,color:'var(--dark)',fontFamily:'Playfair Display,serif' }}>Выберите город</div>
+            <div style={{ fontSize:12,color:'var(--secondary)',marginTop:2 }}>Показываем горящие окошки рядом с вами</div>
           </div>
-          <button onClick={onClose} style={{
-            background: 'rgba(18,26,18,0.06)', border: 'none', cursor: 'pointer',
-            width: 32, height: 32, borderRadius: '50%', fontSize: 16, color: 'var(--secondary)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-          }}>✕</button>
+          <button onClick={onClose} style={{ background:'rgba(18,26,18,0.06)',border:'none',cursor:'pointer',width:32,height:32,borderRadius:'50%',fontSize:16,color:'var(--secondary)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0 }}>✕</button>
         </div>
 
-        <div style={{ padding: '0 20px 16px', flexShrink: 0 }}>
+        <div style={{ padding:'0 20px 16px',flexShrink:0 }}>
           <button onClick={detectLocation} disabled={locating} style={{
-            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            background: 'var(--dark)', color: '#fff', border: 'none',
-            padding: '11px', borderRadius: 14, fontSize: 13, fontWeight: 500,
-            cursor: locating ? 'default' : 'pointer', opacity: locating ? 0.6 : 1,
-            fontFamily: 'Inter,sans-serif', marginBottom: 12, transition: 'opacity 0.2s',
+            width:'100%',display:'flex',alignItems:'center',justifyContent:'center',gap:8,
+            background:'var(--dark)',color:'#fff',border:'none',padding:'11px',borderRadius:14,
+            fontSize:13,fontWeight:500,cursor:locating?'default':'pointer',opacity:locating?0.6:1,
+            fontFamily:'Inter,sans-serif',marginBottom:12,transition:'opacity 0.2s',
           }}>
             {locating ? '⏳ Определяем...' : '📍 Определить моё местоположение'}
           </button>
 
-          <div style={{ position: 'relative' }}>
-            <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 14, opacity: 0.4, pointerEvents: 'none' }}>🔍</span>
-            <input
-              ref={searchRef}
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Поиск города..."
-              style={{
-                width: '100%', border: '1px solid var(--border)', borderRadius: 12,
-                padding: '10px 12px 10px 34px', fontSize: 13, outline: 'none',
-                background: '#FDFCF9', boxSizing: 'border-box',
-                fontFamily: 'Inter,sans-serif', color: 'var(--dark)', transition: 'border-color 0.2s',
-              }}
-              onFocus={e => e.target.style.borderColor = 'var(--dark)'}
-              onBlur={e => e.target.style.borderColor = 'var(--border)'}
+          <div style={{ position:'relative' }}>
+            <span style={{ position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',fontSize:14,opacity:0.4,pointerEvents:'none' }}>🔍</span>
+            <input ref={searchRef} value={search} onChange={e => setSearch(e.target.value)} placeholder="Поиск города..."
+              style={{ width:'100%',border:'1px solid var(--border)',borderRadius:12,padding:'10px 12px 10px 34px',fontSize:13,outline:'none',background:'#FDFCF9',boxSizing:'border-box',fontFamily:'Inter,sans-serif',color:'var(--dark)',transition:'border-color 0.2s' }}
+              onFocus={e => e.target.style.borderColor='var(--dark)'}
+              onBlur={e => e.target.style.borderColor='var(--border)'}
             />
           </div>
         </div>
 
-        <div style={{ overflowY: 'auto', flex: 1, padding: '0 20px 24px' }}>
+        <div style={{ overflowY:'auto',flex:1,padding:'0 20px 24px' }}>
           {showMoscowSection && (
             <>
-              <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--secondary)', marginBottom: 10 }}>
-                Москва и область
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 20 }}>
+              <div style={{ fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--secondary)',marginBottom:10 }}>Москва и область</div>
+              <div style={{ display:'flex',flexWrap:'wrap',gap:6,marginBottom:20 }}>
                 {filteredMoscow.map(c => (
                   <button key={c.name} onClick={() => onSelect(c.name)} style={{
-                    padding: '6px 14px', borderRadius: 20, fontSize: 13, cursor: 'pointer',
-                    border: '1px solid var(--border)', fontFamily: 'Inter,sans-serif',
-                    background: currentCity === c.name ? 'var(--dark)' : 'transparent',
-                    color: currentCity === c.name ? '#fff' : 'var(--dark)',
-                    fontWeight: currentCity === c.name ? 500 : 400,
-                    transition: 'all 0.15s',
+                    padding:'6px 14px',borderRadius:20,fontSize:13,cursor:'pointer',
+                    border:'1px solid var(--border)',fontFamily:'Inter,sans-serif',
+                    background:currentCity===c.name?'var(--dark)':'transparent',
+                    color:currentCity===c.name?'#fff':'var(--dark)',
+                    fontWeight:currentCity===c.name?500:400,transition:'all 0.15s',
                   }}>{c.name}</button>
                 ))}
               </div>
@@ -615,29 +514,27 @@ function CityModal({ currentCity, onSelect, onClose }) {
           )}
 
           {showMoscowSection && showOtherSection && (
-            <div style={{ height: 1, background: 'var(--border)', marginBottom: 20 }} />
+            <div style={{ height:1,background:'var(--border)',marginBottom:20 }} />
           )}
 
           {showOtherSection && (
             <>
-              <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--secondary)', marginBottom: 10 }}>
-                Другие города
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <div style={{ fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--secondary)',marginBottom:10 }}>Другие города</div>
+              <div style={{ display:'flex',flexDirection:'column',gap:2 }}>
                 {filteredOther.map(c => (
                   <button key={c.name} onClick={() => onSelect(c.name)} style={{
-                    textAlign: 'left', padding: '10px 12px', borderRadius: 10, fontSize: 14,
-                    border: 'none', cursor: 'pointer', fontFamily: 'Inter,sans-serif',
-                    background: currentCity === c.name ? 'rgba(18,26,18,0.06)' : 'transparent',
-                    color: 'var(--dark)', fontWeight: currentCity === c.name ? 500 : 400,
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    transition: 'background 0.15s',
+                    textAlign:'left',padding:'10px 12px',borderRadius:10,fontSize:14,
+                    border:'none',cursor:'pointer',fontFamily:'Inter,sans-serif',
+                    background:currentCity===c.name?'rgba(18,26,18,0.06)':'transparent',
+                    color:'var(--dark)',fontWeight:currentCity===c.name?500:400,
+                    display:'flex',alignItems:'center',justifyContent:'space-between',
+                    transition:'background 0.15s',
                   }}
-                    onMouseEnter={e => { if (currentCity !== c.name) e.currentTarget.style.background = 'rgba(18,26,18,0.04)' }}
-                    onMouseLeave={e => { if (currentCity !== c.name) e.currentTarget.style.background = 'transparent' }}
+                    onMouseEnter={e => { if(currentCity!==c.name) e.currentTarget.style.background='rgba(18,26,18,0.04)' }}
+                    onMouseLeave={e => { if(currentCity!==c.name) e.currentTarget.style.background='transparent' }}
                   >
                     {c.name}
-                    {currentCity === c.name && <span style={{ fontSize: 11, color: 'var(--accent)', fontWeight: 600 }}>✓</span>}
+                    {currentCity===c.name && <span style={{ fontSize:11,color:'var(--accent)',fontWeight:600 }}>✓</span>}
                   </button>
                 ))}
               </div>
@@ -645,9 +542,7 @@ function CityModal({ currentCity, onSelect, onClose }) {
           )}
 
           {!showMoscowSection && !showOtherSection && (
-            <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--secondary)', fontSize: 14 }}>
-              Город не найден
-            </div>
+            <div style={{ textAlign:'center',padding:'32px 0',color:'var(--secondary)',fontSize:14 }}>Город не найден</div>
           )}
         </div>
       </div>
@@ -659,28 +554,29 @@ function CityModal({ currentCity, onSelect, onClose }) {
 
 export default function Nav({ onCityChange, user: userProp, onUserChange }) {
   const isMobile = useIsMobile()
-  const [city, setCity]           = useState('Москва')
-  const [cityOpen, setCityOpen]   = useState(false)
-  const [authOpen, setAuthOpen]   = useState(false)
-  const navigate = useNavigate()
-  const [user, setUser] = useState(userProp ?? getStoredUser())
-  const [dropOpen, setDropOpen]   = useState(false)
+  const [city, setCity]         = useState('Москва')
+  const [cityOpen, setCityOpen] = useState(false)
+  const [authOpen, setAuthOpen] = useState(false)
+  const navigate                = useNavigate()
+  const [user, setUser]         = useState(userProp ?? getStoredUser())
+  const [dropOpen, setDropOpen] = useState(false)
 
   function selectCity(name) {
-    setCity(name)
-    setCityOpen(false)
-    onCityChange?.(name)
+    setCity(name); setCityOpen(false); onCityChange?.(name)
   }
 
-  function handleLogin(u) { onUserChange?.(u)
+  function handleLogin(u) {
+    storeUser(u, localStorage.getItem('lovi_token') || '')
     setUser(u)
+    onUserChange?.(u)
     setAuthOpen(false)
     navigate('/my-bookings')
   }
 
-  function handleLogout() { onUserChange?.(null)
+  function handleLogout() {
     clearUser()
     setUser(null)
+    onUserChange?.(null)
     setDropOpen(false)
     navigate('/')
   }
@@ -688,84 +584,60 @@ export default function Nav({ onCityChange, user: userProp, onUserChange }) {
   return (
     <>
       <nav style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: isMobile ? '14px 16px' : '20px 40px',
-        position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(253,252,249,0.92)', backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid var(--border)',
+        display:'flex',justifyContent:'space-between',alignItems:'center',
+        padding:isMobile?'14px 16px':'20px 40px',
+        position:'sticky',top:0,zIndex:100,
+        background:'rgba(253,252,249,0.92)',backdropFilter:'blur(12px)',
+        borderBottom:'1px solid var(--border)',
       }}>
-        <img src="/logo.svg" alt="LOVI.today" style={{ height: 28 }} />
+        <img src="/logo.svg" alt="LOVI.today" style={{ height:28 }} />
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-
-          {/* Кнопка города */}
-          <button
-            onClick={() => setCityOpen(true)}
-            style={{
-              fontSize: 13, fontWeight: 500, cursor: 'pointer',
-              background: 'transparent', border: '1px solid var(--border)',
-              padding: '6px 14px', borderRadius: 20, color: 'var(--dark)',
-              display: 'flex', alignItems: 'center', gap: 6,
-              transition: 'border-color 0.2s', fontFamily: 'Inter,sans-serif',
-            }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--dark)'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+        <div style={{ display:'flex',alignItems:'center',gap:8 }}>
+          <button onClick={() => setCityOpen(true)} style={{
+            fontSize:13,fontWeight:500,cursor:'pointer',
+            background:'transparent',border:'1px solid var(--border)',
+            padding:'6px 14px',borderRadius:20,color:'var(--dark)',
+            display:'flex',alignItems:'center',gap:6,
+            transition:'border-color 0.2s',fontFamily:'Inter,sans-serif',
+          }}
+            onMouseEnter={e => e.currentTarget.style.borderColor='var(--dark)'}
+            onMouseLeave={e => e.currentTarget.style.borderColor='var(--border)'}
           >
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', flexShrink: 0 }} />
+            <span style={{ width:6,height:6,borderRadius:'50%',background:'var(--accent)',flexShrink:0 }} />
             {city}
-            <span style={{ fontSize: 10, opacity: 0.5 }}>▼</span>
+            <span style={{ fontSize:10,opacity:0.5 }}>▼</span>
           </button>
 
-          {/* Залогинен: аватар + дропдаун */}
           {user ? (
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => setDropOpen(v => !v)}
-                style={{
-                  width: 36, height: 36, borderRadius: '50%',
-                  background: 'var(--dark)', color: '#fff',
-                  border: 'none', cursor: 'pointer',
-                  fontSize: 13, fontWeight: 600, fontFamily: 'Inter,sans-serif',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
+            <div style={{ position:'relative' }}>
+              <button onClick={() => setDropOpen(v => !v)} style={{
+                width:36,height:36,borderRadius:'50%',
+                background:'var(--dark)',color:'#fff',
+                border:'none',cursor:'pointer',
+                fontSize:13,fontWeight:600,fontFamily:'Inter,sans-serif',
+                display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,
+              }}>
                 {getInitials(user.name)}
               </button>
-
               {dropOpen && (
-                <UserDropdown onNavigate={navigate}
-                  user={user}
-                  onClose={() => setDropOpen(false)}
-                  onLogout={handleLogout}
-                />
+                <UserDropdown user={user} onClose={() => setDropOpen(false)} onLogout={handleLogout} onNavigate={navigate} />
               )}
             </div>
           ) : (
-            /* Не залогинен: кнопка Войти */
-            <button
-              onClick={() => setAuthOpen(true)}
-              style={{
-                fontSize: 13, fontWeight: 500, cursor: 'pointer',
-                background: 'var(--dark)', color: '#fff',
-                border: 'none', padding: '7px 18px', borderRadius: 20,
-                fontFamily: 'Inter,sans-serif',
-              }}
-            >
+            <button onClick={() => setAuthOpen(true)} style={{
+              fontSize:13,fontWeight:500,cursor:'pointer',
+              background:'var(--dark)',color:'#fff',
+              border:'none',padding:'7px 18px',borderRadius:20,
+              fontFamily:'Inter,sans-serif',
+            }}>
               Войти
             </button>
           )}
         </div>
       </nav>
 
-      {cityOpen && (
-        <CityModal currentCity={city} onSelect={selectCity} onClose={() => setCityOpen(false)} />
-      )}
-
-      {authOpen && (
-        <AuthModal onClose={() => setAuthOpen(false)} onLogin={handleLogin} />
-      )}
+      {cityOpen && <CityModal currentCity={city} onSelect={selectCity} onClose={() => setCityOpen(false)} />}
+      {authOpen && <AuthModal onClose={() => setAuthOpen(false)} onLogin={handleLogin} />}
     </>
   )
-
-  {forgotOpen && <ForgotModal onClose={() => { setForgotOpen(false); onClose() }} onBack={() => setForgotOpen(false)} />}}
+}
