@@ -87,8 +87,8 @@ function Countdown({ dt }) {
     }}>
       <span style={{ fontSize: 11, opacity: 0.6 }}>через</span>
       <span style={{
-        fontFamily: 'monospace', fontSize: 15, fontWeight: 600,
-        color: urgent ? '#F97316' : 'var(--dark)',
+        fontFamily: 'monospace', fontSize: 13, fontWeight: 500,
+        color: urgent ? '#F97316' : 'var(--secondary)',
       }}>{str}</span>
     </div>
   )
@@ -217,13 +217,13 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
         {/* Дата-время блок */}
         <div style={{
           minWidth: 48, textAlign: 'center',
-          background: future ? 'var(--dark)' : 'rgba(18,26,18,0.06)',
+          background: future && isNearest ? 'var(--dark)' : 'rgba(18,26,18,0.06)',
           borderRadius: 12, padding: '8px 6px',
         }}>
-          <div style={{ fontSize: 18, fontWeight: 700, color: future ? '#fff' : 'var(--secondary)', fontFamily: 'Playfair Display,serif', lineHeight: 1 }}>
+          <div style={{ fontSize: 18, fontWeight: 700, color: future && isNearest ? '#fff' : 'var(--secondary)', fontFamily: 'Playfair Display,serif', lineHeight: 1 }}>
             {new Date(booking.datetime).getDate()}
           </div>
-          <div style={{ fontSize: 10, color: future ? 'rgba(255,255,255,0.6)' : 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 2 }}>
+          <div style={{ fontSize: 10, color: future && isNearest ? 'rgba(255,255,255,0.6)' : 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 2 }}>
             {new Date(booking.datetime).toLocaleDateString('ru-RU', { month: 'short' })}
           </div>
         </div>
@@ -404,10 +404,10 @@ export default function MyBookings({ user, onUserChange }) {
       </div>
 
       {/* Bento Dashboard */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'auto auto', gap: 10, marginBottom: 28 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'auto auto', gap: 10, marginBottom: 28, alignItems: 'stretch' }}>
 
         {/* Экономия — большой квадрат */}
-        <div style={{ gridColumn: '1 / 2', gridRow: '1 / 3', background: 'var(--dark)', borderRadius: 20, padding: '24px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div style={{ gridColumn: '1 / 2', gridRow: '1 / 3', background: 'var(--dark)', borderRadius: 20, padding: '24px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignSelf: 'stretch' }}>
           <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Ваша экономия</div>
           <div>
             <div style={{ fontSize: 36, fontWeight: 700, color: '#fff', fontFamily: 'Playfair Display,serif', lineHeight: 1.1 }}>
