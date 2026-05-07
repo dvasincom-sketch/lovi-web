@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import UpdateBanner from './components/UpdateBanner'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Nav from './components/Nav'
 import HeroNew from './components/HeroNew'
@@ -39,7 +40,9 @@ export default function App() {
     try { return JSON.parse(localStorage.getItem('lovi_user')) } catch { return null }
   })
   return (
-    <BrowserRouter>
+    <>
+      <UpdateBanner />
+      <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home user={user} setUser={setUser} />} />
         <Route path="/ui" element={<UI />} />
@@ -49,5 +52,6 @@ export default function App() {
         <Route path="/my-bookings" element={<MyBookings user={user} />} />
       </Routes>
     </BrowserRouter>
+    </>
   )
 }

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Нет соединения — Lovi</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #FDFCF9;
+      color: #121A12;
+      font-family: Inter, sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 24px;
+    }
+    .wrap { text-align: center; max-width: 320px; }
+    h1 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 12px; }
+    p { color: #8F8475; font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+    button {
+      background: #F97316; color: #fff; border: none;
+      padding: 12px 28px; border-radius: 8px;
+      font-size: 14px; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Нет соединения</h1>
+    <p>Горящие окошки загружаются в реальном времени — нужен интернет. Попробуй чуть позже.</p>
+    <button onclick="location.reload()">Обновить</button>
+  </div>
+</body>
+</html>
