@@ -249,6 +249,10 @@ function AuthModal({ onClose, onLogin }) {
         <style>{`
           @keyframes authSlideUp { from{transform:translateY(40px);opacity:0} to{transform:translateY(0);opacity:1} }
           @keyframes authFadeUp  { from{transform:scale(0.96) translateY(8px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+          @keyframes dotPulse { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+          .dot-1{animation:dotPulse 1.2s ease-in-out infinite}
+          .dot-2{animation:dotPulse 1.2s ease-in-out 0.2s infinite}
+          .dot-3{animation:dotPulse 1.2s ease-in-out 0.4s infinite}
         `}</style>
 
         <div ref={ref} style={{
@@ -311,8 +315,8 @@ function AuthModal({ onClose, onLogin }) {
             )}
 
             <button onClick={handleSubmit} disabled={loading}
-              style={{ width:'100%',background:loading?'rgba(18,26,18,0.4)':'var(--dark)',color:'#fff',border:'none',padding:'14px',borderRadius:14,fontSize:14,fontWeight:600,cursor:loading?'default':'pointer',marginTop:4,fontFamily:'Inter,sans-serif',transition:'background 0.2s' }}>
-              {loading ? '...' : tab==='login' ? 'Войти' : 'Создать аккаунт'}
+              style={{ width:'100%',background:'var(--dark)',color:'#fff',border:'none',padding:'14px',borderRadius:14,fontSize:14,fontWeight:600,cursor:loading?'default':'pointer',marginTop:4,fontFamily:'Inter,sans-serif',transition:'background 0.2s' }}>
+              {loading ? <span style={{display:'flex',alignItems:'center',justifyContent:'center',gap:4}}><span className='dot-1' style={{width:6,height:6,borderRadius:'50%',background:'#fff',display:'inline-block'}}/><span className='dot-2' style={{width:6,height:6,borderRadius:'50%',background:'#fff',display:'inline-block'}}/><span className='dot-3' style={{width:6,height:6,borderRadius:'50%',background:'#fff',display:'inline-block'}}/></span> : tab==='login' ? 'Войти' : 'Создать аккаунт'}
             </button>
 
             {tab === 'login' && (
