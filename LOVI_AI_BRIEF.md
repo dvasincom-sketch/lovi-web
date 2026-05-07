@@ -769,3 +769,40 @@ ALTER TABLE bookings ADD: user_id, base_price, discount_pct, rating_place, ratin
 - НЕ использовать эмодзи 📬 📋 🎟 и др — только минималистичные SVG
 - НЕ добавлять JSX после return компонента — парсер падает
 - НЕ использовать click listener для закрытия модалов — использовать mousedown
+
+---
+
+## ИТОГИ СЕССИИ 07.05.2026 (часть 3)
+
+### Бронирование — статус
+- staff_id теперь передаётся корректно (staffRef fix)
+- user_id, client_email передаются в booking insert
+- LOVI_BASE_URL обновлён на https://lovi.today
+- Бронь появляется в "Мои брони" ✅
+- Redirect после оплаты на lovi.today ✅
+- Запись в YCLIENTS НЕ создаётся — 401 Unauthorized
+
+### Причина блокера YCLIENTS
+- user_token в таблице salons устарел
+- OAuth callback получает user_data+user_data_sign вместо user_token
+- Публичное приложение YCLIENTS (app_id=41238) на модерации — BLOCKED
+- Без публичного приложения create_record и create_client возвращают 401
+
+### Что работает через текущий токен
+- GET запросы: featured, slots, staff, book_times — OK
+- POST запросы: create_client, create_record — 401
+
+### Следующий шаг
+Дождаться модерации публичного приложения YCLIENTS → новый OAuth flow → новый user_token → create_record заработает
+
+### Email триггеры добавлены
+- booking_confirmed — при оплате (payment webhook)
+- booking_cancelled — при отмене
+- booking_reminder — шаблон готов, нужен cron
+- review_request — шаблон готов, нужен cron
+- slots_digest — шаблон готов, нужен cron
+
+### Телефон в регистрации
+- Поле phone добавлено в users таблицу
+- Передаётся при регистрации и логине
+- Автозаполняется в форме бронирования SlotDrawer
