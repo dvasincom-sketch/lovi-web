@@ -38,6 +38,23 @@ function BookingCode({ id, booking }) {
   const code = booking?.booking_code || `LV-${String(id).padStart(5,'0')}`
   const [copied, setCopied] = useState(false)
   function copy() { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000) }
+
+  // Показывать код только за 2 часа до визита
+  const msToVisit = new Date(booking?.datetime) - Date.now()
+  const twoHours = 2 * 60 * 60 * 1000
+  const isVisible = msToVisit <= twoHours && msToVisit > 0
+
+  if (!isVisible) {
+    const hoursLeft = Math.ceil(msToVisit / 1000 / 60 / 60)
+    return (
+      <div style={{ display:'inline-flex',alignItems:'center',gap:8,background:'rgba(18,26,18,0.04)',border:'1px solid var(--border)',borderRadius:10,padding:'8px 14px' }}>
+        <span style={{ fontSize:13,color:'var(--secondary)' }}>
+          {msToVisit > 0 ? `Код появится за 2 ч до визита (через ${hoursLeft} ч)` : 'Визит завершён'}
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div onClick={copy} style={{ display:'inline-flex',alignItems:'center',gap:8,background:'rgba(249,115,22,0.08)',border:'1px solid rgba(249,115,22,0.2)',borderRadius:10,padding:'8px 14px',cursor:'pointer' }}>
       <span style={{ fontFamily:'monospace',fontSize:16,fontWeight:700,color:'#F97316',letterSpacing:'0.08em' }}>{code}</span>
