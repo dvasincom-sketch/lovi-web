@@ -132,7 +132,11 @@ function ForgotModal({ onClose, onBack }) {
 
         {sent ? (
           <div style={{ textAlign:'center',padding:'16px 0' }}>
-            <div style={{ fontSize:32,marginBottom:16 }}>📬</div>
+            <div style={{ marginBottom:16,display:'flex',justifyContent:'center' }}>
+              <div style={{ width:48,height:48,borderRadius:14,background:'rgba(18,26,18,0.06)',display:'flex',alignItems:'center',justifyContent:'center' }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--dark)" strokeWidth="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+            </div>
             <div style={{ fontSize:16,fontWeight:700,color:'var(--dark)',marginBottom:8 }}>Письмо отправлено</div>
             <div style={{ fontSize:13,color:'var(--secondary)',lineHeight:1.6,marginBottom:24 }}>Проверьте почту — ссылка действительна 2 часа.</div>
             <button onClick={onClose} style={{ width:'100%',background:'var(--dark)',color:'#fff',border:'none',padding:'14px',borderRadius:14,fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:'Inter,sans-serif' }}>Закрыть</button>
