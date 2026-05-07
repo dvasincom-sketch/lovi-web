@@ -404,10 +404,12 @@ export default function MyBookings({ user, onUserChange }) {
               <div style={{ fontSize:10,color:'rgba(255,255,255,0.4)',textTransform:'uppercase',letterSpacing:'0.12em',marginBottom:4 }}>Lovi Pass</div>
               <div style={{ fontSize:14,fontWeight:600,color:'#fff',lineHeight:1.3 }}>Единый абонемент</div>
             </div>
-            <button style={{ alignSelf:'stretch',background:'#F97316',border:'none',borderRadius:8,padding:'7px 8px',fontSize:11,fontWeight:600,color:'#fff',cursor:'pointer',fontFamily:'Inter,sans-serif',lineHeight:1.3,textAlign:'center' }}>
-              Активировать
-              <br/>15 000 ₽
-            </button>
+            <div>
+              <div style={{ fontSize:10,color:'rgba(255,255,255,0.4)',marginBottom:4 }}>15 000 ₽</div>
+              <button style={{ background:'#F97316',border:'none',borderRadius:8,padding:'7px 10px',fontSize:11,fontWeight:600,color:'#fff',cursor:'pointer',fontFamily:'Inter,sans-serif' }}>
+                Активировать
+              </button>
+            </div>
           </div>
 
         </div>
