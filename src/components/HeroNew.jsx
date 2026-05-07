@@ -231,7 +231,7 @@ function ComingSoonBlock({ city }) {
 
   // Форма для бизнеса
   const [bizOpen, setBizOpen] = useState(false)
-  const [biz, setBiz] = useState({ name: '', phone: '', salon: '', address: '', crm: '' })
+  const [biz, setBiz] = useState({ name: '', phone: '', salon: '', address: '', crm: '', email: '' })
   const [bizSent, setBizSent] = useState(false)
   const [bizError, setBizError] = useState('')
   const [bizSubmitting, setBizSubmitting] = useState(false)
@@ -256,6 +256,7 @@ function ComingSoonBlock({ city }) {
           name:       biz.name.trim(),
           phone:      biz.phone.trim(),
           salon_name: biz.salon.trim(),
+          email:      biz.email.trim() || null,
           address:    biz.address.trim() || null,
           crm:        biz.crm || null,
         }),
@@ -446,6 +447,15 @@ function ComingSoonBlock({ city }) {
                 onBlur={e => e.target.style.borderColor = 'var(--border)'}
               />
             </div>
+            <input
+              value={biz.email}
+              onChange={handleBizChange('email')}
+              placeholder="Email для связи"
+              type="email"
+              style={inputStyle}
+              onFocus={e => e.target.style.borderColor = 'var(--dark)'}
+              onBlur={e => e.target.style.borderColor = 'var(--border)'}
+            />
             <input
               value={biz.salon}
               onChange={handleBizChange('salon')}
