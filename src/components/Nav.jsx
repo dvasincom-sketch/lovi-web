@@ -181,10 +181,10 @@ function AuthModal({ onClose, onLogin }) {
   const ref = useRef(null)
 
   useEffect(() => {
-    function handle(e) { if (ref.current && !ref.current.contains(e.target)) onClose() }
+    function handle(e) { if (forgotOpen) return; if (ref.current && !ref.current.contains(e.target)) onClose() }
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
-  }, [])
+  }, [forgotOpen])
 
   useEffect(() => {
     function handle(e) { if (e.key === 'Escape') onClose() }
