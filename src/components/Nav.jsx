@@ -309,7 +309,7 @@ function AuthModal({ onClose, onLogin }) {
 
 // ─── UserDropdown ──────────────────────────────────────────────────────────────
 
-function UserDropdown({ user, onClose, onLogout }) {
+function UserDropdown({ user, onClose, onLogout, onNavigate }) {
   const ref = useRef(null)
 
   useEffect(() => {
@@ -317,8 +317,8 @@ function UserDropdown({ user, onClose, onLogout }) {
       if (ref.current && !ref.current.contains(e.target)) onClose()
     }
     // Небольшой delay чтобы не закрылось сразу при открытии
-    const t = setTimeout(() => document.addEventListener('mousedown', handle), 50)
-    return () => { clearTimeout(t); document.removeEventListener('mousedown', handle) }
+    const t = setTimeout(() => document.addEventListener('click', handle), 50)
+    return () => { clearTimeout(t); document.removeEventListener('click', handle) }
   }, [])
 
   const itemStyle = {
@@ -350,7 +350,7 @@ function UserDropdown({ user, onClose, onLogout }) {
         style={itemStyle}
         onMouseEnter={e => e.currentTarget.style.background = 'rgba(18,26,18,0.04)'}
         onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-        onClick={onClose}
+        onClick={() => { onClose(); onNavigate("/my-bookings") }}
       >
         📋 Мои брони
       </button>
@@ -646,7 +646,7 @@ export default function Nav({ onCityChange, user: userProp, onUserChange }) {
               </button>
 
               {dropOpen && (
-                <UserDropdown
+                <UserDropdown onNavigate={navigate}
                   user={user}
                   onClose={() => setDropOpen(false)}
                   onLogout={handleLogout}
