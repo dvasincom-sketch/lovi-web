@@ -110,6 +110,71 @@ function ReviewForm({ booking, onSubmit }) {
   )
 }
 
+
+// ─── InstallBanner — установка PWA ───────────────────────────────────────────
+function InstallBanner() {
+  const [show, setShow] = useState(false)
+  const [platform, setPlatform] = useState(null)
+  const [deferredPrompt, setDeferredPrompt] = useState(null)
+  const [installed, setInstalled] = useState(false)
+
+  useEffect(() => {
+    if (window.matchMedia('(display-mode: standalone)').matches) return
+    if (localStorage.getItem('lovi_install_dismissed')) return
+    const ua = navigator.userAgent
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream
+    const isAndroid = /Android/.test(ua)
+    if (isIOS) { setPlatform('ios'); setShow(true) }
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault()
+      setDeferredPrompt(e)
+      if (isAndroid || !isIOS) { setPlatform('android'); setShow(true) }
+    })
+    window.addEventListener('appinstalled', () => setInstalled(true))
+  }, [])
+
+  function dismiss() {
+    localStorage.setItem('lovi_install_dismissed', '1')
+    setShow(false)
+  }
+
+  async function install() {
+    if (!deferredPrompt) return
+    deferredPrompt.prompt()
+    const { outcome } = await deferredPrompt.userChoice
+    if (outcome === 'accepted') setInstalled(true)
+    setShow(false)
+  }
+
+  if (!show || installed) return null
+
+  return (
+    <div style={{ marginTop:24,borderRadius:20,background:'#F1F0EC',border:'1px solid var(--border)',padding:'18px 20px',position:'relative' }}>
+      <button onClick={dismiss} style={{ position:'absolute',top:14,right:14,background:'none',border:'none',cursor:'pointer',color:'var(--secondary)',fontSize:18,lineHeight:1,padding:2 }}>×</button>
+      <div style={{ display:'flex',alignItems:'flex-start',gap:14 }}>
+        <div style={{ width:44,height:44,borderRadius:12,flexShrink:0,background:'var(--dark)',display:'flex',alignItems:'center',justifyContent:'center' }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2v13M7 9l5 6 5-6"/><path d="M3 17v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"/>
+          </svg>
+        </div>
+        <div style={{ flex:1,minWidth:0 }}>
+          <div style={{ fontSize:14,fontWeight:600,color:'var(--dark)',marginBottom:4 }}>Добавить Lovi на экран</div>
+          {platform === 'ios' ? (
+            <div style={{ fontSize:12,color:'var(--secondary)',lineHeight:1.6 }}>
+              Нажмите <svg style={{ display:'inline',verticalAlign:'middle',margin:'0 2px' }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> в браузере → «На экран "Домой"»
+            </div>
+          ) : (
+            <div style={{ fontSize:12,color:'var(--secondary)',lineHeight:1.6 }}>Быстрый доступ к горящим окошкам без браузера</div>
+          )}
+          {platform === 'android' && deferredPrompt && (
+            <button onClick={install} style={{ marginTop:10,padding:'8px 16px',borderRadius:10,background:'var(--dark)',border:'none',color:'#fff',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'Inter,sans-serif' }}>Установить</button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── BookingCard — приоритизированная подача данных ───────────────────────────
 function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
   const [open, setOpen] = useState(defaultOpen)
@@ -415,6 +480,7 @@ export default function MyBookings({ user, onUserChange }) {
         )}
         </div>
 
+        <InstallBanner />
         <ProblemFAQ />
 
       </div>

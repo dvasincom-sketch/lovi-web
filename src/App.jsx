@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import UpdateBanner from './components/UpdateBanner'
+import InstallBanner from './components/InstallBanner'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Nav from './components/Nav'
 import HeroNew from './components/HeroNew'
@@ -42,6 +43,7 @@ export default function App() {
   return (
     <>
       <UpdateBanner />
+      <InstallBanner />
       <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home user={user} setUser={setUser} />} />
