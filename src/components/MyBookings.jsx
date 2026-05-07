@@ -244,7 +244,7 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
             <Countdown dt={booking.datetime} />
           ) : (
             savings > 0 && (
-              <span style={{ fontSize: 12, color: '#16A34A', fontWeight: 600 }}>−{savings.toLocaleString()} ₽</span>
+              <span style={{ fontSize: 12, color: '#16A34A', fontWeight: 600 }}>сэкономили {savings.toLocaleString()} ₽</span>
             )
           )}
           <span style={{
