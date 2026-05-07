@@ -39,3 +39,8 @@ input:focus { outline: none; }
   color: #fff;
   border-color: var(--dark);
 }
+
+/* iOS zoom fix — prevent auto-zoom on input focus */
+input, select, textarea {
+  font-size: 16px !important;
+}
