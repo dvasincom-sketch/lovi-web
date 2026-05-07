@@ -11,6 +11,7 @@ import MyBookings from './components/MyBookings'
 import UI from './pages/UI'
 import Confirm from './pages/Confirm'
 import ResetPassword from './pages/ResetPassword'
+import Unsubscribe from './pages/Unsubscribe'
 
 function Home({ user, setUser }) {
   const [city, setCity] = useState('Москва')
@@ -44,6 +45,7 @@ export default function App() {
         <Route path="/ui" element={<UI />} />
         <Route path="/confirm" element={<Confirm />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/my-bookings" element={<MyBookings user={user} />} />
       </Routes>
     </BrowserRouter>
