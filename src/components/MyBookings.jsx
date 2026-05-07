@@ -34,8 +34,8 @@ function useCountdown(dt) {
   return { str: h > 0 ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`, urgent: left < 3600 }
 }
 
-function BookingCode({ id }) {
-  const code = `LV-${String(id).padStart(5,'0')}`
+function BookingCode({ id, booking }) {
+  const code = booking?.booking_code || `LV-${String(id).padStart(5,'0')}`
   const [copied, setCopied] = useState(false)
   function copy() { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000) }
   return (
@@ -230,7 +230,7 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
                   </div>
                 </div>
                 <div style={{ fontSize:10,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:8 }}>Код для чекина — назовите администратору</div>
-                <BookingCode id={booking.id} />
+                <BookingCode id={booking.id} booking={booking} />
               </div>
             )}
 
