@@ -7,17 +7,17 @@ import BentoGrid from './components/BentoGrid'
 import AllSlots from './components/AllSlots'
 import Ticker from './components/Ticker'
 import ValueCard from './components/ValueCard'
+import MyBookings from './components/MyBookings'
 import UI from './pages/UI'
 import Confirm from './pages/Confirm'
 
-function Home() {
+function Home({ user, setUser }) {
   const [city, setCity] = useState('Москва')
   const [searchQuery, setSearchQuery] = useState(null)
   const isMoscow = city === 'Москва'
-
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: 60 }}>
-      <Nav onCityChange={setCity} />
+      <Nav onCityChange={setCity} user={user} onUserChange={setUser} />
       <HeroNew city={city} />
       {isMoscow && (
         <>
@@ -33,12 +33,16 @@ function Home() {
 }
 
 export default function App() {
+  const [user, setUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('lovi_user')) } catch { return null }
+  })
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home user={user} setUser={setUser} />} />
         <Route path="/ui" element={<UI />} />
         <Route path="/confirm" element={<Confirm />} />
+        <Route path="/my-bookings" element={<MyBookings user={user} />} />
       </Routes>
     </BrowserRouter>
   )

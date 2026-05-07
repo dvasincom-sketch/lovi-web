@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 const API = 'https://insalon.onrender.com'
@@ -571,12 +572,13 @@ function CityModal({ currentCity, onSelect, onClose }) {
 
 // ─── Nav ───────────────────────────────────────────────────────────────────────
 
-export default function Nav({ onCityChange }) {
+export default function Nav({ onCityChange, user: userProp, onUserChange }) {
   const isMobile = useIsMobile()
   const [city, setCity]           = useState('Москва')
   const [cityOpen, setCityOpen]   = useState(false)
   const [authOpen, setAuthOpen]   = useState(false)
-  const [user, setUser]           = useState(getStoredUser)
+  const navigate = useNavigate()
+  const [user, setUser] = useState(userProp ?? getStoredUser())
   const [dropOpen, setDropOpen]   = useState(false)
 
   function selectCity(name) {
@@ -585,11 +587,11 @@ export default function Nav({ onCityChange }) {
     onCityChange?.(name)
   }
 
-  function handleLogin(u) {
+  function handleLogin(u) { onUserChange?.(u)
     setUser(u)
   }
 
-  function handleLogout() {
+  function handleLogout() { onUserChange?.(null)
     clearUser()
     setUser(null)
     setDropOpen(false)
