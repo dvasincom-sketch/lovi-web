@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Nav from './Nav'
 
 const API = 'https://insalon.onrender.com'
 const WHATSAPP = 'https://wa.me/79164470569'
@@ -397,7 +399,8 @@ function ProblemFAQ() {
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
-export default function MyBookings({ user }) {
+export default function MyBookings({ user, onUserChange }) {
+  const navigate = useNavigate()
   const [bookings, setBookings] = useState([])
   const [loading, setLoading]   = useState(true)
   const [tab, setTab]           = useState('upcoming') // upcoming | history
@@ -424,7 +427,9 @@ export default function MyBookings({ user }) {
   }, 0)
 
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px 80px' }}>
+    <div style={{ background:'var(--bg)',minHeight:'100vh' }}>
+      <Nav user={user} onUserChange={onUserChange} />
+      <div style={{ maxWidth: 960, margin: '0 auto', padding: '24px 16px 80px' }}>
 
       {/* Заголовок */}
       <div style={{ marginBottom: 24 }}>
@@ -508,6 +513,7 @@ export default function MyBookings({ user }) {
 
       {/* FAQ — всегда внизу */}
       <ProblemFAQ />
+      </div>
     </div>
   )
 }
