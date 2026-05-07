@@ -702,3 +702,36 @@ src/components/
 3. **Файлы через терминал** — `cat > file << 'EOF'`, не артефакты Claude
 4. **Проверочная команда после каждого шага** — curl / npm run build / grep
 5. **Не генерить если файл уже есть** — спросить сначала
+
+---
+
+## ИТОГИ СЕССИИ 07.05.2026
+
+### Авторизация
+- Таблица `users` в Supabase: id, name, email, password_hash, created_at
+- Бэкенд: `app/routers/auth.py` — POST /api/auth/register, /api/auth/login, /api/auth/my-bookings, /api/auth/rate
+- JWT токен (python-jose), bcrypt без passlib, pydantic[email]
+- Nav.jsx: залогинен → аватар с инициалами + дропдаун (Мои брони, Выйти)
+- Состояние user хранится в App.jsx, прокидывается через props
+
+### MyBookings.jsx
+- Роут /my-bookings в App.jsx
+- Bento: одна строка — Следующий визит (кликабельный) → Экономия → Lovi Pass (градиент)
+- Lovi Pass: градиент #1a1a2e→#0f3460, кнопка "Активировать — 15 000 ₽" по ширине текста
+- BookingCard: 3-колоночный layout, код чекина крупно, финансы отдельно
+- История: retention блок "Хотите снова?" с тем же градиентом
+- Safety FAQ: SVG иконки, фон #F1F0EC, Центр безопасности и гарантий
+- Тестовые данные: user_id=3, 9 броней всех статусов
+
+### Новые поля bookings
+ALTER TABLE bookings ADD: user_id, base_price, discount_pct, rating_place, rating_master, rating_service, review_text
+
+### Новые таблицы
+- users: id, name, email, password_hash, created_at
+
+### Ticker.jsx
+- Генератор 37 800+ уникальных событий (30 имён × действия × 12 услуг × 7 выгод)
+- 3 типа: service / benefit / subscription
+- Чередование: 3-4 события → статусная строка
+- Обновление каждые 30 сек
+- Скорость: drift 90s linear infinite

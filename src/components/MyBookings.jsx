@@ -39,9 +39,9 @@ function BookingCode({ id }) {
   const [copied, setCopied] = useState(false)
   function copy() { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000) }
   return (
-    <div onClick={copy} style={{ display:'inline-flex',alignItems:'center',gap:8,background:'rgba(249,115,22,0.08)',border:'1px solid rgba(249,115,22,0.2)',borderRadius:10,padding:'6px 12px',cursor:'pointer' }}>
-      <span style={{ fontFamily:'monospace',fontSize:14,fontWeight:700,color:'#F97316',letterSpacing:'0.05em' }}>{code}</span>
-      <span style={{ fontSize:11,color:'#F97316',opacity:0.7 }}>{copied ? '✓ скопировано' : 'нажмите чтобы скопировать'}</span>
+    <div onClick={copy} style={{ display:'inline-flex',alignItems:'center',gap:8,background:'rgba(249,115,22,0.08)',border:'1px solid rgba(249,115,22,0.2)',borderRadius:10,padding:'8px 14px',cursor:'pointer' }}>
+      <span style={{ fontFamily:'monospace',fontSize:16,fontWeight:700,color:'#F97316',letterSpacing:'0.08em' }}>{code}</span>
+      <span style={{ fontSize:11,color:'#F97316',opacity:0.7 }}>{copied ? '✓ скопировано' : 'нажмите'}</span>
     </div>
   )
 }
@@ -110,6 +110,7 @@ function ReviewForm({ booking, onSubmit }) {
   )
 }
 
+// ─── BookingCard — приоритизированная подача данных ───────────────────────────
 function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
   const [open, setOpen] = useState(defaultOpen)
   const future = isFuture(booking.datetime)
@@ -121,8 +122,10 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
     completed: { bg:'rgba(18,26,18,0.04)',   border:'var(--border)',         color:'var(--secondary)', label:'Завершено' },
   }
   const sc = statusMap[booking.status] || statusMap.confirmed
+
   return (
     <div style={{ border:`1px solid ${open?'rgba(18,26,18,0.12)':'var(--border)'}`,borderRadius:16,background:open?'#fff':'transparent',transition:'all 0.2s',overflow:'hidden' }}>
+      {/* Шапка */}
       <div onClick={() => setOpen(v => !v)} style={{ padding:'16px 20px',cursor:'pointer',display:'flex',alignItems:'center',gap:14 }}>
         <div style={{ minWidth:48,textAlign:'center',background:future&&isNearest?'var(--dark)':'rgba(18,26,18,0.06)',borderRadius:12,padding:'8px 6px',flexShrink:0 }}>
           <div style={{ fontSize:18,fontWeight:700,color:future&&isNearest?'#fff':'var(--secondary)',fontFamily:'Playfair Display,serif',lineHeight:1 }}>{new Date(booking.datetime).getDate()}</div>
@@ -138,26 +141,76 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
         </div>
         <span style={{ fontSize:12,color:'var(--secondary)',marginLeft:4,transform:open?'rotate(180deg)':'none',transition:'transform 0.2s' }}>▾</span>
       </div>
+
+      {/* Раскрытое тело */}
       {open && (
         <div style={{ padding:'0 20px 20px',borderTop:'1px solid var(--border)' }}>
-          <div style={{ paddingTop:16,display:'flex',flexDirection:'column',gap:14 }}>
-            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:10 }}>
-              {[['Дата',formatDate(booking.datetime)],['Время',formatTime(booking.datetime)],['Длительность',formatDuration(booking.duration)],['Итого',`${booking.total_price?.toLocaleString()} ₽`],booking.base_price&&['Цена в салоне',`${booking.base_price?.toLocaleString()} ₽`],booking.discount_pct&&['Скидка',`${booking.discount_pct}%`]].filter(Boolean).map(([label,val]) => (
-                <div key={label}>
-                  <div style={{ fontSize:10,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:2 }}>{label}</div>
-                  <div style={{ fontSize:14,fontWeight:500,color:'var(--dark)' }}>{val}</div>
-                </div>
-              ))}
-            </div>
+          <div style={{ paddingTop:16,display:'flex',flexDirection:'column',gap:16 }}>
+
+            {/* Приоритет 1: для предстоящих — дата+время + код */}
             {future && booking.status!=='cancelled' && (
-              <div>
+              <div style={{ background:'#F8F7F4',borderRadius:14,padding:'16px' }}>
+                <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,marginBottom:16 }}>
+                  <div>
+                    <div style={{ fontSize:10,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:4 }}>Дата</div>
+                    <div style={{ fontSize:15,fontWeight:700,color:'var(--dark)' }}>{formatDate(booking.datetime)}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize:10,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:4 }}>Время</div>
+                    <div style={{ fontSize:15,fontWeight:700,color:'var(--dark)' }}>{formatTime(booking.datetime)}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize:10,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:4 }}>Длительность</div>
+                    <div style={{ fontSize:15,fontWeight:700,color:'var(--dark)' }}>{formatDuration(booking.duration)}</div>
+                  </div>
+                </div>
                 <div style={{ fontSize:10,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:8 }}>Код для чекина — назовите администратору</div>
                 <BookingCode id={booking.id} />
               </div>
             )}
+
+            {/* Для завершённых — компактная сетка */}
+            {!future && (
+              <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10 }}>
+                {[
+                  ['Дата', formatDate(booking.datetime)],
+                  ['Время', formatTime(booking.datetime)],
+                  ['Длительность', formatDuration(booking.duration)],
+                  ['Итого', `${booking.total_price?.toLocaleString()} ₽`],
+                  booking.base_price ? ['Цена в салоне', `${booking.base_price?.toLocaleString()} ₽`] : null,
+                  booking.discount_pct ? ['Скидка', `${booking.discount_pct}%`] : null,
+                ].filter(Boolean).map(([label, val]) => (
+                  <div key={label}>
+                    <div style={{ fontSize:10,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:2 }}>{label}</div>
+                    <div style={{ fontSize:14,fontWeight:500,color:'var(--dark)' }}>{val}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Приоритет 2: финансы для предстоящих */}
+            {future && booking.status!=='cancelled' && (
+              <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10 }}>
+                {[
+                  ['Итого', `${booking.total_price?.toLocaleString()} ₽`],
+                  booking.base_price ? ['Цена в салоне', `${booking.base_price?.toLocaleString()} ₽`] : null,
+                  booking.discount_pct ? ['Скидка Lovi', `−${booking.discount_pct}%`] : null,
+                ].filter(Boolean).map(([label, val]) => (
+                  <div key={label}>
+                    <div style={{ fontSize:10,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:2 }}>{label}</div>
+                    <div style={{ fontSize:14,fontWeight:600,color: label==='Скидка Lovi'?'#16A34A':'var(--dark)' }}>{val}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Адрес */}
             <div style={{ fontSize:13,color:'var(--secondary)',display:'flex',gap:6,alignItems:'flex-start' }}>
-              <span>📍</span><span>Head Spa Beauty · ул. Миклухо-Маклая 37 · 5 мин от м. Беляево</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ flexShrink:0,marginTop:1 }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Head Spa Beauty · ул. Миклухо-Маклая 37 · 5 мин от м. Беляево</span>
             </div>
+
+            {/* Кнопка переноса */}
             {future && booking.status!=='cancelled' && (
               <a href={`${WHATSAPP}?text=Хочу перенести или отменить запись ${String(booking.id).padStart(5,'0')} на ${formatDate(booking.datetime)} ${formatTime(booking.datetime)}`}
                 target="_blank" rel="noreferrer"
@@ -166,6 +219,8 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
                 Отменить или перенести
               </a>
             )}
+
+            {/* Отзыв */}
             {!future && booking.status!=='cancelled' && <ReviewForm booking={booking} />}
           </div>
         </div>
@@ -174,6 +229,7 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
   )
 }
 
+// ─── Safety FAQ ───────────────────────────────────────────────────────────────
 function ProblemFAQ() {
   const items = [
     { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>, q: 'Салон закрыт', a: 'Заморозим выплату салону и вернём деньги в течение 24 часов.' },
@@ -206,6 +262,7 @@ function ProblemFAQ() {
   )
 }
 
+// ─── Main ─────────────────────────────────────────────────────────────────────
 export default function MyBookings({ user, onUserChange }) {
   const navigate = useNavigate()
   const [bookings, setBookings] = useState([])
@@ -227,52 +284,64 @@ export default function MyBookings({ user, onUserChange }) {
   const history  = bookings.filter(b => !isFuture(b.datetime) || b.status==='cancelled').sort((a,b) => new Date(b.datetime)-new Date(a.datetime))
   const totalSavings = bookings.reduce((sum,b) => sum+(b.base_price&&b.total_price?b.base_price-b.total_price:0), 0)
 
+  function goUpcoming() { setTab('upcoming'); setTimeout(() => document.getElementById('bookings-list')?.scrollIntoView({ behavior:'smooth' }), 50) }
+
   return (
     <div style={{ background:'var(--bg)',minHeight:'100vh' }}>
       <Nav user={user} onUserChange={onUserChange} />
       <div style={{ maxWidth:960,margin:'0 auto',padding:'24px 16px 80px' }}>
 
-        <div style={{ marginBottom:24 }}>
+        <div style={{ marginBottom:20 }}>
           <h1 style={{ fontFamily:'Playfair Display,serif',fontSize:28,fontWeight:700,color:'var(--dark)',margin:0 }}>Мои брони</h1>
         </div>
 
-        {/* Bento Dashboard */}
-        <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gridTemplateRows:'auto auto',gap:10,marginBottom:28,alignItems:'stretch' }}>
+        {/* Bento — одна строка из трёх плашек */}
+        <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:28 }}>
 
-          {/* Экономия */}
-          <div style={{ gridColumn:'1/2',gridRow:'1/3',background:'#F1F0EC',borderRadius:20,padding:'20px',display:'flex',flexDirection:'column',gap:4 }}>
-            <div style={{ fontSize:10,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.12em' }}>Ваша экономия</div>
-            <div style={{ fontSize:30,fontWeight:700,color:'var(--dark)',fontFamily:'Playfair Display,serif',lineHeight:1,marginTop:4 }}>
-              {totalSavings>0?`${totalSavings.toLocaleString()} ₽`:'0 ₽'}
-            </div>
-            <div style={{ fontSize:12,color:'var(--secondary)',marginTop:2 }}>за {bookings.length} {plural(bookings.length)}</div>
-          </div>
-
-          {/* Lovi Pass */}
-          <div style={{ gridColumn:'2/4',gridRow:'1',background:'var(--dark)',borderRadius:20,padding:'20px',display:'flex',flexDirection:'column',justifyContent:'space-between',gap:10 }}>
-            <div>
-              <div style={{ fontSize:10,color:'rgba(255,255,255,0.4)',textTransform:'uppercase',letterSpacing:'0.12em',marginBottom:4 }}>Lovi Pass</div>
-              <div style={{ fontSize:15,fontWeight:600,color:'#fff' }}>Единый абонемент</div>
-              <div style={{ fontSize:12,color:'rgba(255,255,255,0.4)',marginTop:2 }}>Неограниченный доступ к горящим окошкам</div>
-            </div>
-            <button style={{ background:'#F97316',border:'none',borderRadius:10,padding:'10px 16px',fontSize:13,fontWeight:600,color:'#fff',cursor:'pointer',fontFamily:'Inter,sans-serif',textAlign:'left' }}>
-              Активировать — 15 000 ₽
-            </button>
-          </div>
-
-          {/* Следующий визит */}
-          <div style={{ gridColumn:'2/4',gridRow:'2',background:'#F1F0EC',borderRadius:20,padding:'20px',display:'flex',flexDirection:'column',gap:4 }}>
+          {/* 1. Следующий визит — первый, кликабельный */}
+          <div
+            onClick={goUpcoming}
+            style={{ background:'#F1F0EC',borderRadius:20,padding:'18px 20px',display:'flex',flexDirection:'column',gap:4,cursor:upcoming.length>0?'pointer':'default',transition:'background 0.15s' }}
+            onMouseEnter={e => { if(upcoming.length>0) e.currentTarget.style.background='#E8E6DE' }}
+            onMouseLeave={e => e.currentTarget.style.background='#F1F0EC'}
+          >
             <div style={{ fontSize:10,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.12em' }}>Следующий визит</div>
             {upcoming.length>0 ? (
               <>
-                <div style={{ fontSize:20,fontWeight:700,color:'var(--dark)',fontFamily:'Playfair Display,serif',lineHeight:1,marginTop:4 }}>
+                <div style={{ fontSize:22,fontWeight:700,color:'var(--dark)',fontFamily:'Playfair Display,serif',lineHeight:1,marginTop:4 }}>
                   {new Date(upcoming[0].datetime).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}
                 </div>
-                <div style={{ fontSize:12,color:'var(--secondary)' }}>{upcoming[0].service_title.split('(')[0].trim()}</div>
+                <div style={{ fontSize:11,color:'var(--secondary)',marginTop:2 }}>{upcoming[0].service_title.split('(')[0].trim()} →</div>
               </>
             ) : (
               <div style={{ fontSize:13,color:'var(--secondary)',marginTop:4 }}>Нет записей</div>
             )}
+          </div>
+
+          {/* 2. Экономия */}
+          <div style={{ background:'#F1F0EC',borderRadius:20,padding:'18px 20px',display:'flex',flexDirection:'column',gap:4 }}>
+            <div style={{ fontSize:10,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.12em' }}>Ваша экономия</div>
+            <div style={{ fontSize:22,fontWeight:700,color:'var(--dark)',fontFamily:'Playfair Display,serif',lineHeight:1,marginTop:4 }}>
+              {totalSavings>0?`${totalSavings.toLocaleString()} ₽`:'0 ₽'}
+            </div>
+            <div style={{ fontSize:11,color:'var(--secondary)',marginTop:2 }}>за {bookings.length} {plural(bookings.length)}</div>
+          </div>
+
+          {/* 3. Lovi Pass — градиент как Private Beta */}
+          <div style={{
+            borderRadius:20,padding:'18px 20px',display:'flex',flexDirection:'column',justifyContent:'space-between',gap:12,
+            background:'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+            position:'relative',overflow:'hidden',
+          }}>
+            {/* Блик */}
+            <div style={{ position:'absolute',top:-20,right:-20,width:80,height:80,borderRadius:'50%',background:'rgba(249,115,22,0.15)',filter:'blur(20px)',pointerEvents:'none' }} />
+            <div>
+              <div style={{ fontSize:10,color:'rgba(255,255,255,0.4)',textTransform:'uppercase',letterSpacing:'0.12em',marginBottom:4 }}>Lovi Pass</div>
+              <div style={{ fontSize:14,fontWeight:600,color:'#fff',lineHeight:1.3 }}>Единый абонемент</div>
+            </div>
+            <button style={{ alignSelf:'flex-start',background:'#F97316',border:'none',borderRadius:8,padding:'8px 14px',fontSize:12,fontWeight:600,color:'#fff',cursor:'pointer',fontFamily:'Inter,sans-serif',whiteSpace:'nowrap' }}>
+              Активировать — 15 000 ₽
+            </button>
           </div>
 
         </div>
@@ -285,6 +354,7 @@ export default function MyBookings({ user, onUserChange }) {
         </div>
 
         {/* Контент */}
+        <div id="bookings-list">
         {loading ? (
           <div style={{ textAlign:'center',padding:'48px 0',color:'var(--secondary)',fontSize:14 }}>Загружаем брони...</div>
         ) : tab==='upcoming' ? (
@@ -329,18 +399,21 @@ export default function MyBookings({ user, onUserChange }) {
           ) : (
             <div style={{ display:'flex',flexDirection:'column',gap:10 }}>
               {history.map(b => <BookingCard key={b.id} booking={b} />)}
-              <div style={{ marginTop:6,background:'var(--dark)',borderRadius:20,padding:'20px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:16 }}>
+              {/* Retention блок */}
+              <div style={{ marginTop:6,borderRadius:20,padding:'20px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,background:'linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%)',position:'relative',overflow:'hidden' }}>
+                <div style={{ position:'absolute',top:-20,right:60,width:100,height:100,borderRadius:'50%',background:'rgba(249,115,22,0.1)',filter:'blur(24px)',pointerEvents:'none' }} />
                 <div>
                   <div style={{ fontSize:13,fontWeight:600,color:'#fff',marginBottom:4 }}>Хотите снова?</div>
-                  <div style={{ fontSize:12,color:'rgba(255,255,255,0.5)' }}>Узнайте какую скидку можно получить на ближайшее окошко</div>
+                  <div style={{ fontSize:12,color:'rgba(255,255,255,0.5)',lineHeight:1.5 }}>Узнайте какую скидку можно получить<br/>на ближайшее окошко</div>
                 </div>
-                <a href="/" style={{ flexShrink:0,background:'#F97316',border:'none',borderRadius:10,padding:'10px 16px',fontSize:13,fontWeight:600,color:'#fff',textDecoration:'none',whiteSpace:'nowrap' }}>
+                <a href="/" style={{ flexShrink:0,background:'#F97316',border:'none',borderRadius:10,padding:'10px 18px',fontSize:13,fontWeight:600,color:'#fff',textDecoration:'none',whiteSpace:'nowrap' }}>
                   Смотреть →
                 </a>
               </div>
             </div>
           )
         )}
+        </div>
 
         <ProblemFAQ />
 
