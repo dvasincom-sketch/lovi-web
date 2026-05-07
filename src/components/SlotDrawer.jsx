@@ -34,10 +34,15 @@ export default function SlotDrawer({ slot, onClose }) {
   const isMobile = useIsMobile()
   const [staff, setStaff] = useState(null)
   const [staffLoading, setStaffLoading] = useState(true)
-  const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
+  const [name, setName] = useState(() => {
+    try { const u = JSON.parse(localStorage.getItem('lovi_user')); return u?.name || '' } catch { return '' }
+  })
+  const [phone, setPhone] = useState(() => {
+    try { const u = JSON.parse(localStorage.getItem('lovi_user')); return u?.phone || '' } catch { return '' }
+  })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const loviUser = (() => { try { return JSON.parse(localStorage.getItem('lovi_user')) } catch { return null } })()
   const [expired, setExpired] = useState(false)
   const overlayRef = useRef(null)
 
@@ -108,6 +113,9 @@ export default function SlotDrawer({ slot, onClose }) {
           staff_name: staff?.name,
           client_name: name.trim(),
           client_phone: phone.trim(),
+          client_email: loviUser?.email || '',
+          user_id: loviUser?.id || null,
+          discount_pct: slot.discount_pct || null,
         })
       })
       const data = await res.json()
