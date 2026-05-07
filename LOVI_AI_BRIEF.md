@@ -735,3 +735,37 @@ ALTER TABLE bookings ADD: user_id, base_price, discount_pct, rating_place, ratin
 - Чередование: 3-4 события → статусная строка
 - Обновление каждые 30 сек
 - Скорость: drift 90s linear infinite
+
+---
+
+## ИТОГИ СЕССИИ 07.05.2026 (часть 2)
+
+### Авторизация — доработки
+- После логина → редирект на /my-bookings
+- После выхода → редирект на /
+- Nav.jsx полностью переписан (был сломан лишней строкой 771)
+
+### Email / Сброс пароля (Resend)
+- Провайдер: Resend (временно), план: Yandex Cloud Postbox после переезда на РФ сервер
+- Домен lovi.today верифицирован в Resend
+- pip install resend в venv insalon
+- RESEND_API_KEY добавлен в .env и на Render
+- Таблица: password_reset_tokens (id, user_id, token, expires_at, used, created_at)
+- Эндпоинты в app/routers/auth.py:
+  - POST /api/auth/forgot-password — генерирует токен, отправляет письмо
+  - POST /api/auth/reset-password — принимает токен + новый пароль, помечает токен used
+- Токен действителен 2 часа, одноразовый
+- Страница: /reset-password?token=... → src/pages/ResetPassword.jsx
+
+### ForgotModal (Nav.jsx)
+- Открывается по кнопке "Забыли пароль?" в форме входа
+- State forgotOpen в AuthModal (не в Nav)
+- ForgotModal рендерится внутри return AuthModal в <>...</>
+- zIndex: 1100 (выше AuthModal 1000)
+- AuthModal не закрывается пока forgotOpen=true
+- Все иконки SVG — без эмодзи
+
+### ANTI-PATTERNS (новые)
+- НЕ использовать эмодзи 📬 📋 🎟 и др — только минималистичные SVG
+- НЕ добавлять JSX после return компонента — парсер падает
+- НЕ использовать click listener для закрытия модалов — использовать mousedown
