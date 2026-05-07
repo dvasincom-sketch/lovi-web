@@ -277,7 +277,7 @@ export default function ValueCard({ searchQuery }) {
               <div style={{
                 fontSize: 11, color: 'rgba(255,255,255,0.25)', textAlign: 'center',
               }}>
-                3 000 ₽ за сеанс · 5 сеансов · баланс не сгорает
+                 · Баланс не сгорает
               </div>
             </div>
 
