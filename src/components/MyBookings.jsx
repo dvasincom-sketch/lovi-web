@@ -187,7 +187,7 @@ function ReviewForm({ booking, onSubmit }) {
 
 // ─── Booking Card ─────────────────────────────────────────────────────────────
 
-function BookingCard({ booking, defaultOpen = false }) {
+function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
   const [open, setOpen] = useState(defaultOpen)
   const future = isFuture(booking.datetime)
   const savings = booking.base_price && booking.total_price
@@ -380,7 +380,7 @@ export default function MyBookings({ user, onUserChange }) {
     load()
   }, [])
 
-  const upcoming = bookings.filter(b => isFuture(b.datetime) && b.status !== 'cancelled')
+  const upcoming = bookings.filter(b => isFuture(b.datetime) && b.status !== 'cancelled').sort((a,b) => new Date(a.datetime) - new Date(b.datetime))
   const history  = bookings.filter(b => !isFuture(b.datetime) || b.status === 'cancelled')
 
   // Статистика
@@ -407,7 +407,7 @@ export default function MyBookings({ user, onUserChange }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'auto auto', gap: 10, marginBottom: 28 }}>
 
         {/* Экономия — большой квадрат */}
-        <div style={{ gridColumn: '1 / 2', gridRow: '1 / 3', background: 'var(--dark)', borderRadius: 20, padding: '24px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 160 }}>
+        <div style={{ gridColumn: '1 / 2', gridRow: '1 / 3', background: 'var(--dark)', borderRadius: 20, padding: '24px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Ваша экономия</div>
           <div>
             <div style={{ fontSize: 36, fontWeight: 700, color: '#fff', fontFamily: 'Playfair Display,serif', lineHeight: 1.1 }}>
@@ -497,7 +497,7 @@ export default function MyBookings({ user, onUserChange }) {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {upcoming.map((b, i) => <BookingCard key={b.id} booking={b} defaultOpen={i === 0} />)}
+            {upcoming.map((b, i) => <BookingCard key={b.id} booking={b} defaultOpen={i === 0} isNearest={i === 0} />)}
           </div>
         )
       ) : (
