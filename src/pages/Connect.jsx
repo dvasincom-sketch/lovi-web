@@ -13,7 +13,11 @@ export default function Connect() {
     const user_data = params.get("user_data")
 
     let user_info = {}
-    try { user_info = JSON.parse(atob(user_data)) } catch(e) {}
+    try {
+      const bin = atob(user_data.replace(/-/g,'+').replace(/_/g,'/'))
+      const bytes = new Uint8Array([...bin].map(c => c.charCodeAt(0)))
+      user_info = JSON.parse(new TextDecoder("utf-8").decode(bytes))
+    } catch(e) {}
 
     if (!salon_id) { setStatus("error"); return }
 
