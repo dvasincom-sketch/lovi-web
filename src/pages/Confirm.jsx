@@ -86,6 +86,26 @@ export default function Confirm() {
   }, [booking?.master_id])
 
   const isPaid       = booking?.status === 'paid' || booking?.status === 'confirmed'
+
+  async function handleCancel() {
+    if (!window.confirm('Отменить бронирование? Средства вернутся на баланс Лови.')) return
+    try {
+      const token = localStorage.getItem('lovi_token')
+      if (!token) { alert('Войдите в аккаунт чтобы отменить бронь'); return }
+      const res = await fetch(`${API}/api/lovi/bookings/${bookingId}/cancel`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      const data = await res.json()
+      if (data.ok) {
+        setBooking(prev => ({...prev, status: 'cancelled_by_client'}))
+      } else {
+        alert(data.detail || 'Ошибка при отмене')
+      }
+    } catch(e) {
+      alert('Ошибка сети')
+    }
+  }
   const isCancelledBySalon = booking?.status === 'cancelled_by_salon'
   const isCancelledByClient = booking?.status === 'cancelled_by_client' || booking?.status === 'cancelled'
   const durationMin  = booking ? Math.floor((booking.duration || 0) / 60) : 0
@@ -294,7 +314,7 @@ export default function Confirm() {
                 { label: 'Отменить', text: 'Хочу отменить запись', danger: true },
               ].map((btn, i) => (
                 <button key={i}
-                  onClick={() => window.open(`https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(`${btn.text} №${bookingId}`)}`, '_blank')}
+                  onClick={() => btn.danger ? handleCancel() : window.open(`https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(`${btn.text} №${bookingId}`)}`, '_blank')}
                   style={{
                     flex: 1, padding: '10px', borderRadius: 20,
                     background: 'transparent',
