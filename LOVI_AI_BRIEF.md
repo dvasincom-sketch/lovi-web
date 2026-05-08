@@ -838,3 +838,64 @@ ALTER TABLE bookings ADD: user_id, base_price, discount_pct, rating_place, ratin
 ### Dev Log
 Сессии логируются командой curl в `dev_sessions` через API Render.
 Формат: date, feature, category, duration_min, tokens_approx, notes.
+
+---
+
+## ИТОГИ СЕССИИ 08.05.2026
+
+### Сделано
+**YCLIENTS маркетплейс — новое приложение Lovi (app_id: 41940)**
+- ✅ Настроены Callback URL и Registration Redirect URL
+- ✅ Страница `/connect` — принимает `salon_id` + `user_data`, декодирует UTF-8
+- ✅ `POST /api/lovi/connect` — сохраняет салон, генерирует JWT, отправляет welcome письмо с magic link
+- ✅ `/webhook/lovi/disconnect` — обработка отключения (POST + GET заглушка)
+
+**Кабинет партнёра**
+- ✅ `/salon/dashboard` — статус подключения, синхронизация, контакты владельца
+- ✅ Health-check токена через `GET /records` — показывает ok / no_access / error
+- ✅ `/salon/login` — форма запроса magic link
+- ✅ `/salon/auth` — верификация токена → JWT → редирект в кабинет
+- ✅ Welcome письмо при подключении (шаблон salon_welcome.html)
+- ✅ Таблица `salon_magic_links` в Supabase
+
+**Бронирование**
+- ✅ Вебхук record_edit/delete — уведомляет клиента при изменении/отмене записи салоном
+- ✅ `POST /api/lovi/bookings/{id}/cancel` — отмена клиентом с возвратом на баланс
+- ✅ Кастомный модал отмены в стиле сайта
+- ✅ Фильтры статусов cancelled_by_client / cancelled_by_salon в "Мои брони"
+- ✅ Таблицы `balance_transactions`, колонка `lovi_balance` в `users`
+- ✅ Колонки `yclients_record_id`, `yclients_record_hash` в `bookings`
+
+### Заблокировано
+- ❌ Получение user_token через маркетплейс — эндпоинт активации неизвестен, запрос в поддержку YCLIENTS отправлен
+
+### Беклог следующей сессии
+**P0**
+1. Получить ответ от поддержки YCLIENTS → активировать интеграцию → получить рабочий user_token
+2. Реальное бронирование create_record в YCLIENTS
+
+**P1**
+3. Кабинет партнёра — статистика броней и выручки
+4. YooKassa refund при отмене (сейчас только возврат на баланс Lovi)
+5. Показывать баланс Lovi в /my-bookings
+
+**P2**
+6. Автотесты booking flow
+7. POST /api/lovi/search-intent — аналитика поисковых запросов
+8. Отдельный бэкенд для Lovi
+
+---
+
+## КАК ЗАКРЫВАТЬ СЕССИЮ
+
+В конце каждой сессии:
+1. Дописать итоги в `LOVI_AI_BRIEF.md` (этот файл)
+2. Залогировать в Dev Log одной командой:
+
+```bash
+curl -X POST https://insalon.onrender.com/dev-sessions \
+  -H "Content-Type: application/json" \
+  -d '{"date":"YYYY-MM-DD","feature":"Название задачи","category":"dev","duration_min":90,"tokens_approx":50000,"notes":"..."}'
+```
+
+Категории: dev / design / analytics
