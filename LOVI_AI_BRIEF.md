@@ -899,3 +899,58 @@ curl -X POST https://insalon.onrender.com/dev-sessions \
 ```
 
 Категории: dev / design / analytics
+
+---
+
+## ИТОГИ СЕССИИ 08.05.2026 (часть 2)
+
+### Сделано
+
+**Бронирование в YCLIENTS — починили end-to-end:**
+- ✅ Запись создаётся в расписании YCLIENTS после оплаты
+- ✅ seance_length берётся из YCLIENTS API (не из нашей БД где 0)
+- ✅ Системный клиент Lovi.today (id=396205299) для всех записей
+- ✅ staff_id берётся из /api/booking/staff, кнопка заблокирована пока не загружен
+- ✅ fire-and-forget create_record убран из lovi_book — только через payment webhook
+- ✅ YooKassa webhook URL исправлен на /payments/webhook
+
+**Двусторонняя синхронизация:**
+- ✅ Вебхуки от YCLIENTS работают (через непубличное приложение)
+- ✅ record.delete → status: cancelled_by_salon
+- ✅ Отмена клиентом → DELETE в YCLIENTS без record_hash
+
+**Страница /confirm:**
+- ✅ Показывает статус cancelled_by_salon / cancelled_by_client
+- ✅ Кнопка "Отменить" использует API вместо WhatsApp
+- ✅ Polling останавливается при отмене
+
+**Insalon booking:**
+- ✅ Исправлен двойной путь /api/booking/booking/ → /api/booking/
+
+**Документация:**
+- ✅ LOVI_PARTNER_ONBOARDING.md — техническое руководство для новых партнёров
+
+### Ключевые открытия
+- YCLIENTS виджет использует новый API: platform.yclients.com/api/v1/b2c/booking/
+- Старый book_times не работает без staff_id — 0 слотов
+- seance_length обязателен и должен совпадать с тем что в YCLIENTS (иначе "Выбранное время недоступно")
+- Удаление записи работает без record_hash через user_token администратора
+
+### Заблокировано
+- ❌ POST /marketplace/partner/callback — всё ещё ошибка (ждём модерации)
+- ❌ Документация нового B2C Booking API — запрошена у поддержки
+
+### Беклог следующей сессии
+**P0**
+1. Получить ответ от поддержки по новому B2C API → переключить витрину на search-timeslots
+2. Дождаться модерации → протестировать автоматическую активацию
+
+**P1**
+3. YooKassa refund при отмене клиентом (сейчас только баланс Lovi)
+4. Показывать баланс Lovi в /my-bookings
+5. Кабинет партнёра — статистика броней и выручки
+6. asyncio.gather для featured (параллельные запросы) — задеплоено, проверить скорость
+
+**P2**
+7. Кэш слотов в Supabase (cron каждые 15 мин) — для масштабирования
+8. Автотесты booking flow
