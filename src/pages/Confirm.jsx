@@ -62,7 +62,7 @@ export default function Confirm() {
         const data = await r.json()
         if (data.error || data.detail) { setBooking({ notFound: true }); return }
         setBooking(data)
-        if (data.status !== 'paid' && attempts < 12) {
+        if (data.status !== 'paid' && data.status !== 'confirmed' && attempts < 12) {
           attempts++
           setTimeout(poll, 2500)
         }
@@ -85,11 +85,11 @@ export default function Confirm() {
       .catch(() => {})
   }, [booking?.master_id])
 
-  const isPaid       = booking?.status === 'paid'
+  const isPaid       = booking?.status === 'paid' || booking?.status === 'confirmed'
   const durationMin  = booking ? Math.floor((booking.duration || 0) / 60) : 0
 
   function copyLink() {
-    navigator.clipboard.writeText(`https://lovi-web.onrender.com/confirm?booking_id=${bookingId}`)
+    navigator.clipboard.writeText(`https://lovi.today/confirm?booking_id=${bookingId}`)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -252,7 +252,7 @@ export default function Confirm() {
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               }}>
                 <div style={{ fontSize: 12, color: 'var(--secondary)' }}>
-                  lovi-web.onrender.com/confirm?booking_id={bookingId}
+                  lovi.today/confirm?booking_id={bookingId}
                 </div>
                 <button onClick={copyLink} style={{
                   fontSize: 11, fontWeight: 500,
