@@ -370,25 +370,36 @@ export default function MyBookings({ user, onUserChange }) {
     load()
   }, [])
 
-  const handleCancel = async (bookingId, refundAmount) => {
-    if (!window.confirm(`Отменить бронирование? ${refundAmount ? refundAmount.toLocaleString() + ' ₽ вернутся на ваш баланс Лови.' : ''}`)) return
+  const handleCancel = (bookingId, refundAmount) => {
+    setCancelModal({ bookingId, refundAmount })
+  }
+
+  const confirmCancel = async () => {
+    if (!cancelModal) return
+    setCancelling(true)
     try {
-      const token = localStorage.getItem('token')
-      const res = await fetch(`${API}/api/lovi/bookings/${bookingId}/cancel`, {
+      const token = localStorage.getItem('lovi_token')
+      const res = await fetch(`${API}/api/lovi/bookings/${cancelModal.bookingId}/cancel`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       })
       const data = await res.json()
       if (data.ok) {
-        alert(`Бронирование отменено. ${data.refunded ? data.refunded.toLocaleString() + ' ₽ возвращены на баланс.' : ''}`)
+        setCancelModal(null)
         window.location.reload()
       } else {
+        setCancelModal(null)
         alert(data.detail || 'Ошибка при отмене')
       }
     } catch(e) {
+      setCancelModal(null)
       alert('Ошибка сети')
     }
+    setCancelling(false)
   }
+
+  const [cancelModal, setCancelModal] = useState(null) // {bookingId, refundAmount}
+  const [cancelling, setCancelling] = useState(false)
 
   const upcoming = bookings.filter(b => isFuture(b.datetime) && b.status!=='cancelled').sort((a,b) => new Date(a.datetime)-new Date(b.datetime))
   const history  = bookings.filter(b => !isFuture(b.datetime) || b.status==='cancelled').sort((a,b) => new Date(b.datetime)-new Date(a.datetime))
@@ -530,6 +541,33 @@ export default function MyBookings({ user, onUserChange }) {
 
         <InstallBanner />
         <ProblemFAQ />
+
+      {cancelModal && (
+        <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.4)',zIndex:1000,display:'flex',alignItems:'flex-end',justifyContent:'center' }}
+          onClick={() => !cancelling && setCancelModal(null)}>
+          <div style={{ background:'#FDFCF9',borderRadius:'20px 20px 0 0',padding:'32px 24px 40px',width:'100%',maxWidth:480 }}
+            onClick={e => e.stopPropagation()}>
+            <div style={{ width:36,height:4,background:'rgba(18,26,18,0.15)',borderRadius:2,margin:'0 auto 24px' }} />
+            <h3 style={{ fontFamily:'Playfair Display,serif',fontSize:20,color:'#121A12',marginBottom:8 }}>Отменить бронирование?</h3>
+            {cancelModal.refundAmount > 0 && (
+              <p style={{ fontSize:14,color:'#8F8475',lineHeight:1.6,marginBottom:24 }}>
+                {cancelModal.refundAmount.toLocaleString()} ₽ вернутся на ваш баланс «Лови» и будут доступны для следующего бронирования.
+              </p>
+            )}
+            <div style={{ background:'rgba(18,26,18,0.04)',borderRadius:12,padding:'12px 16px',marginBottom:24,fontSize:13,color:'#8F8475',lineHeight:1.5 }}>
+              Отмена возможна не позднее чем за 2 часа до визита.
+            </div>
+            <button onClick={confirmCancel} disabled={cancelling}
+              style={{ width:'100%',padding:'14px',borderRadius:12,background:'#dc2626',color:'#fff',border:'none',fontSize:15,fontWeight:600,cursor:'pointer',marginBottom:10,opacity:cancelling?0.6:1 }}>
+              {cancelling ? 'Отменяем...' : 'Да, отменить'}
+            </button>
+            <button onClick={() => setCancelModal(null)} disabled={cancelling}
+              style={{ width:'100%',padding:'14px',borderRadius:12,background:'none',color:'#121A12',border:'1px solid rgba(18,26,18,0.15)',fontSize:15,fontWeight:500,cursor:'pointer' }}>
+              Назад
+            </button>
+          </div>
+        </div>
+      )}
 
       </div>
     </div>
