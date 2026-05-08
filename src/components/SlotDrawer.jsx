@@ -110,8 +110,8 @@ export default function SlotDrawer({ slot, onClose }) {
           duration: (slot.duration_min || 60) * 60,
           lovi_price: slot.lovi_price,
           base_price: slot.base_price,
-          staff_id: (staffRef.current || staff)?.id || slot.staff_id || null,
-          staff_name: (staffRef.current || staff)?.name || slot.staff_name || '',
+          staff_id: (staffRef.current || staff)?.id || null,
+          staff_name: (staffRef.current || staff)?.name || '',
           client_name: name.trim(),
           client_phone: phone.trim(),
           client_email: loviUser?.email || '',
@@ -318,7 +318,7 @@ export default function SlotDrawer({ slot, onClose }) {
           )}
 
           {/* Оплатить */}
-          <button onClick={handleSubmit} disabled={submitting} style={{
+          <button onClick={handleSubmit} disabled={submitting || staffLoading} style={{
             width: '100%', padding: '16px', borderRadius: 20,
             background: submitting ? 'rgba(18,26,18,0.4)' : 'var(--accent)',
             color: '#fff', border: 'none',
@@ -327,7 +327,7 @@ export default function SlotDrawer({ slot, onClose }) {
             boxShadow: submitting ? 'none' : '0 8px 24px rgba(249,115,22,0.3)',
             transition: 'all 0.3s',
           }}>
-            {submitting ? '⏳ Создаём бронь...' : `Оплатить ${fmt(slot.lovi_price)}`}
+            {staffLoading ? 'Загружаем мастера...' : submitting ? '⏳ Создаём бронь...' : `Оплатить ${fmt(slot.lovi_price)}`}
           </button>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 12 }}>
