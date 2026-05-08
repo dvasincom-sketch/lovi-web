@@ -79,6 +79,7 @@ export default function SalonDashboard() {
               <div style={s.label}>Синхронизация</div>
               {salon.token_status === "ok" && <span style={s.badge}>Работает</span>}
               {salon.token_status === "error" && <span style={s.badgeOff}>Ошибка</span>}
+              {salon.token_status === "no_access" && <span style={{...s.badgeOff, background:"#fee2e2", color:"#dc2626"}}>Нет прав</span>}
               {(salon.token_status === "no_token" || salon.token_status === "unknown") && (
                 <span style={{...s.badgeOff, background:"#fef9c3", color:"#854d0e"}}>Не настроено</span>
               )}
@@ -108,6 +109,12 @@ export default function SalonDashboard() {
             <div style={{marginTop:16, padding:"12px 16px", background:"#fee2e2", borderRadius:10, fontSize:13, color:"#dc2626", lineHeight:1.5}}>
               Не удаётся получить расписание. Возможно, токен YCLIENTS устарел.{" "}
               <a href="https://yclients.com/e/mp_41940_lovi_goryaschie_okoshki_zapisi/" style={{color:"#dc2626", fontWeight:600}}>Переподключить →</a>
+            </div>
+          )}
+          {salon.token_status === "no_access" && (
+            <div style={{marginTop:16, padding:"12px 16px", background:"#fee2e2", borderRadius:10, fontSize:13, color:"#dc2626", lineHeight:1.5}}>
+              <strong>Нет прав на управление филиалом.</strong> Интеграция подключена, но токен не имеет доступа к расписанию. Необходимо завершить активацию через маркетплейс YCLIENTS.{" "}
+              <a href="https://yclients.com/e/mp_41940_lovi_goryaschie_okoshki_zapisi/" style={{color:"#dc2626", fontWeight:600}}>Активировать →</a>
             </div>
           )}
         </div>
