@@ -200,7 +200,9 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false, onCancel
   const statusMap = {
     paid:      { bg:'rgba(34,197,94,0.08)',  border:'rgba(34,197,94,0.2)',  color:'#16A34A', label:'Оплачено' },
     confirmed: { bg:'rgba(34,197,94,0.08)',  border:'rgba(34,197,94,0.2)',  color:'#16A34A', label:'Подтверждено' },
-    cancelled: { bg:'rgba(18,26,18,0.06)',   border:'var(--border)',         color:'var(--secondary)', label:'Отменено' },
+    cancelled:            { bg:'rgba(18,26,18,0.06)', border:'var(--border)', color:'var(--secondary)', label:'Отменено' },
+    cancelled_by_client:  { bg:'rgba(18,26,18,0.06)', border:'var(--border)', color:'var(--secondary)', label:'Отменено вами' },
+    cancelled_by_salon:   { bg:'#fee2e2',              border:'#fecaca',       color:'#dc2626',           label:'Отменено салоном' },
     completed: { bg:'rgba(18,26,18,0.04)',   border:'var(--border)',         color:'var(--secondary)', label:'Завершено' },
   }
   const sc = statusMap[booking.status] || statusMap.confirmed
@@ -401,8 +403,9 @@ export default function MyBookings({ user, onUserChange }) {
   const [cancelModal, setCancelModal] = useState(null) // {bookingId, refundAmount}
   const [cancelling, setCancelling] = useState(false)
 
-  const upcoming = bookings.filter(b => isFuture(b.datetime) && b.status!=='cancelled').sort((a,b) => new Date(a.datetime)-new Date(b.datetime))
-  const history  = bookings.filter(b => !isFuture(b.datetime) || b.status==='cancelled').sort((a,b) => new Date(b.datetime)-new Date(a.datetime))
+  const CANCELLED = ['cancelled','cancelled_by_client','cancelled_by_salon']
+  const upcoming = bookings.filter(b => isFuture(b.datetime) && !CANCELLED.includes(b.status)).sort((a,b) => new Date(a.datetime)-new Date(b.datetime))
+  const history  = bookings.filter(b => !isFuture(b.datetime) || CANCELLED.includes(b.status)).sort((a,b) => new Date(b.datetime)-new Date(a.datetime))
   const totalSavings = bookings.reduce((sum,b) => sum+(b.base_price&&b.total_price?b.base_price-b.total_price:0), 0)
 
   function goUpcoming() { setTab('upcoming'); setTimeout(() => document.getElementById('bookings-list')?.scrollIntoView({ behavior:'smooth' }), 50) }
