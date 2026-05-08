@@ -171,11 +171,19 @@ export default function SalonDashboard() {
             </div>
           </div>
           {salon.last_sync_at && (
-            <div style={{marginTop:16, paddingTop:16, borderTop:"1px solid rgba(18,26,18,0.06)"}}>
-              <div style={s.label}>Последняя проверка</div>
-              <p style={{...s.value, fontSize:13, color:"#8F8475"}}>
-                {new Date(salon.last_sync_at).toLocaleString("ru-RU")}
-              </p>
+            <div style={{marginTop:16, paddingTop:16, borderTop:"1px solid rgba(18,26,18,0.06)",
+              display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+              <div>
+                <div style={s.label}>Последняя проверка</div>
+                <p style={{...s.value, fontSize:13, color:"#8F8475"}}>
+                  {new Date(salon.last_sync_at).toLocaleString("ru-RU")}
+                </p>
+              </div>
+              <button onClick={()=>navigate("/salon/onboarding")}
+                style={{background:"#F97316", color:"#fff", border:"none",
+                borderRadius:8, padding:"8px 18px", fontSize:13, fontWeight:600, cursor:"pointer"}}>
+                Настроить
+              </button>
             </div>
           )}
           {salon.token_status === "no_token" && (

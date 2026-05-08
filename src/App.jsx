@@ -14,6 +14,7 @@ import UI from './pages/UI'
 import Confirm from './pages/Confirm'
 import ResetPassword from './pages/ResetPassword'
 import Connect from './pages/Connect'
+import SalonOnboarding from "./pages/SalonOnboarding"
 import SalonDashboard from './pages/SalonDashboard'
 import SalonLogin from './pages/SalonLogin'
 import SalonAuth from './pages/SalonAuth'
@@ -56,6 +57,7 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/connect" element={<Connect />} />
         <Route path="/salon/dashboard" element={<SalonDashboard />} />
+        <Route path="/salon/onboarding" element={<SalonOnboarding />} />
         <Route path="/salon/login" element={<SalonLogin />} />
         <Route path="/salon/auth" element={<SalonAuth />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
