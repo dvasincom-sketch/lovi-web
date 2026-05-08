@@ -112,8 +112,8 @@ export default function AllSlots() {
         </div>
       </div>
       <div style={{display:'flex',gap:12,overflowX:'hidden',padding:isMobile?'0 16px 12px':'0 40px 12px'}}>
-        {[200,160,180,200,160].map((w,i)=>(
-          <div key={i} style={{flexShrink:0,width:w,height:180,borderRadius:24,
+        {[0,1,2,3,4].map((i)=>(
+          <div key={i} style={{flexShrink:0,width:200,height:160,borderRadius:24,
             background:'rgba(18,26,18,0.06)',
             animation:`shimmer 1.5s ease-in-out infinite ${i*0.15}s`}}/>
         ))}

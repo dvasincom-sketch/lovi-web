@@ -360,14 +360,16 @@ export default function BentoGrid(){
         }}>
           {loading ? (
             <>
-              <div style={{flex:1,background:'#fff',borderRadius:32,
-                animation:'shimmer 1.5s infinite',minHeight:160,
-                border:'1px solid var(--border)'}}>
-                <style>{`@keyframes shimmer{0%{opacity:1}50%{opacity:0.5}100%{opacity:1}}`}</style>
+              <div style={{flex:1,borderRadius:32,minHeight:160,
+                border:'1px solid var(--border)',
+                background:'linear-gradient(135deg,#f0ede8,#e8e5e0)',
+                animation:'shimmer 1.5s ease-in-out infinite'}}>
+                <style>{`@keyframes shimmer{0%{opacity:1}50%{opacity:0.4}100%{opacity:1}}`}</style>
               </div>
-              <div style={{flex:1,background:'#fff',borderRadius:32,
-                animation:'shimmer 1.5s infinite 0.3s',minHeight:160,
-                border:'1px solid var(--border)'}}/>
+              <div style={{flex:1,borderRadius:32,minHeight:160,
+                border:'1px solid var(--border)',
+                background:'linear-gradient(135deg,#f0ede8,#e8e5e0)',
+                animation:'shimmer 1.5s ease-in-out infinite 0.3s'}}/>
             </>
           ) : (
             <>
