@@ -63,7 +63,7 @@ export default function Hero({ onSearch }) {
   }
 
   return (
-    <section style={{
+    <section id="about" style={{
       maxWidth: 1200, margin: '0 auto',
       padding: isMobile ? '40px 16px 40px' : '80px 40px 60px',
       textAlign: 'center', animation: 'fadeUp 0.8s ease both',

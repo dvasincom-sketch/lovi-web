@@ -2,6 +2,7 @@ import { useState } from 'react'
 import UpdateBanner from './components/UpdateBanner'
 import InstallBanner from './components/InstallBanner'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Footer from "./components/Footer"
 import Nav from './components/Nav'
 import HeroNew from './components/HeroNew'
 import Hero from './components/Hero'
@@ -35,6 +36,7 @@ function Home({ user, setUser }) {
           <Hero onSearch={setSearchQuery} />
           <ValueCard searchQuery={searchQuery} />
           <Ticker />
+          <Footer />
         </>
       )}
     </div>
