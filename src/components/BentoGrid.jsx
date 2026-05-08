@@ -358,8 +358,23 @@ export default function BentoGrid(){
           gridRow: isMobile?'span 1':'span 2',
           display:'flex',flexDirection:'column',gap:isMobile?14:20
         }}>
-          <SubCard slot={slot2} tag="Топ по отзывам" onBook={s=>setInfoSlot(s)}/>
-          <SubCard slot={slot3} onBook={s=>setInfoSlot(s)}/>
+          {loading ? (
+            <>
+              <div style={{flex:1,background:'#fff',borderRadius:32,
+                animation:'shimmer 1.5s infinite',minHeight:160,
+                border:'1px solid var(--border)'}}>
+                <style>{`@keyframes shimmer{0%{opacity:1}50%{opacity:0.5}100%{opacity:1}}`}</style>
+              </div>
+              <div style={{flex:1,background:'#fff',borderRadius:32,
+                animation:'shimmer 1.5s infinite 0.3s',minHeight:160,
+                border:'1px solid var(--border)'}}/>
+            </>
+          ) : (
+            <>
+              <SubCard slot={slot2} tag="Топ по отзывам" onBook={s=>setInfoSlot(s)}/>
+              <SubCard slot={slot3} onBook={s=>setInfoSlot(s)}/>
+            </>
+          )}
         </div>
 
 

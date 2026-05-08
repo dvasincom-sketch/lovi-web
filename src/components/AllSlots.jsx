@@ -104,7 +104,25 @@ export default function AllSlots() {
       .finally(()=>setLoading(false))
   },[])
 
-  if (loading || slots.length === 0) return null
+  if (loading) return (
+    <div style={{padding:isMobile?'32px 0 40px':'48px 0 60px', background:'#F1F0EC'}}>
+      <div style={{padding:isMobile?'0 16px':'0 40px',marginBottom:16}}>
+        <div style={{fontSize:11,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--secondary)'}}>
+          Ближайшие окошки
+        </div>
+      </div>
+      <div style={{display:'flex',gap:12,overflowX:'hidden',padding:isMobile?'0 16px 12px':'0 40px 12px'}}>
+        {[200,160,180,200,160].map((w,i)=>(
+          <div key={i} style={{flexShrink:0,width:w,height:180,borderRadius:24,
+            background:'rgba(18,26,18,0.06)',
+            animation:`shimmer 1.5s ease-in-out infinite ${i*0.15}s`}}/>
+        ))}
+      </div>
+      <style>{`@keyframes shimmer{0%{opacity:1}50%{opacity:0.4}100%{opacity:1}}`}</style>
+    </div>
+  )
+
+  if (slots.length === 0) return null
 
   const filtered = activeCategory === 'all'
     ? slots
