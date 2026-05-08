@@ -806,3 +806,35 @@ ALTER TABLE bookings ADD: user_id, base_price, discount_pct, rating_place, ratin
 - Поле phone добавлено в users таблицу
 - Передаётся при регистрации и логине
 - Автозаполняется в форме бронирования SlotDrawer
+
+---
+
+## ИТОГИ СЕССИИ 07.05.2026 (часть 4) — PWA + безопасность
+
+### PWA
+- `vite-plugin-pwa` установлен, SW генерируется автоматически
+- `manifest.webmanifest` — иконка `icon-512.png`, тёмная тема, standalone
+- Стратегия кэширования: shell → Cache First, `/api/lovi/featured` → Network First, `/api/auth/my-bookings` → Network Only
+- `navigateFallback: '/index.html'` — исправлен баг с offline экраном на SPA роутах
+- `UpdateBanner.jsx` — баннер обновления SW
+- `InstallBanner.jsx` — глобальный баннер установки (iOS Safari + Android Chrome), в `App.jsx`
+- `public/offline.html` — страница без соединения
+
+### UI fixes
+- iOS zoom fix — `font-size: 16px` на все input
+- Кнопка Lovi Pass — цена отдельной строкой, кнопка "Активировать"
+- Email base.html — `color-scheme: light only`, хедер всегда тёмный
+
+### Безопасность booking_code
+- Колонка `booking_code` в таблице `bookings`
+- Генерация: HMAC-SHA256(UUID, secret)[:8] → формат `A3F7-KX2M`
+- Код показывается только за 2 часа до визита
+- Эндпоинт `POST /api/booking/checkin/{booking_code}` — одноразовый чек-ин, пишет `checkin_used_at`
+
+### Новые колонки bookings
+- `booking_code` text UNIQUE
+- `checkin_used_at` timestamptz
+
+### Dev Log
+Сессии логируются командой curl в `dev_sessions` через API Render.
+Формат: date, feature, category, duration_min, tokens_approx, notes.

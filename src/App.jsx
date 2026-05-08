@@ -13,6 +13,7 @@ import MyBookings from './components/MyBookings'
 import UI from './pages/UI'
 import Confirm from './pages/Confirm'
 import ResetPassword from './pages/ResetPassword'
+import Connect from './pages/Connect'
 import Unsubscribe from './pages/Unsubscribe'
 
 function Home({ user, setUser }) {
@@ -50,6 +51,7 @@ export default function App() {
         <Route path="/ui" element={<UI />} />
         <Route path="/confirm" element={<Confirm />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/connect" element={<Connect />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/my-bookings" element={<MyBookings user={user} />} />
       </Routes>
