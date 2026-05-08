@@ -253,12 +253,20 @@ export default function SalonDashboard() {
                         alignItems:"flex-start", flexWrap:"wrap", gap:8}}>
                         <div>
                           <div style={{fontSize:14, color:"#121A12", fontWeight:500, marginBottom:4}}>
-                            ID {row.service_id}
+                            {row.service_name || `Услуга ${row.service_id}`}
                           </div>
-                          <span style={{...sc, borderRadius:20, padding:"3px 10px",
-                            fontSize:11, fontWeight:600, display:"inline-block"}}>
-                            {STRATEGY_LABELS[row.strategy_name] || row.strategy_name}
-                          </span>
+                          <div style={{display:"flex", alignItems:"center", gap:8}}>
+                            <span style={{...sc, borderRadius:20, padding:"3px 10px",
+                              fontSize:11, fontWeight:600, display:"inline-block"}}>
+                              {STRATEGY_LABELS[row.strategy_name] || row.strategy_name}
+                            </span>
+                            <span style={{fontSize:11, borderRadius:20, padding:"3px 10px",
+                              fontWeight:600, display:"inline-block",
+                              background: row.status==="published" ? "#dcfce7" : "#f3f4f6",
+                              color: row.status==="published" ? "#16a34a" : "#8F8475"}}>
+                              {row.status === "published" ? "На витрине" : "Черновик"}
+                            </span>
+                          </div>
                         </div>
 
                         {!isEditing ? (
