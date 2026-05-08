@@ -193,7 +193,7 @@ function InstallBanner() {
 }
 
 // ─── BookingCard — приоритизированная подача данных ───────────────────────────
-function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
+function BookingCard({ booking, defaultOpen = false, isNearest = false, onCancel = () => {} }) {
   const [open, setOpen] = useState(defaultOpen)
   const future = isFuture(booking.datetime)
   const savings = booking.base_price && booking.total_price ? booking.base_price - booking.total_price : 0
@@ -292,14 +292,22 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false }) {
               <span>Head Spa Beauty · ул. Миклухо-Маклая 37 · 5 мин от м. Беляево</span>
             </div>
 
-            {/* Кнопка переноса */}
-            {future && booking.status!=='cancelled' && (
-              <a href={`${WHATSAPP}?text=Хочу перенести или отменить запись ${String(booking.id).padStart(5,'0')} на ${formatDate(booking.datetime)} ${formatTime(booking.datetime)}`}
-                target="_blank" rel="noreferrer"
-                style={{ display:'flex',alignItems:'center',justifyContent:'center',gap:8,padding:'11px',borderRadius:12,border:'1px solid var(--border)',fontSize:13,fontWeight:500,color:'var(--dark)',textDecoration:'none' }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Отменить или перенести
-              </a>
+            {/* Кнопки действий */}
+            {future && booking.status!=='cancelled' && booking.status!=='cancelled_by_client' && booking.status!=='cancelled_by_salon' && (
+              <div style={{ display:'flex', gap:8 }}>
+                <a href={`${WHATSAPP}?text=Хочу перенести запись ${String(booking.id).padStart(5,'0')} на ${formatDate(booking.datetime)} ${formatTime(booking.datetime)}`}
+                  target="_blank" rel="noreferrer"
+                  style={{ flex:1,display:'flex',alignItems:'center',justifyContent:'center',gap:6,padding:'11px',borderRadius:12,border:'1px solid var(--border)',fontSize:13,fontWeight:500,color:'var(--dark)',textDecoration:'none' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  Перенести
+                </a>
+                <button
+                  onClick={() => onCancel(booking.id, booking.total_price)}
+                  style={{ flex:1,display:'flex',alignItems:'center',justifyContent:'center',gap:6,padding:'11px',borderRadius:12,border:'1px solid rgba(220,38,38,0.3)',fontSize:13,fontWeight:500,color:'#dc2626',background:'none',cursor:'pointer' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Отменить
+                </button>
+              </div>
             )}
 
             {/* Отзыв */}
@@ -361,6 +369,26 @@ export default function MyBookings({ user, onUserChange }) {
     }
     load()
   }, [])
+
+  const handleCancel = async (bookingId, refundAmount) => {
+    if (!window.confirm(`Отменить бронирование? ${refundAmount ? refundAmount.toLocaleString() + ' ₽ вернутся на ваш баланс Лови.' : ''}`)) return
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${API}/api/lovi/bookings/${bookingId}/cancel`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      const data = await res.json()
+      if (data.ok) {
+        alert(`Бронирование отменено. ${data.refunded ? data.refunded.toLocaleString() + ' ₽ возвращены на баланс.' : ''}`)
+        window.location.reload()
+      } else {
+        alert(data.detail || 'Ошибка при отмене')
+      }
+    } catch(e) {
+      alert('Ошибка сети')
+    }
+  }
 
   const upcoming = bookings.filter(b => isFuture(b.datetime) && b.status!=='cancelled').sort((a,b) => new Date(a.datetime)-new Date(b.datetime))
   const history  = bookings.filter(b => !isFuture(b.datetime) || b.status==='cancelled').sort((a,b) => new Date(b.datetime)-new Date(a.datetime))
@@ -471,7 +499,7 @@ export default function MyBookings({ user, onUserChange }) {
             </div>
           ) : (
             <div style={{ display:'flex',flexDirection:'column',gap:10 }}>
-              {upcoming.map((b,i) => <BookingCard key={b.id} booking={b} defaultOpen={i===0} isNearest={i===0} />)}
+              {upcoming.map((b,i) => <BookingCard key={b.id} booking={b} defaultOpen={i===0} isNearest={i===0} onCancel={handleCancel} />)}
             </div>
           )
         ) : (
