@@ -97,6 +97,9 @@ export default function SlotDrawer({ slot, onClose }) {
     if (!name.trim()) { setError('Введите имя'); return }
     if (!phone.trim() || phone.replace(/\D/g,'').length < 10) { setError('Введите корректный телефон'); return }
     if (expired) { setError('Слот уже недоступен'); return }
+    if (staffLoading) { setError('Подождите, загружаем информацию о мастере'); return }
+    const currentStaffId = staffRef.current?.id || staff?.id
+    if (!currentStaffId) { setError('Не удалось определить мастера. Попробуйте обновить страницу.'); return }
     setError('')
     setSubmitting(true)
     try {
@@ -110,7 +113,7 @@ export default function SlotDrawer({ slot, onClose }) {
           duration: (slot.duration_min || 60) * 60,
           lovi_price: slot.lovi_price,
           base_price: slot.base_price,
-          staff_id: (staffRef.current || staff)?.id || null,
+          staff_id: staffRef.current?.id || staff?.id || null,
           staff_name: (staffRef.current || staff)?.name || '',
           client_name: name.trim(),
           client_phone: phone.trim(),
