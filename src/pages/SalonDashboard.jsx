@@ -68,16 +68,48 @@ export default function SalonDashboard() {
 
         {/* Статус */}
         <div style={s.card}>
-          <div style={s.row}>
-            <div style={s.label}>Статус подключения</div>
-            <span style={salon.is_active ? s.badge : s.badgeOff}>
-              {salon.is_active ? "Активен" : "Отключён"}
-            </span>
+          <div style={{display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:16}}>
+            <div>
+              <div style={s.label}>Подключение</div>
+              <span style={salon.is_active ? s.badge : s.badgeOff}>
+                {salon.is_active ? "Активно" : "Отключено"}
+              </span>
+            </div>
+            <div>
+              <div style={s.label}>Синхронизация</div>
+              {salon.token_status === "ok" && <span style={s.badge}>Работает</span>}
+              {salon.token_status === "error" && <span style={s.badgeOff}>Ошибка</span>}
+              {(salon.token_status === "no_token" || salon.token_status === "unknown") && (
+                <span style={{...s.badgeOff, background:"#fef9c3", color:"#854d0e"}}>Не настроено</span>
+              )}
+            </div>
+            <div>
+              <div style={s.label}>Подключён</div>
+              <p style={{...s.value, fontSize:13}}>
+                {new Date(salon.connected_at).toLocaleDateString("ru-RU", {day:"numeric",month:"long",year:"numeric"})}
+              </p>
+            </div>
           </div>
-          <div style={s.row}>
-            <div style={s.label}>Подключён</div>
-            <p style={s.value}>{new Date(salon.connected_at).toLocaleDateString("ru-RU", {day:"numeric",month:"long",year:"numeric"})}</p>
-          </div>
+          {salon.last_sync_at && (
+            <div style={{marginTop:16, paddingTop:16, borderTop:"1px solid rgba(18,26,18,0.06)"}}>
+              <div style={s.label}>Последняя проверка</div>
+              <p style={{...s.value, fontSize:13, color:"#8F8475"}}>
+                {new Date(salon.last_sync_at).toLocaleString("ru-RU")}
+              </p>
+            </div>
+          )}
+          {salon.token_status === "no_token" && (
+            <div style={{marginTop:16, padding:"12px 16px", background:"#fef9c3", borderRadius:10, fontSize:13, color:"#854d0e", lineHeight:1.5}}>
+              Для синхронизации расписания необходимо переподключить салон через маркетплейс YCLIENTS.{" "}
+              <a href="https://yclients.com/e/mp_41940_lovi_goryaschie_okoshki_zapisi/" style={{color:"#854d0e", fontWeight:600}}>Переподключить →</a>
+            </div>
+          )}
+          {salon.token_status === "error" && (
+            <div style={{marginTop:16, padding:"12px 16px", background:"#fee2e2", borderRadius:10, fontSize:13, color:"#dc2626", lineHeight:1.5}}>
+              Не удаётся получить расписание. Возможно, токен YCLIENTS устарел.{" "}
+              <a href="https://yclients.com/e/mp_41940_lovi_goryaschie_okoshki_zapisi/" style={{color:"#dc2626", fontWeight:600}}>Переподключить →</a>
+            </div>
+          )}
         </div>
 
         {/* Контакты */}
