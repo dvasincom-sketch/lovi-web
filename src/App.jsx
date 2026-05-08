@@ -15,6 +15,8 @@ import Confirm from './pages/Confirm'
 import ResetPassword from './pages/ResetPassword'
 import Connect from './pages/Connect'
 import SalonDashboard from './pages/SalonDashboard'
+import SalonLogin from './pages/SalonLogin'
+import SalonAuth from './pages/SalonAuth'
 import Unsubscribe from './pages/Unsubscribe'
 
 function Home({ user, setUser }) {
@@ -54,6 +56,8 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/connect" element={<Connect />} />
         <Route path="/salon/dashboard" element={<SalonDashboard />} />
+        <Route path="/salon/login" element={<SalonLogin />} />
+        <Route path="/salon/auth" element={<SalonAuth />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/my-bookings" element={<MyBookings user={user} />} />
       </Routes>
