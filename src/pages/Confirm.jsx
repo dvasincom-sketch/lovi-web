@@ -62,7 +62,7 @@ export default function Confirm() {
         const data = await r.json()
         if (data.error || data.detail) { setBooking({ notFound: true }); return }
         setBooking(data)
-        if (data.status !== 'paid' && data.status !== 'confirmed' && attempts < 12) {
+        if (!['paid','confirmed','cancelled_by_salon','cancelled_by_client','cancelled'].includes(data.status) && attempts < 12) {
           attempts++
           setTimeout(poll, 2500)
         }
@@ -86,6 +86,8 @@ export default function Confirm() {
   }, [booking?.master_id])
 
   const isPaid       = booking?.status === 'paid' || booking?.status === 'confirmed'
+  const isCancelledBySalon = booking?.status === 'cancelled_by_salon'
+  const isCancelledByClient = booking?.status === 'cancelled_by_client' || booking?.status === 'cancelled'
   const durationMin  = booking ? Math.floor((booking.duration || 0) / 60) : 0
 
   function copyLink() {
@@ -145,18 +147,18 @@ export default function Confirm() {
         }}>
           <div style={{
             width: 40, height: 40, borderRadius: '50%',
-            background: isPaid ? 'rgba(34,197,94,0.1)' : 'rgba(249,115,22,0.1)',
+            background: isPaid ? 'rgba(34,197,94,0.1)' : isCancelledBySalon || isCancelledByClient ? 'rgba(220,38,38,0.1)' : 'rgba(249,115,22,0.1)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 20, flexShrink: 0,
           }}>
-            {isPaid ? '✓' : '⏳'}
+            {isPaid ? '✓' : isCancelledBySalon || isCancelledByClient ? '✕' : '⏳'}
           </div>
           <div>
             <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 22, fontWeight: 500, lineHeight: 1.2 }}>
-              {isPaid ? 'Запись подтверждена' : 'Ожидаем оплату...'}
+              {isPaid ? 'Запись подтверждена' : isCancelledBySalon ? 'Запись отменена салоном' : isCancelledByClient ? 'Вы отменили запись' : 'Ожидаем оплату...'}
             </div>
             <div style={{ fontSize: 13, color: 'var(--secondary)', marginTop: 3 }}>
-              {isPaid ? `Бронь №${bookingId}` : 'Обновляем статус автоматически'}
+              {isPaid ? `Бронь №${bookingId}` : isCancelledBySalon ? 'Средства будут возвращены на баланс Лови' : isCancelledByClient ? 'Средства возвращены на баланс Лови' : 'Обновляем статус автоматически'}
             </div>
           </div>
         </div>
