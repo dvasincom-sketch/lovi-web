@@ -179,7 +179,10 @@ export default function Partners() {
       </div>
 
       {/* Форма */}
-<div id="form" style={{ padding: isMobile ? '48px 20px 64px' : '72px 40px 88px', background: '#121A12' }}>
+<div id="form" style={{
+  padding: isMobile ? '48px 20px 64px' : '72px 40px 88px',
+  background: `radial-gradient(ellipse at 75% 8%, rgba(255,255,255,0.32) 0%, transparent 50%), #3D3830`
+}}>
   <div style={{ maxWidth: 520, margin: '0 auto' }}>
     <div style={{ ...s.label, color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>Стать партнёром</div>
     <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: isMobile ? 26 : 34, color: '#fff', textAlign: 'center', margin: '0 0 32px', lineHeight: 1.3 }}>
