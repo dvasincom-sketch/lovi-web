@@ -69,7 +69,11 @@ export default function Partners() {
     <div style={s.page}>
 
       {/* Hero */}
-      <div style={{ background: '#121A12', color: '#fff', padding: isMobile ? '60px 20px 56px' : '80px 40px 72px' }}>
+      <div style={{ 
+  background: `radial-gradient(ellipse at 75% 8%, rgba(255,255,255,0.32) 0%, transparent 50%), #3D3830`,
+  color: '#fff', 
+  padding: isMobile ? '60px 20px 56px' : '80px 40px 72px' 
+}}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={s.label}>Для партнёров</div>
           <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: isMobile ? 32 : 52, fontWeight: 600, lineHeight: 1.15, margin: '0 0 24px', letterSpacing: '-0.02em', maxWidth: 680 }}>
