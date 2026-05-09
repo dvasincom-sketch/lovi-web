@@ -20,6 +20,18 @@ import SalonDashboard from './pages/SalonDashboard'
 import SalonLogin from './pages/SalonLogin'
 import SalonAuth from './pages/SalonAuth'
 import Unsubscribe from './pages/Unsubscribe'
+import ComingSoon from './components/ComingSoon'
+
+function PageWithLayout({ children }) {
+  const [user, setUser] = useState(null)
+  return (
+    <>
+      <Nav user={user} onUserChange={setUser} />
+      {children}
+      <Footer />
+    </>
+  )
+}
 
 function Home({ user, setUser }) {
   const [city, setCity] = useState('Москва')
@@ -59,6 +71,11 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/connect" element={<Connect />} />
         <Route path="/salon/dashboard" element={<SalonDashboard />} />
+        <Route path="/about"    element={<PageWithLayout><ComingSoon title="О сервисе" /></PageWithLayout>} />
+        <Route path="/pass"     element={<PageWithLayout><ComingSoon title="Lovi Pass" /></PageWithLayout>} />
+        <Route path="/partners" element={<PageWithLayout><ComingSoon title="Партнёрам" /></PageWithLayout>} />
+        <Route path="/privacy"  element={<PageWithLayout><ComingSoon title="Политика конфиденциальности" /></PageWithLayout>} />
+        <Route path="/offer"    element={<PageWithLayout><ComingSoon title="Публичная оферта" /></PageWithLayout>} />
         <Route path="/salon/onboarding" element={<SalonOnboarding />} />
         <Route path="/salon/login" element={<SalonLogin />} />
         <Route path="/salon/auth" element={<SalonAuth />} />
