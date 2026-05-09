@@ -22,6 +22,7 @@ import SalonAuth from './pages/SalonAuth'
 import Unsubscribe from './pages/Unsubscribe'
 import ComingSoon from './components/ComingSoon'
 import Partners from './pages/Partners'
+import About from './pages/About'
 
 function PageWithLayout({ children }) {
   const [user, setUser] = useState(null)
@@ -74,7 +75,7 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/connect" element={<Connect />} />
         <Route path="/salon/dashboard" element={<SalonDashboard />} />
-        <Route path="/about"    element={<PageWithLayout><ComingSoon title="О сервисе" /></PageWithLayout>} />
+        <Route path="/about" element={<PageWithLayout><About /></PageWithLayout>} />
         <Route path="/pass"     element={<PageWithLayout><ComingSoon title="Lovi Pass" /></PageWithLayout>} />
         <Route path="/partners" element={<PageWithLayout><Partners /></PageWithLayout>} />
         <Route path="/privacy"  element={<PageWithLayout><ComingSoon title="Политика конфиденциальности" /></PageWithLayout>} />
