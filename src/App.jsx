@@ -23,6 +23,7 @@ import Unsubscribe from './pages/Unsubscribe'
 import ComingSoon from './components/ComingSoon'
 import Partners from './pages/Partners'
 import About from './pages/About'
+import Pass from './pages/Pass'
 
 function PageWithLayout({ children }) {
   const [user, setUser] = useState(null)
@@ -76,7 +77,7 @@ export default function App() {
         <Route path="/connect" element={<Connect />} />
         <Route path="/salon/dashboard" element={<SalonDashboard />} />
         <Route path="/about" element={<PageWithLayout><About /></PageWithLayout>} />
-        <Route path="/pass"     element={<PageWithLayout><ComingSoon title="Lovi Pass" /></PageWithLayout>} />
+        <Route path="/pass" element={<PageWithLayout><Pass /></PageWithLayout>} />
         <Route path="/partners" element={<PageWithLayout><Partners /></PageWithLayout>} />
         <Route path="/privacy"  element={<PageWithLayout><ComingSoon title="Политика конфиденциальности" /></PageWithLayout>} />
         <Route path="/offer"    element={<PageWithLayout><ComingSoon title="Публичная оферта" /></PageWithLayout>} />
