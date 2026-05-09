@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PartnerForm from '../components/PartnerForm'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 const API = "https://insalon.onrender.com"
