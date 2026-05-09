@@ -34,7 +34,7 @@ function PageWithLayout({ children }) {
   )
 }
 
-function Home({ user, setUser }) {
+function Home({ user, setUser, authOpen, setAuthOpen }) {
   const [city, setCity] = useState('Москва')
   const [searchQuery, setSearchQuery] = useState(null)
   const isMoscow = city === 'Москва'
@@ -66,7 +66,7 @@ export default function App() {
       <InstallBanner />
       <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home user={user} setUser={setUser} />} />
+        <Route path="/" element={<Home user={user} setUser={setUser} authOpen={authOpen} setAuthOpen={setAuthOpen} />} />
         <Route path="/ui" element={<UI />} />
         <Route path="/confirm" element={<Confirm />} />
         <Route path="/reset-password" element={<ResetPassword />} />
