@@ -60,6 +60,7 @@ export default function App() {
   const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem('lovi_user')) } catch { return null }
   })
+  const [authOpen, setAuthOpen] = useState(false)
   return (
     <>
       <UpdateBanner />
