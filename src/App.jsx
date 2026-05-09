@@ -82,7 +82,7 @@ export default function App() {
         <Route path="/salon/login" element={<SalonLogin />} />
         <Route path="/salon/auth" element={<SalonAuth />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
-        <Route path="/my-bookings" element={<MyBookings user={user} onUserChange={setUser} openAuth={() => setAuthOpen(true)} />} />
+        <Route path="/my-bookings" element={<MyBookings user={user} onUserChange={setUser} openAuth={() => setAuthOpen(true)} authOpen={authOpen} setAuthOpen={setAuthOpen} />} />
       </Routes>
     </BrowserRouter>
     </>

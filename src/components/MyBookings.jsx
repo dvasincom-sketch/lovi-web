@@ -355,7 +355,7 @@ function ProblemFAQ() {
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
-export default function MyBookings({ user, onUserChange, openAuth }) {
+export default function MyBookings({ user, onUserChange, openAuth, authOpen, setAuthOpen }) {
   const navigate = useNavigate()
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
@@ -417,7 +417,7 @@ export default function MyBookings({ user, onUserChange, openAuth }) {
 
   return (
     <div style={{ background:'var(--bg)',minHeight:'100vh' }}>
-      <Nav user={user} onUserChange={onUserChange} />
+      <Nav user={user} onUserChange={onUserChange} authOpen={authOpen} onAuthOpen={setAuthOpen} />
       <div style={{ maxWidth:960,margin:'0 auto',padding:'24px 16px 80px' }}>
 
         <div style={{ marginBottom:20 }}>

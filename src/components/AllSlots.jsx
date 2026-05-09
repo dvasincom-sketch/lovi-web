@@ -133,7 +133,7 @@ export default function AllSlots() {
 
   return (
     <>
-    <div style={{padding:isMobile?'32px 0 40px':'48px 0 60px', background:'#F1F0EC'}}>
+    <div id='slots' style={{padding:isMobile?'32px 0 40px':'48px 0 60px', background:'#F1F0EC', scrollMarginTop:'70px'}}>
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
         marginBottom:16,flexWrap:'wrap',gap:10,padding:isMobile?'0 16px':'0 40px'}}>
         <div style={{display:'flex',alignItems:'center',gap:12}}>
