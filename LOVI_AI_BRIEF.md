@@ -954,3 +954,95 @@ curl -X POST https://insalon.onrender.com/dev-sessions \
 **P2**
 7. Кэш слотов в Supabase (cron каждые 15 мин) — для масштабирования
 8. Автотесты booking flow
+
+---
+
+## ИТОГИ СЕССИИ 09.05.2026
+
+### Витрина — фикс timezone и эндпоинты
+
+- Разделили `/api/lovi/featured` (BentoGrid) и `/api/lovi/slots-stream` (AllSlots)
+- Починили timezone баг — сервер UTC, слоты в +03:00, теперь сегодняшние слоты отображаются
+- Убрали дубликаты в выдаче через дедупликацию по (service_id, datetime)
+- AllSlots переключён на `/api/lovi/slots-stream`
+- Fallback логика featured больше не перезаписывает сегодняшние слоты
+
+### Стратегии скидок — динамические параметры
+
+- Таблица `service_strategies` в Supabase: threshold_far, threshold_near, coeff_far, coeff_near, coeff_hot, strategy_name, status, service_name, category, display_order
+- Класс `DynamicDiscountStrategy` — параметры читаются из Supabase при каждом запросе
+- `get_strategy()` — fallback на step если не найдена в БД
+- Константы `FEATURED_SERVICES_WEEKDAY/WEEKEND` вынесены на уровень модуля
+- `_fetch_slots_for_date()` вынесена как общая функция, используется в обоих эндпоинтах
+- Новые эндпоинты: `GET /api/lovi/strategies`, `PUT /api/lovi/strategies/{service_id}`
+
+### Синхронизация услуг из YCLIENTS
+
+- `POST /api/lovi/sync-services` — тянет все услуги из YCLIENTS, upsert в Supabase
+- Whitelist категорий YCLIENTS: 27323178 (spa), 19468178 (head), 19658180 (back), 27461844 (spa)
+- Исключены архивные: 22296048, 22296054, 22296057
+- Новые услуги добавляются со статусом draft, существующие не перезаписываются
+- Заполнены service_name для 13 услуг вручную + 15 новых через sync
+
+### Salon Dashboard — переработка
+
+- Drag-and-drop порядка услуг (display_order)
+- Смена категории через select прямо в строке
+- Toggle published/draft на каждой услуге
+- Кнопка «Обновить из YCLIENTS» → sync-services
+- `StrategyDrawer` — глобальная стратегия с 4 шагами (приоритет → скидка → горизонт → услуги)
+- `ServiceDrawer` — точечные настройки одной услуги с кнопкой «Настроить»
+- Показывает текущие скидки по времени: за час / за день / за 3 дня
+- Счётчик опубликованных услуг в блоке «Витрина»
+
+### Salon Onboarding — переработка
+
+- Вопросы перенесены из отдельной страницы в drawer внутри дашборда
+- `/salon/onboarding` оставлен как роут но онбординг теперь в drawer
+- Пресеты скидок: мягкая (20%), сбалансированная (35%), агрессивная (45%), максимум (50%+)
+- Человекочитаемые описания вместо premium/step/popular
+
+### Skeleton loaders
+
+- BentoGrid: featured карточка (уже был) + правая колонка (новый)
+- AllSlots: 5 карточек с shimmer анимацией вместо `return null`
+- Цвет skeleton: `linear-gradient(135deg,#f0ede8,#e8e5e0)`
+
+### Footer
+
+- Новый `Footer.jsx` — тёмно-серый (#1C1F1C)
+- Tagline «Горящие окошки рядом с вами» шрифтом Playfair Display
+- Колонка 1: якоря (#featured, #slots, #about)
+- Колонка 2: О сервисе, Lovi Pass, Мои брони
+- Колонка 3: Партнёрам + Контакты
+- Юридика: Политика конфиденциальности, Публичная оферта
+- `scrollToAnchor()` — с других страниц редирект на `/#id`
+
+### Страницы-заглушки ComingSoon
+
+- Компонент `ComingSoon.jsx` — H1/H2/текст + CTA «Смотреть окошки»
+- Роуты: /about, /pass, /partners, /privacy, /offer
+- `PageWithLayout` — обёртка с Nav + Footer для заглушек
+
+### Якоря
+
+| Якорь | Секция | Компонент |
+|-------|--------|-----------|
+| `#featured` | Лучшее предложение | BentoGrid |
+| `#slots` | Ближайшие окошки | AllSlots |
+| `#about` | Поиск скидок | Hero |
+
+### Авторизация
+
+- `authOpen` state поднят в App.jsx
+- При переходе на /my-bookings без токена — автоматически открывается AuthModal
+- Nav принимает `authOpen` и `onAuthOpen` пропсы
+
+### Беклог (P0 → следующая сессия)
+
+1. `_fetch_slots_for_date` читать published услуги из Supabase вместо хардкода
+2. Ответ от поддержки YCLIENTS по B2C API
+3. YooKassa refund при отмене клиентом
+4. Баланс Lovi в /my-bookings
+5. Дубли услуг — скрывать в дашборде
+6. Кабинет партнёра — статистика броней и выручки

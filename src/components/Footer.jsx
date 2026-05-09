@@ -24,7 +24,7 @@ const SERVICE_LINKS = [
 ]
 
 const PARTNER_LINKS = [
-  { label: 'Подключить салон', href: '/partners' },
+  { label: 'Подключить салон', href: '/partners' },,
   { label: 'Кабинет партнёра', href: '/salon/login' },
 ]
 
