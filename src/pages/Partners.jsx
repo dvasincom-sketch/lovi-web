@@ -58,25 +58,6 @@ const REQUIREMENTS = [
 
 export default function Partners() {
   const isMobile = useIsMobile()
-  const [name, setName]       = useState('')
-  const [phone, setPhone]     = useState('')
-  const [salon, setSalon]     = useState('')
-  const [sent, setSent]       = useState(false)
-  const [loading, setLoading] = useState(false)
-
-  async function submit() {
-    if (!name || !phone || !salon) return
-    setLoading(true)
-    try {
-      await fetch(`${API}/api/lovi/city-partner`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ city: 'Москва', name, phone, salon_name: salon })
-      })
-      setSent(true)
-    } finally { setLoading(false) }
-  }
-
   const s = {
     page:    { background: 'var(--bg)', minHeight: '100vh', fontFamily: 'Inter, sans-serif' },
     section: { maxWidth: 1100, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' },
@@ -198,58 +179,15 @@ export default function Partners() {
       </div>
 
       {/* Форма */}
-      <div id="form" style={{ padding: isMobile ? '48px 20px 64px' : '72px 40px 88px', background: '#121A12' }}>
-        <div style={{ maxWidth: 520, margin: '0 auto' }}>
-          <div style={{ ...s.label, color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>Стать партнёром</div>
-          <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: isMobile ? 26 : 34, color: '#fff', textAlign: 'center', margin: '0 0 32px', lineHeight: 1.3 }}>
-            Хочу подключить салон
-          </h2>
-
-          {sent ? (
-            <div style={{ textAlign: 'center', padding: '32px 0' }}>
-              <div style={{ fontSize: 40, marginBottom: 16 }}>
-                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" style={{ margin: '0 auto', display: 'block' }}>
-                  <circle cx="28" cy="28" r="28" fill="rgba(249,115,22,0.12)"/>
-                  <path d="M18 28l8 8 14-14" stroke="#F97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <div style={{ fontSize: 18, fontWeight: 600, color: '#fff', marginBottom: 8 }}>Заявка получена</div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>Мы свяжемся с вами в течение рабочего дня и покажем цифры вашего же салона.</div>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <input style={{ ...s.input, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
-                placeholder="Ваше имя" value={name} onChange={e => setName(e.target.value)}
-                onFocus={e => e.target.style.borderColor = 'rgba(249,115,22,0.5)'}
-                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
-              />
-              <input style={{ ...s.input, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
-                placeholder="Телефон" value={phone}
-                onChange={e => {
-                  let v = e.target.value.replace(/[^\d+]/g, '')
-                  if (!v.startsWith('+7')) v = '+7' + v.replace(/^\+?7?/, '')
-                  if (v.length > 12) v = v.slice(0, 12)
-                  setPhone(v)
-                }}
-                onFocus={e => e.target.style.borderColor = 'rgba(249,115,22,0.5)'}
-                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
-              />
-              <input style={{ ...s.input, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
-                placeholder="Название салона" value={salon} onChange={e => setSalon(e.target.value)}
-                onFocus={e => e.target.style.borderColor = 'rgba(249,115,22,0.5)'}
-                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
-              />
-              <button disabled={loading || !name || !phone || !salon} onClick={submit}
-                style={{ background: (!name||!phone||!salon||loading) ? 'rgba(249,115,22,0.4)' : '#F97316', color: '#fff', border: 'none', padding: '15px', borderRadius: 14, fontSize: 15, fontWeight: 600, cursor: 'pointer', marginTop: 4, fontFamily: 'Inter, sans-serif', transition: 'background 0.2s' }}>
-                {loading ? 'Отправляем...' : 'Отправить заявку'}
-              </button>
-              <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)', textAlign: 'center', margin: 0 }}>
-                Мы свяжемся в течение рабочего дня
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+<div style={{ padding: isMobile ? '48px 20px 64px' : '72px 40px 88px', background: '#121A12' }}>
+  <div style={{ maxWidth: 520, margin: '0 auto' }}>
+    <div style={{ ...s.label, color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>Стать партнёром</div>
+    <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: isMobile ? 26 : 34, color: '#fff', textAlign: 'center', margin: '0 0 32px', lineHeight: 1.3 }}>
+      Хочу подключить салон
+    </h2>
+    <PartnerForm city="Москва" dark={true} />
+  </div>
+</div>
 
     </div>
   )
