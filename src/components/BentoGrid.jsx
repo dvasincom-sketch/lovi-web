@@ -237,7 +237,7 @@ export default function BentoGrid(){
   const pad = isMobile ? '32px 16px 80px' : '48px 40px 60px'
 
   return(
-    <div style={{maxWidth:1200,margin:'0 auto',padding:pad}}>
+    <div id='featured' style={{maxWidth:1200,margin:'0 auto',padding:pad,scrollMarginTop:'70px'}}>
       <div style={{fontSize:11,letterSpacing:'0.1em',textTransform:'uppercase',
         color:'var(--secondary)',marginBottom:isMobile?16:24}}>
         Ближайшие слоты

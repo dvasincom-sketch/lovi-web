@@ -24,6 +24,7 @@ import ComingSoon from './components/ComingSoon'
 
 function PageWithLayout({ children }) {
   const [user, setUser] = useState(null)
+  const [authOpen, setAuthOpen] = useState(false)
   return (
     <>
       <Nav user={user} onUserChange={setUser} />
@@ -39,7 +40,7 @@ function Home({ user, setUser }) {
   const isMoscow = city === 'Москва'
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: 60 }}>
-      <Nav onCityChange={setCity} user={user} onUserChange={setUser} />
+      <Nav onCityChange={setCity} user={user} onUserChange={setUser} authOpen={authOpen} onAuthOpen={setAuthOpen} />
       <HeroNew city={city} />
       {isMoscow && (
         <>
@@ -80,7 +81,7 @@ export default function App() {
         <Route path="/salon/login" element={<SalonLogin />} />
         <Route path="/salon/auth" element={<SalonAuth />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
-        <Route path="/my-bookings" element={<MyBookings user={user} />} />
+        <Route path="/my-bookings" element={<MyBookings user={user} onUserChange={setUser} openAuth={() => setAuthOpen(true)} />} />
       </Routes>
     </BrowserRouter>
     </>

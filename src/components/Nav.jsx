@@ -573,11 +573,15 @@ function CityModal({ currentCity, onSelect, onClose }) {
 
 // ─── Nav ───────────────────────────────────────────────────────────────────────
 
-export default function Nav({ onCityChange, user: userProp, onUserChange }) {
+export default function Nav({ onCityChange, user: userProp, onUserChange, authOpen: authOpenProp, onAuthOpen }) {
   const isMobile = useIsMobile()
   const [city, setCity]         = useState('Москва')
   const [cityOpen, setCityOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
+
+  const isAuthOpen = authOpenProp !== undefined ? authOpenProp : authOpen
+  function openAuth() { if (onAuthOpen) onAuthOpen(true); else setAuthOpen(true) }
+  function closeAuth() { if (onAuthOpen) onAuthOpen(false); else setAuthOpen(false) }
   const navigate                = useNavigate()
   const [user, setUser]         = useState(userProp ?? getStoredUser())
   const [dropOpen, setDropOpen] = useState(false)
@@ -645,7 +649,7 @@ export default function Nav({ onCityChange, user: userProp, onUserChange }) {
               )}
             </div>
           ) : (
-            <button onClick={() => setAuthOpen(true)} style={{
+            <button onClick={openAuth} style={{
               fontSize:13,fontWeight:500,cursor:'pointer',
               background:'var(--dark)',color:'#fff',
               border:'none',padding:'7px 18px',borderRadius:20,
@@ -658,7 +662,7 @@ export default function Nav({ onCityChange, user: userProp, onUserChange }) {
       </nav>
 
       {cityOpen && <CityModal currentCity={city} onSelect={selectCity} onClose={() => setCityOpen(false)} />}
-      {authOpen && <AuthModal onClose={() => setAuthOpen(false)} onLogin={handleLogin} />}
+      {isAuthOpen && <AuthModal onClose={closeAuth} onLogin={handleLogin} />}
     </>
   )
 }

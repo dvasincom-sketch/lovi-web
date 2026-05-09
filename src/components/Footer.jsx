@@ -56,10 +56,11 @@ export default function Footer() {
       borderBottom: '1px solid rgba(255,255,255,0.08)',
     },
     tagline: {
-      fontSize: isMobile ? 15 : 17,
+      fontSize: isMobile ? 22 : 26,
       color: 'rgba(255,255,255,0.75)',
-      lineHeight: 1.55,
+      lineHeight: 1.4,
       fontWeight: 400,
+      fontFamily: 'Playfair Display, serif',
       gridColumn: isMobile ? 'span 2' : 'span 1',
     },
     colTitle: {

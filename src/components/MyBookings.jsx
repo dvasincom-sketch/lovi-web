@@ -355,13 +355,18 @@ function ProblemFAQ() {
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
-export default function MyBookings({ user, onUserChange }) {
+export default function MyBookings({ user, onUserChange, openAuth }) {
   const navigate = useNavigate()
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('upcoming')
 
   useEffect(() => {
+    if (!getToken()) {
+      setLoading(false)
+      if (openAuth) openAuth()
+      return
+    }
     async function load() {
       try {
         const res = await fetch(`${API}/api/auth/my-bookings`, { headers:{ Authorization:`Bearer ${getToken()}` } })
