@@ -6,7 +6,7 @@ const API = "https://insalon.onrender.com"
 const CAT_LABELS = {
   head: "Голова",
   spa:  "SPA",
-  back: "Массаж",
+  back: "Спина",
   neck: "Шея",
   body: "Всё тело",
 }
