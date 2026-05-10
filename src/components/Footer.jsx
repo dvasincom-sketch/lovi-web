@@ -24,7 +24,7 @@ const SERVICE_LINKS = [
 ]
 
 const PARTNER_LINKS = [
-  { label: 'Подключить салон', href: '/partners' },,
+  { label: 'Подключить салон', href: '/partners' },
   { label: 'Кабинет партнёра', href: '/salon/login' },
 ]
 
@@ -88,17 +88,30 @@ export default function Footer() {
       display: 'flex',
       flexDirection: isMobile ? 'column' : 'row',
       justifyContent: 'space-between',
-      alignItems: isMobile ? 'flex-start' : 'center',
-      gap: 12,
+      alignItems: isMobile ? 'flex-start' : 'flex-start',
+      gap: 24,
+    },
+    legalText: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 8,
+      maxWidth: isMobile ? '100%' : '65%',
     },
     copy: {
       fontSize: 12,
-      color: 'rgba(255,255,255,0.2)',
+      color: 'rgba(255,255,255,0.35)',
+      lineHeight: 1.6,
+    },
+    disclaimer: {
+      fontSize: 11,
+      color: 'rgba(255,255,255,0.25)',
+      lineHeight: 1.6,
     },
     legal: {
       display: 'flex',
       gap: 20,
       flexWrap: 'wrap',
+      alignItems: 'center',
     },
     legalLink: {
       fontSize: 12,
@@ -171,9 +184,16 @@ export default function Footer() {
 
         </div>
 
-        {/* Нижняя строка */}
+        {/* Нижняя строка с юр. информацией */}
         <div style={s.bottom}>
-          <div style={s.copy}>© 2026 Lovi.today. Все права защищены.</div>
+          <div style={s.legalText}>
+            <div style={s.copy}>
+              © 2026 Lovi.today. Все права защищены. ОГРН 324774600002041, ИП Васин Дмитрий Вячеславович
+            </div>
+            <div style={s.disclaimer}>
+              Оставляя заявку, вы подтверждаете согласие на обработку персональных данных в соответствии с законодательством Российской Федерации, в том числе ФЗ №152 «О персональных данных». Ваши данные используются исключительно для связи и информирования об услугах. Использование материалов сайта без согласия владельца запрещено.
+            </div>
+          </div>
           <div style={s.legal}>
             {LEGAL_LINKS.map(l => (
               <button key={l.href} style={s.legalLink}
