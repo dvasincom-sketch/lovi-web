@@ -25,6 +25,7 @@ import Partners from './pages/Partners'
 import About from './pages/About'
 import Pass from './pages/Pass'
 import ScrollToTop from './components/ScrollToTop'
+import Privacy from './pages/Privacy'
 
 function PageWithLayout({ children }) {
   const [user, setUser] = useState(null)
@@ -85,7 +86,7 @@ export default function App() {
           <Route path="/about" element={<PageWithLayout><About /></PageWithLayout>} />
           <Route path="/pass" element={<PageWithLayout><Pass /></PageWithLayout>} />
           <Route path="/partners" element={<PageWithLayout><Partners /></PageWithLayout>} />
-          <Route path="/privacy"  element={<PageWithLayout><ComingSoon title="Политика конфиденциальности" /></PageWithLayout>} />
+          <Route path="/privacy" element={<PageWithLayout><Privacy /></PageWithLayout>} />
           <Route path="/offer"    element={<PageWithLayout><ComingSoon title="Публичная оферта" /></PageWithLayout>} />
           <Route path="/salon/onboarding" element={<SalonOnboarding />} />
           <Route path="/salon/login" element={<SalonLogin />} />
