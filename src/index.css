@@ -6,9 +6,9 @@
   --border: rgba(18,26,18,0.06); --secondary: #8F8475;
 }
 * { box-sizing: border-box; }
-html { background: #FDFCF9; }
-body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--dark); margin: 0; -webkit-font-smoothing: antialiased; }
-#root { background: var(--bg); min-height: 100vh; }
+html { background: #FDFCF9; height: 100%; }
+body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--dark); margin: 0; -webkit-font-smoothing: antialiased; height: 100%; }
+#root { background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; }
 
 @keyframes pulse { 0%{transform:scale(1);opacity:1} 100%{transform:scale(3);opacity:0} }
 @keyframes drift { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
