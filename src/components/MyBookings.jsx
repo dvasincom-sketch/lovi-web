@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Nav from './Nav'
+import Footer from './Footer' // ✅ добавлен
 
 const API = 'https://insalon.onrender.com'
 const WHATSAPP = 'https://wa.me/79164470569'
@@ -39,7 +40,6 @@ function BookingCode({ id, booking }) {
   const [copied, setCopied] = useState(false)
   function copy() { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000) }
 
-  // Показывать код только за 2 часа до визита
   const msToVisit = new Date(booking?.datetime) - Date.now()
   const twoHours = 2 * 60 * 60 * 1000
   const isVisible = msToVisit <= twoHours && msToVisit > 0
@@ -209,7 +209,6 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false, onCancel
 
   return (
     <div style={{ border:`1px solid ${open?'rgba(18,26,18,0.12)':'var(--border)'}`,borderRadius:16,background:open?'#fff':'transparent',transition:'all 0.2s',overflow:'hidden' }}>
-      {/* Шапка */}
       <div onClick={() => setOpen(v => !v)} style={{ padding:'16px 20px',cursor:'pointer',display:'flex',alignItems:'center',gap:14 }}>
         <div style={{ minWidth:48,textAlign:'center',background:future&&isNearest?'var(--dark)':'rgba(18,26,18,0.06)',borderRadius:12,padding:'8px 6px',flexShrink:0 }}>
           <div style={{ fontSize:18,fontWeight:700,color:future&&isNearest?'#fff':'var(--secondary)',fontFamily:'Playfair Display,serif',lineHeight:1 }}>{new Date(booking.datetime).getDate()}</div>
@@ -226,12 +225,10 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false, onCancel
         <span style={{ fontSize:12,color:'var(--secondary)',marginLeft:4,transform:open?'rotate(180deg)':'none',transition:'transform 0.2s' }}>▾</span>
       </div>
 
-      {/* Раскрытое тело */}
       {open && (
         <div style={{ padding:'0 20px 20px',borderTop:'1px solid var(--border)' }}>
           <div style={{ paddingTop:16,display:'flex',flexDirection:'column',gap:16 }}>
 
-            {/* Приоритет 1: для предстоящих — дата+время + код */}
             {future && booking.status!=='cancelled' && (
               <div style={{ background:'#F8F7F4',borderRadius:14,padding:'16px' }}>
                 <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,marginBottom:16 }}>
@@ -253,7 +250,6 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false, onCancel
               </div>
             )}
 
-            {/* Для завершённых — компактная сетка */}
             {!future && (
               <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10 }}>
                 {[
@@ -272,7 +268,6 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false, onCancel
               </div>
             )}
 
-            {/* Приоритет 2: финансы для предстоящих */}
             {future && booking.status!=='cancelled' && (
               <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10 }}>
                 {[
@@ -288,13 +283,11 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false, onCancel
               </div>
             )}
 
-            {/* Адрес */}
             <div style={{ fontSize:13,color:'var(--secondary)',display:'flex',gap:6,alignItems:'flex-start' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ flexShrink:0,marginTop:1 }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               <span>Head Spa Beauty · ул. Миклухо-Маклая 37 · 5 мин от м. Беляево</span>
             </div>
 
-            {/* Кнопки действий */}
             {future && booking.status!=='cancelled' && booking.status!=='cancelled_by_client' && booking.status!=='cancelled_by_salon' && (
               <div style={{ display:'flex', gap:8 }}>
                 <a href={`${WHATSAPP}?text=Хочу перенести запись ${String(booking.id).padStart(5,'0')} на ${formatDate(booking.datetime)} ${formatTime(booking.datetime)}`}
@@ -312,7 +305,6 @@ function BookingCard({ booking, defaultOpen = false, isNearest = false, onCancel
               </div>
             )}
 
-            {/* Отзыв */}
             {!future && booking.status!=='cancelled' && <ReviewForm booking={booking} />}
           </div>
         </div>
@@ -377,9 +369,7 @@ export default function MyBookings({ user, onUserChange, openAuth, authOpen, set
     load()
   }, [])
 
-  const handleCancel = (bookingId, refundAmount) => {
-    setCancelModal({ bookingId, refundAmount })
-  }
+  const handleCancel = (bookingId, refundAmount) => setCancelModal({ bookingId, refundAmount })
 
   const confirmCancel = async () => {
     if (!cancelModal) return
@@ -416,18 +406,17 @@ export default function MyBookings({ user, onUserChange, openAuth, authOpen, set
   function goUpcoming() { setTab('upcoming'); setTimeout(() => document.getElementById('bookings-list')?.scrollIntoView({ behavior:'smooth' }), 50) }
 
   return (
-    <div style={{ background:'var(--bg)',minHeight:'100vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg)' }}>
       <Nav user={user} onUserChange={onUserChange} authOpen={authOpen} onAuthOpen={setAuthOpen} />
-      <div style={{ maxWidth:960,margin:'0 auto',padding:'24px 16px 80px' }}>
+      <div style={{ flex: 1, maxWidth: 960, margin: '0 auto', padding: '24px 16px 80px', width: '100%' }}>
 
-        <div style={{ marginBottom:20 }}>
-          <h1 style={{ fontFamily:'Playfair Display,serif',fontSize:28,fontWeight:700,color:'var(--dark)',margin:0 }}>Мои брони</h1>
+        <div style={{ marginBottom: 20 }}>
+          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 28, fontWeight: 700, color: 'var(--dark)', margin: 0 }}>Мои брони</h1>
         </div>
 
         {/* Bento — одна строка из трёх плашек */}
-        <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:28 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 28 }}>
 
-          {/* 1. Следующий визит — первый, кликабельный */}
           <div
             onClick={goUpcoming}
             style={{ background:'#F1F0EC',borderRadius:20,padding:'18px 20px',display:'flex',flexDirection:'column',gap:4,cursor:upcoming.length>0?'pointer':'default',transition:'background 0.15s' }}
@@ -447,7 +436,6 @@ export default function MyBookings({ user, onUserChange, openAuth, authOpen, set
             )}
           </div>
 
-          {/* 2. Экономия */}
           <div style={{ background:'#F1F0EC',borderRadius:20,padding:'18px 20px',display:'flex',flexDirection:'column',gap:4 }}>
             <div style={{ fontSize:10,color:'var(--secondary)',textTransform:'uppercase',letterSpacing:'0.12em' }}>Ваша экономия</div>
             <div style={{ fontSize:22,fontWeight:700,color:'var(--dark)',fontFamily:'Playfair Display,serif',lineHeight:1,marginTop:4 }}>
@@ -456,13 +444,11 @@ export default function MyBookings({ user, onUserChange, openAuth, authOpen, set
             <div style={{ fontSize:11,color:'var(--secondary)',marginTop:2 }}>за {bookings.length} {plural(bookings.length)}</div>
           </div>
 
-          {/* 3. Lovi Pass — градиент как Private Beta */}
           <div style={{
             borderRadius:20,padding:'18px 20px',display:'flex',flexDirection:'column',justifyContent:'space-between',gap:12,
             background:'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
             position:'relative',overflow:'hidden',
           }}>
-            {/* Блик */}
             <div style={{ position:'absolute',top:-20,right:-20,width:80,height:80,borderRadius:'50%',background:'rgba(249,115,22,0.15)',filter:'blur(20px)',pointerEvents:'none' }} />
             <div>
               <div style={{ fontSize:10,color:'rgba(255,255,255,0.4)',textTransform:'uppercase',letterSpacing:'0.12em',marginBottom:4 }}>Lovi Pass</div>
@@ -479,66 +465,64 @@ export default function MyBookings({ user, onUserChange, openAuth, authOpen, set
         </div>
 
         {/* Табы */}
-        <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',background:'#F1F0EC',borderRadius:14,padding:4,marginBottom:20 }}>
-          {[['upcoming',`Предстоящие${upcoming.length?` · ${upcoming.length}`:''}`],['history','История']].map(([id,label]) => (
-            <button key={id} onClick={() => setTab(id)} style={{ padding:'9px',borderRadius:10,fontSize:13,fontWeight:500,border:'none',cursor:'pointer',fontFamily:'Inter,sans-serif',background:tab===id?'#fff':'transparent',color:tab===id?'var(--dark)':'var(--secondary)',boxShadow:tab===id?'0 1px 4px rgba(18,26,18,0.08)':'none',transition:'all 0.2s' }}>{label}</button>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: '#F1F0EC', borderRadius: 14, padding: 4, marginBottom: 20 }}>
+          {[['upcoming', `Предстоящие${upcoming.length ? ` · ${upcoming.length}` : ''}`], ['history', 'История']].map(([id, label]) => (
+            <button key={id} onClick={() => setTab(id)} style={{ padding: '9px', borderRadius: 10, fontSize: 13, fontWeight: 500, border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', background: tab === id ? '#fff' : 'transparent', color: tab === id ? 'var(--dark)' : 'var(--secondary)', boxShadow: tab === id ? '0 1px 4px rgba(18,26,18,0.08)' : 'none', transition: 'all 0.2s' }}>{label}</button>
           ))}
         </div>
 
-        {/* Контент */}
         <div id="bookings-list">
         {loading ? (
-          <div style={{ textAlign:'center',padding:'48px 0',color:'var(--secondary)',fontSize:14 }}>Загружаем брони...</div>
-        ) : tab==='upcoming' ? (
-          upcoming.length===0 ? (
-            <div style={{ padding:'32px 0' }}>
-              <div style={{ background:'var(--dark)',borderRadius:20,padding:'24px',marginBottom:16,display:'flex',alignItems:'center',justifyContent:'space-between' }}>
+          <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--secondary)', fontSize: 14 }}>Загружаем брони...</div>
+        ) : tab === 'upcoming' ? (
+          upcoming.length === 0 ? (
+            <div style={{ padding: '32px 0' }}>
+              <div style={{ background: 'var(--dark)', borderRadius: 20, padding: '24px', marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ fontSize:12,color:'rgba(255,255,255,0.4)',marginBottom:6 }}>Сегодня пользователи Lovi уже сэкономили</div>
-                  <div style={{ fontSize:28,fontWeight:700,color:'#fff',fontFamily:'Playfair Display,serif' }}>6 400 ₽</div>
-                  <div style={{ fontSize:12,color:'rgba(255,255,255,0.4)',marginTop:4 }}>Присоединяйтесь — горящие окошки ждут</div>
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 6 }}>Сегодня пользователи Lovi уже сэкономили</div>
+                  <div style={{ fontSize: 28, fontWeight: 700, color: '#fff', fontFamily: 'Playfair Display, serif' }}>6 400 ₽</div>
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>Присоединяйтесь — горящие окошки ждут</div>
                 </div>
-                <div style={{ fontSize:40 }}>🔥</div>
+                <div style={{ fontSize: 40 }}>🔥</div>
               </div>
-              <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:10 }}>
-                <a href="/" style={{ display:'flex',flexDirection:'column',gap:4,padding:'16px',borderRadius:16,background:'#F1F0EC',textDecoration:'none',border:'1px solid var(--border)' }}>
-                  <span style={{ fontSize:20 }}>💆</span>
-                  <span style={{ fontSize:13,fontWeight:600,color:'var(--dark)' }}>Массаж рядом</span>
-                  <span style={{ fontSize:11,color:'var(--secondary)' }}>Горящие окошки</span>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+                <a href="/" style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: '16px', borderRadius: 16, background: '#F1F0EC', textDecoration: 'none', border: '1px solid var(--border)' }}>
+                  <span style={{ fontSize: 20 }}>💆</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--dark)' }}>Массаж рядом</span>
+                  <span style={{ fontSize: 11, color: 'var(--secondary)' }}>Горящие окошки</span>
                 </a>
-                <a href="/" style={{ display:'flex',flexDirection:'column',gap:4,padding:'16px',borderRadius:16,background:'#F1F0EC',textDecoration:'none',border:'1px solid var(--border)' }}>
-                  <span style={{ fontSize:20 }}>✨</span>
-                  <span style={{ fontSize:13,fontWeight:600,color:'var(--dark)' }}>Head SPA</span>
-                  <span style={{ fontSize:11,color:'var(--secondary)' }}>Премиум со скидкой</span>
+                <a href="/" style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: '16px', borderRadius: 16, background: '#F1F0EC', textDecoration: 'none', border: '1px solid var(--border)' }}>
+                  <span style={{ fontSize: 20 }}>✨</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--dark)' }}>Head SPA</span>
+                  <span style={{ fontSize: 11, color: 'var(--secondary)' }}>Премиум со скидкой</span>
                 </a>
               </div>
-              <a href="/" style={{ display:'flex',alignItems:'center',justifyContent:'center',gap:8,padding:'14px',borderRadius:14,background:'var(--dark)',color:'#fff',textDecoration:'none',fontSize:14,fontWeight:600,fontFamily:'Inter,sans-serif' }}>
+              <a href="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '14px', borderRadius: 14, background: 'var(--dark)', color: '#fff', textDecoration: 'none', fontSize: 14, fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>
                 Смотреть все горящие окошки →
               </a>
             </div>
           ) : (
-            <div style={{ display:'flex',flexDirection:'column',gap:10 }}>
-              {upcoming.map((b,i) => <BookingCard key={b.id} booking={b} defaultOpen={i===0} isNearest={i===0} onCancel={handleCancel} />)}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {upcoming.map((b, i) => <BookingCard key={b.id} booking={b} defaultOpen={i === 0} isNearest={i === 0} onCancel={handleCancel} />)}
             </div>
           )
         ) : (
-          history.length===0 ? (
-            <div style={{ textAlign:'center',padding:'48px 16px' }}>
-              <div style={{ fontSize:32,marginBottom:12 }}>📋</div>
-              <div style={{ fontSize:16,fontWeight:600,color:'var(--dark)',marginBottom:6 }}>История пуста</div>
-              <div style={{ fontSize:13,color:'var(--secondary)' }}>Завершённые визиты появятся здесь</div>
+          history.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '48px 16px' }}>
+              <div style={{ fontSize: 32, marginBottom: 12 }}>📋</div>
+              <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--dark)', marginBottom: 6 }}>История пуста</div>
+              <div style={{ fontSize: 13, color: 'var(--secondary)' }}>Завершённые визиты появятся здесь</div>
             </div>
           ) : (
-            <div style={{ display:'flex',flexDirection:'column',gap:10 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {history.map(b => <BookingCard key={b.id} booking={b} />)}
-              {/* Retention блок */}
-              <div style={{ marginTop:6,borderRadius:20,padding:'20px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,background:'linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%)',position:'relative',overflow:'hidden' }}>
-                <div style={{ position:'absolute',top:-20,right:60,width:100,height:100,borderRadius:'50%',background:'rgba(249,115,22,0.1)',filter:'blur(24px)',pointerEvents:'none' }} />
+              <div style={{ marginTop: 6, borderRadius: 20, padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, background: 'linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%)', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: -20, right: 60, width: 100, height: 100, borderRadius: '50%', background: 'rgba(249,115,22,0.1)', filter: 'blur(24px)', pointerEvents: 'none' }} />
                 <div>
-                  <div style={{ fontSize:13,fontWeight:600,color:'#fff',marginBottom:4 }}>Хотите снова?</div>
-                  <div style={{ fontSize:12,color:'rgba(255,255,255,0.5)',lineHeight:1.5 }}>Узнайте какую скидку можно получить<br/>на ближайшее окошко</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 4 }}>Хотите снова?</div>
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>Узнайте какую скидку можно получить<br/>на ближайшее окошко</div>
                 </div>
-                <a href="/" style={{ flexShrink:0,background:'#F97316',border:'none',borderRadius:10,padding:'10px 18px',fontSize:13,fontWeight:600,color:'#fff',textDecoration:'none',whiteSpace:'nowrap' }}>
+                <a href="/" style={{ flexShrink: 0, background: '#F97316', border: 'none', borderRadius: 10, padding: '10px 18px', fontSize: 13, fontWeight: 600, color: '#fff', textDecoration: 'none', whiteSpace: 'nowrap' }}>
                   Смотреть →
                 </a>
               </div>
@@ -550,34 +534,35 @@ export default function MyBookings({ user, onUserChange, openAuth, authOpen, set
         <InstallBanner />
         <ProblemFAQ />
 
-      {cancelModal && (
-        <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.4)',zIndex:1000,display:'flex',alignItems:'flex-end',justifyContent:'center' }}
-          onClick={() => !cancelling && setCancelModal(null)}>
-          <div style={{ background:'#FDFCF9',borderRadius:'20px 20px 0 0',padding:'32px 24px 40px',width:'100%',maxWidth:480 }}
-            onClick={e => e.stopPropagation()}>
-            <div style={{ width:36,height:4,background:'rgba(18,26,18,0.15)',borderRadius:2,margin:'0 auto 24px' }} />
-            <h3 style={{ fontFamily:'Playfair Display,serif',fontSize:20,color:'#121A12',marginBottom:8 }}>Отменить бронирование?</h3>
-            {cancelModal.refundAmount > 0 && (
-              <p style={{ fontSize:14,color:'#8F8475',lineHeight:1.6,marginBottom:24 }}>
-                {cancelModal.refundAmount.toLocaleString()} ₽ вернутся на ваш баланс «Лови» и будут доступны для следующего бронирования.
-              </p>
-            )}
-            <div style={{ background:'rgba(18,26,18,0.04)',borderRadius:12,padding:'12px 16px',marginBottom:24,fontSize:13,color:'#8F8475',lineHeight:1.5 }}>
-              Отмена возможна не позднее чем за 2 часа до визита.
+        {cancelModal && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1000, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
+            onClick={() => !cancelling && setCancelModal(null)}>
+            <div style={{ background: '#FDFCF9', borderRadius: '20px 20px 0 0', padding: '32px 24px 40px', width: '100%', maxWidth: 480 }}
+              onClick={e => e.stopPropagation()}>
+              <div style={{ width: 36, height: 4, background: 'rgba(18,26,18,0.15)', borderRadius: 2, margin: '0 auto 24px' }} />
+              <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: 20, color: '#121A12', marginBottom: 8 }}>Отменить бронирование?</h3>
+              {cancelModal.refundAmount > 0 && (
+                <p style={{ fontSize: 14, color: '#8F8475', lineHeight: 1.6, marginBottom: 24 }}>
+                  {cancelModal.refundAmount.toLocaleString()} ₽ вернутся на ваш баланс «Лови» и будут доступны для следующего бронирования.
+                </p>
+              )}
+              <div style={{ background: 'rgba(18,26,18,0.04)', borderRadius: 12, padding: '12px 16px', marginBottom: 24, fontSize: 13, color: '#8F8475', lineHeight: 1.5 }}>
+                Отмена возможна не позднее чем за 2 часа до визита.
+              </div>
+              <button onClick={confirmCancel} disabled={cancelling}
+                style={{ width: '100%', padding: '14px', borderRadius: 12, background: '#dc2626', color: '#fff', border: 'none', fontSize: 15, fontWeight: 600, cursor: 'pointer', marginBottom: 10, opacity: cancelling ? 0.6 : 1 }}>
+                {cancelling ? 'Отменяем...' : 'Да, отменить'}
+              </button>
+              <button onClick={() => setCancelModal(null)} disabled={cancelling}
+                style={{ width: '100%', padding: '14px', borderRadius: 12, background: 'none', color: '#121A12', border: '1px solid rgba(18,26,18,0.15)', fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>
+                Назад
+              </button>
             </div>
-            <button onClick={confirmCancel} disabled={cancelling}
-              style={{ width:'100%',padding:'14px',borderRadius:12,background:'#dc2626',color:'#fff',border:'none',fontSize:15,fontWeight:600,cursor:'pointer',marginBottom:10,opacity:cancelling?0.6:1 }}>
-              {cancelling ? 'Отменяем...' : 'Да, отменить'}
-            </button>
-            <button onClick={() => setCancelModal(null)} disabled={cancelling}
-              style={{ width:'100%',padding:'14px',borderRadius:12,background:'none',color:'#121A12',border:'1px solid rgba(18,26,18,0.15)',fontSize:15,fontWeight:500,cursor:'pointer' }}>
-              Назад
-            </button>
           </div>
-        </div>
-      )}
+        )}
 
       </div>
+      <Footer />
     </div>
   )
 }
