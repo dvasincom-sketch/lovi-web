@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react"
+import { CAT_LABELS } from "../constants"
 import { useNavigate } from "react-router-dom"
 
 const API = "https://insalon.onrender.com"
 
-const CAT_LABELS = {
-  head: "Голова",
-  spa:  "SPA",
-  back: "Спина",
-  neck: "Шея",
-  body: "Всё тело",
-}
 
 const STRATEGY_DESC = {
   premium: "Премиальная",

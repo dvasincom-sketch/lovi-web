@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { CATEGORIES } from '../constants'
 import { useIsMobile } from '../hooks/useIsMobile'
 import SlotDrawer from './SlotDrawer'
 import SlotInfoDrawer from './SlotInfoDrawer'
@@ -26,14 +27,6 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
 }
 
-const CATEGORIES = [
-  { id: 'all', label: 'Все' },
-  { id: 'head', label: 'Голова' },
-  { id: 'spa', label: 'SPA' },
-  { id: 'back', label: 'Спина' },
-  { id: 'neck', label: 'Шея' },
-  { id: 'body', label: 'Всё тело' },
-]
 
 function SlotPill({ slot, isNextDay, onBook }) {
   const {str, urgent} = useTimer(slot.minutes_to_slot * 60)
