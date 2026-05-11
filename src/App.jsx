@@ -27,6 +27,7 @@ import Pass from './pages/Pass'
 import ScrollToTop from './components/ScrollToTop'
 import Privacy from './pages/Privacy'
 import Offer from './pages/Offer'
+import PartnerLanding from './pages/PartnerLanding'
 
 function PageWithLayout({ children }) {
   const [user, setUser] = useState(null)
@@ -93,6 +94,7 @@ export default function App() {
           <Route path="/salon/login" element={<SalonLogin />} />
           <Route path="/salon/auth" element={<SalonAuth />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
+          <Route path="/PartnerLanding" element={<PageWithLayout><PartnerLanding /></PageWithLayout>} />
           <Route path="/my-bookings" element={<MyBookings user={user} onUserChange={setUser} openAuth={() => setAuthOpen(true)} authOpen={authOpen} setAuthOpen={setAuthOpen} />} />
         </Routes>
       </BrowserRouter>
