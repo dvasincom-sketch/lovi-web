@@ -1917,32 +1917,170 @@ export default function UI() {
           <div style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--dark)', marginBottom: 8, maxWidth: 560 }}>
             Body — Система управления ликвидностью вашего времени. Интеллектуальный поиск окон в лучшие велнес-пространства города.
           </div>
-          <div style={{ fontSize: 12, color: 'var(--secondary)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+          <div style={{ fontSize: 12, color: 'var(--secondary)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 32 }}>
             CAPTION / EYEBROW — БЛИЖАЙШИЕ СЛОТЫ
+          </div>
+
+          {/* Typography scale table */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0, border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden' }}>
+            {[
+              { label: 'H1 · 52px · Playfair · 500', sample: 'The Art of State.', style: { fontFamily: 'Playfair Display,serif', fontSize: 52, fontWeight: 500, lineHeight: 1.05, letterSpacing: '-0.02em' } },
+              { label: 'H2 · 32px · Playfair · 500', sample: 'Гималайский дзен', style: { fontFamily: 'Playfair Display,serif', fontSize: 32, fontWeight: 500 } },
+              { label: 'H3 · 22px · Playfair · 500', sample: 'SPA для двоих', style: { fontFamily: 'Playfair Display,serif', fontSize: 22, fontWeight: 500 } },
+              { label: 'Body · 15px · Inter · 400',  sample: 'Система управления ликвидностью вашего времени. Интеллектуальный поиск окон.', style: { fontSize: 15, lineHeight: 1.7, maxWidth: 480 } },
+              { label: 'Small · 13px · Inter · 400', sample: 'Мастер освободился на 17:00 · Head Spa Beauty · ул. Миклухо-Маклая 37', style: { fontSize: 13, lineHeight: 1.6, color: 'var(--secondary)' } },
+              { label: 'Caption · 11px · Inter · 500 · uppercase', sample: 'БЛИЖАЙШИЕ СЛОТЫ · ГОРЯЩИЕ ОКНА', style: { fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--secondary)', fontWeight: 500 } },
+              { label: 'Mono · 13px · monospace',    sample: '17:00  →  18:30  ·  90 мин  ·  −15%', style: { fontSize: 13, fontFamily: 'monospace', color: 'var(--dark)' } },
+            ].map((row, i) => (
+              <div key={i} style={{ display: 'flex', gap: 24, alignItems: 'center', padding: '16px 20px', borderBottom: i < 6 ? '1px solid var(--border)' : 'none', background: i % 2 === 0 ? '#fff' : 'rgba(18,26,18,0.015)' }}>
+                <div style={{ fontSize: 10, color: 'var(--secondary)', fontFamily: 'monospace', whiteSpace: 'nowrap', minWidth: 200, flexShrink: 0 }}>{row.label}</div>
+                <div style={{ ...row.style, color: row.style.color || 'var(--dark)' }}>{row.sample}</div>
+              </div>
+            ))}
           </div>
         </Section>
 
         <Section id="icons" title="Иконки / Icons — lucide-react">
-          {/* Usage note */}
-          <div style={{ background: 'rgba(18,26,18,0.03)', borderRadius: 12, padding: '12px 16px', marginBottom: 24, fontSize: 12, fontFamily: 'monospace', color: 'var(--secondary)' }}>
-            {'import { Zap, MapPin, Clock } from \'lucide-react\''}<br />
-            {'<Icon i={Zap} size={16} color="var(--accent)" stroke={1.5} />'}
+
+          {/* Code block with syntax highlighting */}
+          <div style={{ background: '#1A1F1A', borderRadius: 16, overflow: 'hidden', marginBottom: 32 }}>
+            {/* Header bar */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ display: 'flex', gap: 6 }}>
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#FF5F57' }} />
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#FEBC2E' }} />
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#28C840' }} />
+              </div>
+              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', fontFamily: 'monospace', letterSpacing: '0.06em' }}>UI.jsx</span>
+              <div style={{ width: 44 }} />
+            </div>
+            {/* Code body */}
+            <div style={{ padding: '20px 24px', fontFamily: 'monospace', fontSize: 13, lineHeight: 1.9 }}>
+              <div>
+                <span style={{ color: '#6B9EFF' }}>import</span>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}> {'{ '}</span>
+                <span style={{ color: '#F97316' }}>Zap</span>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>, </span>
+                <span style={{ color: '#F97316' }}>MapPin</span>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>, </span>
+                <span style={{ color: '#F97316' }}>Clock</span>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>{' }'} </span>
+                <span style={{ color: '#6B9EFF' }}>from</span>
+                <span style={{ color: '#4ADE80' }}> 'lucide-react'</span>
+              </div>
+              <div style={{ marginTop: 4, color: 'rgba(255,255,255,0.2)', fontSize: 12 }}>
+                {'// один хелпер — используй везде в проекте'}
+              </div>
+              <div style={{ marginTop: 4 }}>
+                <span style={{ color: '#6B9EFF' }}>const </span>
+                <span style={{ color: '#FCD34D' }}>Icon</span>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}> = ({'{ '}</span>
+                <span style={{ color: '#F97316' }}>i</span>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>: I, </span>
+                <span style={{ color: '#F97316' }}>size</span>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>=16, </span>
+                <span style={{ color: '#F97316' }}>color</span>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>='currentColor', </span>
+                <span style={{ color: '#F97316' }}>stroke</span>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>=1.5 {'}'}) </span>
+                <span style={{ color: '#6B9EFF' }}>=&gt;</span>
+              </div>
+              <div style={{ paddingLeft: 20 }}>
+                <span style={{ color: 'rgba(255,255,255,0.4)' }}>&lt;</span>
+                <span style={{ color: '#4ADE80' }}>I</span>
+                <span style={{ color: '#F97316' }}> size</span>
+                <span style={{ color: 'rgba(255,255,255,0.4)' }}>={'{'}</span>
+                <span style={{ color: '#FCD34D' }}>size</span>
+                <span style={{ color: 'rgba(255,255,255,0.4)' }}>{'}'} </span>
+                <span style={{ color: '#F97316' }}>color</span>
+                <span style={{ color: 'rgba(255,255,255,0.4)' }}>={'{'}</span>
+                <span style={{ color: '#FCD34D' }}>color</span>
+                <span style={{ color: 'rgba(255,255,255,0.4)' }}>{'}'} </span>
+                <span style={{ color: '#F97316' }}>strokeWidth</span>
+                <span style={{ color: 'rgba(255,255,255,0.4)' }}>={'{'}</span>
+                <span style={{ color: '#FCD34D' }}>stroke</span>
+                <span style={{ color: 'rgba(255,255,255,0.4)' }}>{'}'} /&gt;</span>
+              </div>
+              <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+                <div>
+                  <span style={{ color: 'rgba(255,255,255,0.4)' }}>&lt;</span>
+                  <span style={{ color: '#4ADE80' }}>Icon</span>
+                  <span style={{ color: '#F97316' }}> i</span>
+                  <span style={{ color: 'rgba(255,255,255,0.4)' }}>={'{'}</span>
+                  <span style={{ color: '#FCD34D' }}>Zap</span>
+                  <span style={{ color: 'rgba(255,255,255,0.4)' }}>{'}'} </span>
+                  <span style={{ color: '#F97316' }}>size</span>
+                  <span style={{ color: 'rgba(255,255,255,0.4)' }}>={'{'}</span>
+                  <span style={{ color: '#FCD34D' }}>16</span>
+                  <span style={{ color: 'rgba(255,255,255,0.4)' }}>{'}'} </span>
+                  <span style={{ color: '#F97316' }}>color</span>
+                  <span style={{ color: 'rgba(255,255,255,0.4)' }}>="</span>
+                  <span style={{ color: '#4ADE80' }}>var(--accent)</span>
+                  <span style={{ color: 'rgba(255,255,255,0.4)' }}>" </span>
+                  <span style={{ color: '#F97316' }}>stroke</span>
+                  <span style={{ color: 'rgba(255,255,255,0.4)' }}>={'{'}</span>
+                  <span style={{ color: '#FCD34D' }}>1.5</span>
+                  <span style={{ color: 'rgba(255,255,255,0.4)' }}>{'}'} /&gt;</span>
+                </div>
+                {/* Live preview inline */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 12px', background: 'rgba(249,115,22,0.1)', borderRadius: 8, border: '1px solid rgba(249,115,22,0.2)' }}>
+                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em' }}>PREVIEW</span>
+                  <Icon i={Zap} size={16} color="var(--accent)" stroke={1.5} />
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Icon groups */}
+          {/* Stroke weights + color variants — top row */}
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ fontSize: 11, color: 'var(--secondary)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 16 }}>Толщина и цвет</div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'stretch' }}>
+              {/* Stroke scale */}
+              {[
+                { stroke: 1,   label: 'thin · 1',      bg: '#fff' },
+                { stroke: 1.5, label: 'regular · 1.5', bg: '#fff' },
+                { stroke: 2,   label: 'medium · 2',    bg: '#fff' },
+                { stroke: 2.5, label: 'bold · 2.5',    bg: '#fff' },
+              ].map(({ stroke, label, bg }) => (
+                <div key={stroke} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: '16px 20px', border: stroke === 1.5 ? '1px solid var(--dark)' : '1px solid var(--border)', borderRadius: 14, background: bg, minWidth: 80 }}>
+                  <Icon i={Zap} size={22} color="var(--dark)" stroke={stroke} />
+                  <span style={{ fontSize: 9, color: stroke === 1.5 ? 'var(--dark)' : 'var(--secondary)', fontFamily: 'monospace', fontWeight: stroke === 1.5 ? 600 : 400 }}>{label}</span>
+                </div>
+              ))}
+              {/* Divider */}
+              <div style={{ width: 1, background: 'var(--border)', margin: '8px 4px' }} />
+              {/* Color variants */}
+              {[
+                { color: 'var(--dark)',      label: 'dark',    bg: '#fff',           border: 'var(--border)' },
+                { color: 'var(--accent)',    label: 'accent',  bg: 'rgba(249,115,22,0.06)', border: 'rgba(249,115,22,0.2)' },
+                { color: 'var(--secondary)', label: 'muted',   bg: '#fff',           border: 'var(--border)' },
+                { color: '#fff',             label: 'on dark', bg: 'var(--dark)',    border: 'transparent' },
+              ].map(({ color, label, bg, border }) => (
+                <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: '16px 20px', border: `1px solid ${border}`, borderRadius: 14, background: bg, minWidth: 80 }}>
+                  <Icon i={Zap} size={22} color={color} stroke={1.5} />
+                  <span style={{ fontSize: 9, color: label === 'on dark' ? 'rgba(255,255,255,0.45)' : 'var(--secondary)', fontFamily: 'monospace' }}>{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Icon grid — all groups */}
           {[
             {
               label: 'Навигация и действия',
+              color: 'var(--dark)',
               items: [
-                { i: Search, name: 'Search' }, { i: Filter, name: 'Filter' }, { i: SlidersHorizontal, name: 'SlidersHorizontal' },
+                { i: Search, name: 'Search' }, { i: Filter, name: 'Filter' }, { i: SlidersHorizontal, name: 'Sliders' },
                 { i: Menu, name: 'Menu' }, { i: X, name: 'X' }, { i: ChevronDown, name: 'ChevronDown' },
-                { i: ChevronRight, name: 'ChevronRight' }, { i: ArrowRight, name: 'ArrowRight' }, { i: Plus, name: 'Plus' },
-                { i: Minus, name: 'Minus' }, { i: Check, name: 'Check' }, { i: Copy, name: 'Copy' },
-                { i: Share2, name: 'Share2' }, { i: Eye, name: 'Eye' }, { i: Settings, name: 'Settings' },
+                { i: ChevronRight, name: 'ChevronRight' }, { i: ArrowRight, name: 'ArrowRight' }, { i: ArrowLeft, name: 'ArrowLeft' },
+                { i: Plus, name: 'Plus' }, { i: Minus, name: 'Minus' }, { i: Check, name: 'Check' },
+                { i: Copy, name: 'Copy' }, { i: Share2, name: 'Share2' }, { i: Eye, name: 'Eye' },
+                { i: EyeOff, name: 'EyeOff' }, { i: Settings, name: 'Settings' }, { i: Play, name: 'Play' },
               ]
             },
             {
               label: 'Время и статус',
+              color: 'var(--accent)',
               items: [
                 { i: Clock, name: 'Clock' }, { i: Timer, name: 'Timer' }, { i: Calendar, name: 'Calendar' },
                 { i: CalendarDays, name: 'CalendarDays' }, { i: Zap, name: 'Zap' }, { i: Flame, name: 'Flame' },
@@ -1952,6 +2090,7 @@ export default function UI() {
             },
             {
               label: 'Геолокация и контакты',
+              color: 'var(--dark)',
               items: [
                 { i: MapPin, name: 'MapPin' }, { i: Navigation, name: 'Navigation' },
                 { i: Phone, name: 'Phone' }, { i: Mail, name: 'Mail' }, { i: MessageCircle, name: 'MessageCircle' },
@@ -1960,6 +2099,7 @@ export default function UI() {
             },
             {
               label: 'Коммерция и ценности',
+              color: 'var(--dark)',
               items: [
                 { i: CreditCard, name: 'CreditCard' }, { i: Wallet, name: 'Wallet' }, { i: Tag, name: 'Tag' },
                 { i: Percent, name: 'Percent' }, { i: ShoppingBag, name: 'ShoppingBag' },
@@ -1968,56 +2108,58 @@ export default function UI() {
             },
           ].map(group => (
             <div key={group.label} style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 11, color: 'var(--secondary)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 14 }}>{group.label}</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              <div style={{ fontSize: 11, color: 'var(--secondary)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ width: 3, height: 10, borderRadius: 2, background: group.color === 'var(--accent)' ? 'var(--accent)' : 'var(--dark)', display: 'inline-block' }} />
+                {group.label}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(76px, 1fr))', gap: 6 }}>
                 {group.items.map(({ i: Ic, name }) => (
-                  <div key={name} style={{
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                    padding: '14px 12px', border: '1px solid var(--border)', borderRadius: 14,
-                    background: '#fff', cursor: 'default', minWidth: 72, transition: 'all 0.2s'
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--dark)'; e.currentTarget.style.background = 'rgba(18,26,18,0.02)' }}
+                  <div key={name}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '14px 8px', border: '1px solid var(--border)', borderRadius: 14, background: '#fff', cursor: 'default', transition: 'all 0.15s' }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = group.color === 'var(--accent)' ? 'rgba(249,115,22,0.4)' : 'rgba(18,26,18,0.25)'; e.currentTarget.style.background = group.color === 'var(--accent)' ? 'rgba(249,115,22,0.04)' : 'rgba(18,26,18,0.02)' }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = '#fff' }}
                   >
-                    <Icon i={Ic} size={20} color="var(--dark)" stroke={1.5} />
-                    <span style={{ fontSize: 9, color: 'var(--secondary)', fontFamily: 'monospace', letterSpacing: '0.02em', textAlign: 'center', lineHeight: 1.3 }}>{name}</span>
+                    <Icon i={Ic} size={20} color={group.color} stroke={1.5} />
+                    <span style={{ fontSize: 9, color: 'var(--secondary)', fontFamily: 'monospace', textAlign: 'center', lineHeight: 1.3, wordBreak: 'break-all' }}>{name}</span>
                   </div>
                 ))}
               </div>
             </div>
           ))}
 
-          {/* Stroke weights demo */}
-          <div style={{ marginBottom: 0 }}>
-            <div style={{ fontSize: 11, color: 'var(--secondary)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 14 }}>Толщина обводки / stroke</div>
-            <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-              {[
-                { stroke: 1, label: 'thin · 1' },
-                { stroke: 1.5, label: 'regular · 1.5' },
-                { stroke: 2, label: 'medium · 2' },
-                { stroke: 2.5, label: 'bold · 2.5' },
-              ].map(({ stroke, label }) => (
-                <div key={stroke} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                  <Icon i={Zap} size={24} color="var(--dark)" stroke={stroke} />
-                  <span style={{ fontSize: 10, color: 'var(--secondary)', fontFamily: 'monospace' }}>{label}</span>
-                </div>
+          {/* In-context usage examples */}
+          <div>
+            <div style={{ fontSize: 11, color: 'var(--secondary)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 16 }}>Применение в контексте</div>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+              {/* Button with icon */}
+              <button style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--accent)', color: '#fff', border: 'none', padding: '12px 20px', borderRadius: 14, fontWeight: 600, cursor: 'pointer', fontSize: 13 }}>
+                <Icon i={Zap} size={14} color="#fff" stroke={2} /> Забрать слот
+              </button>
+              <button style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--dark)', color: '#fff', border: 'none', padding: '12px 20px', borderRadius: 14, fontWeight: 500, cursor: 'pointer', fontSize: 13 }}>
+                <Icon i={Search} size={14} color="#fff" stroke={1.5} /> Найти окна
+              </button>
+              <button style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'transparent', color: 'var(--dark)', border: '1px solid var(--border)', padding: '12px 20px', borderRadius: 14, fontWeight: 500, cursor: 'pointer', fontSize: 13 }}>
+                <Icon i={SlidersHorizontal} size={14} color="var(--dark)" stroke={1.5} /> Фильтры
+              </button>
+              {/* Icon-only buttons */}
+              {[Search, MapPin, Heart, Share2].map((Ic, i) => (
+                <button key={i} style={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', borderRadius: 12, background: '#fff', cursor: 'pointer', transition: 'all 0.15s' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--dark)' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)' }}
+                >
+                  <Icon i={Ic} size={16} color="var(--dark)" stroke={1.5} />
+                </button>
               ))}
-              <div style={{ marginLeft: 16, display: 'flex', gap: 12 }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                  <Icon i={Zap} size={20} color="var(--accent)" stroke={1.5} />
-                  <span style={{ fontSize: 10, color: 'var(--secondary)', fontFamily: 'monospace' }}>accent</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                  <Icon i={Zap} size={20} color="var(--secondary)" stroke={1.5} />
-                  <span style={{ fontSize: 10, color: 'var(--secondary)', fontFamily: 'monospace' }}>muted</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, background: 'var(--dark)', padding: '10px 10px 8px', borderRadius: 12 }}>
-                  <Icon i={Zap} size={20} color="#fff" stroke={1.5} />
-                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>on dark</span>
-                </div>
+              {/* Inline text + icon */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--secondary)' }}>
+                <Icon i={MapPin} size={13} color="var(--secondary)" stroke={1.5} /> Head Spa Beauty · Беляево
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--accent)', background: 'rgba(249,115,22,0.08)', padding: '4px 10px', borderRadius: 8 }}>
+                <Icon i={Clock} size={12} color="var(--accent)" stroke={2} /> 38 мин
               </div>
             </div>
           </div>
+
         </Section>
 
         <Section id="buttons" title="Кнопки / Buttons">

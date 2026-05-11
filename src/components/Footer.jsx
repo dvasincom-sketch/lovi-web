@@ -2,9 +2,10 @@ import { useIsMobile } from '../hooks/useIsMobile'
 import { useNavigate } from 'react-router-dom'
 
 // Якоря — скролл к элементу на главной
-function scrollToAnchor(id) {
+function scrollToAnchor(id, navigate) {
   if (window.location.pathname !== '/') {
-    window.location.href = `/#${id}`
+    sessionStorage.setItem('scrollTo', id)
+    navigate('/')
     return
   }
   const el = document.getElementById(id)
@@ -21,11 +22,18 @@ const SERVICE_LINKS = [
   { label: 'О сервисе',   href: '/about' },
   { label: 'Lovi Pass',   href: '/pass' },
   { label: 'Мои брони',   href: '/my-bookings' },
+  { label: 'Библиотека',  href: '/library' },
 ]
 
 const PARTNER_LINKS = [
   { label: 'Подключить салон', href: '/partners' },
   { label: 'Кабинет партнёра', href: '/salon/login' },
+]
+
+const COLLAB_LINKS = [
+  { label: 'Инвесторам',     href: '/investor',         sub: 'Yield Management платформа' },
+  { label: 'Маркетологам',   href: '/research',         sub: 'Исследования и данные' },
+  { label: 'Исследователям', href: '/research/dataset', sub: 'Открытый датасет 2026' },
 ]
 
 const LEGAL_LINKS = [
@@ -41,7 +49,7 @@ export default function Footer() {
     wrap: {
       background: '#1C1F1C',
       fontFamily: 'Inter, sans-serif',
-      padding: isMobile ? '48px 20px 36px' : '64px 40px 44px',
+      padding: isMobile ? '0 0 36px' : '0 0 44px',
     },
     inner: {
       maxWidth: 1200,
@@ -49,14 +57,14 @@ export default function Footer() {
     },
     top: {
       display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr 1fr' : '1.2fr 1fr 1fr 1fr',
-      gap: isMobile ? '32px 24px' : 48,
+      gridTemplateColumns: isMobile ? '1fr 1fr' : '1.2fr 1fr 1fr 1fr 1fr',
+      gap: isMobile ? '32px 24px' : 40,
       marginBottom: isMobile ? 36 : 52,
       paddingBottom: isMobile ? 36 : 52,
       borderBottom: '1px solid rgba(255,255,255,0.08)',
     },
     tagline: {
-      fontSize: isMobile ? 22 : 26,
+      fontSize: isMobile ? 22 : 24,
       color: 'rgba(255,255,255,0.75)',
       lineHeight: 1.4,
       fontWeight: 400,
@@ -132,60 +140,112 @@ export default function Footer() {
   return (
     <footer style={s.wrap}>
       <div style={s.inner}>
-        <div style={s.top}>
 
-          {/* Tagline */}
-          <div style={s.tagline}>
-            Горящие окошки<br />рядом с вами
-          </div>
+        {/* Top grid — два визуальных блока B2C / B2B */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          borderRadius: 0,
+          overflow: 'hidden',
+          marginBottom: isMobile ? 32 : 44,
+        }}>
+          {/* ── B2C зона — чуть светлее ─────────────────────────────────── */}
+          <div style={{
+            background: 'rgba(255,255,255,0.03)',
+            padding: isMobile ? '32px 20px' : '40px 36px',
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr 1fr' : '1.4fr 1fr 1fr',
+            gap: isMobile ? '28px 20px' : 40,
+            borderRight: isMobile ? 'none' : '1px solid rgba(255,255,255,0.05)',
+            borderBottom: isMobile ? '1px solid rgba(255,255,255,0.05)' : 'none',
+            alignItems: 'start',
+          }}>
+            {/* Tagline */}
+            <div style={{ ...s.tagline, gridColumn: isMobile ? 'span 2' : 'span 1' }}>
+              Горящие окошки<br />рядом с вами
+            </div>
 
-          {/* Колонка 1 — якоря */}
-          <div>
-            <div style={s.colTitle}>На странице</div>
-            {NAV_LINKS.map(l => (
-              <button key={l.anchor} style={s.link}
-                onMouseEnter={hoverOn} onMouseLeave={hoverOff}
-                onClick={() => scrollToAnchor(l.anchor)}>
-                {l.label}
-              </button>
-            ))}
-          </div>
+            {/* Колонка — На странице */}
+            <div>
+              <div style={s.colTitle}>На странице</div>
+              {NAV_LINKS.map(l => (
+                <button key={l.anchor} style={s.link}
+                  onMouseEnter={hoverOn} onMouseLeave={hoverOff}
+                  onClick={() => scrollToAnchor(l.anchor, navigate)}>
+                  {l.label}
+                </button>
+              ))}
+            </div>
 
-          {/* Колонка 2 — сервис */}
-          <div>
-            <div style={s.colTitle}>Сервис</div>
-            {SERVICE_LINKS.map(l => (
-              <button key={l.href} style={s.link}
-                onMouseEnter={hoverOn} onMouseLeave={hoverOff}
-                onClick={() => navigate(l.href)}>
-                {l.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Колонка 3 — партнёрам */}
-          <div>
-            <div style={s.colTitle}>Партнёрам</div>
-            {PARTNER_LINKS.map(l => (
-              <button key={l.href} style={s.link}
-                onMouseEnter={hoverOn} onMouseLeave={hoverOff}
-                onClick={() => navigate(l.href)}>
-                {l.label} →
-              </button>
-            ))}
-            <div style={{ marginTop: 20 }}>
-              <div style={s.colTitle}>Контакты</div>
-              <a href="mailto:hello@lovi.today" style={s.link}
-                onMouseEnter={hoverOn} onMouseLeave={hoverOff}>
-                hello@lovi.today
-              </a>
+            {/* Колонка — Сервис */}
+            <div>
+              <div style={s.colTitle}>Сервис</div>
+              {SERVICE_LINKS.map(l => (
+                <button key={l.href} style={s.link}
+                  onMouseEnter={hoverOn} onMouseLeave={hoverOff}
+                  onClick={() => navigate(l.href)}>
+                  {l.label}
+                </button>
+              ))}
             </div>
           </div>
 
+          {/* ── B2B зона — немного темнее ────────────────────────────────── */}
+          <div style={{
+            background: 'rgba(0,0,0,0.15)',
+            padding: isMobile ? '32px 20px' : '40px 36px',
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr',
+            gap: isMobile ? '28px 20px' : 40,
+          }}>
+            {/* Колонка — Партнёрам */}
+            <div>
+              <div style={s.colTitle}>Партнёрам</div>
+              {PARTNER_LINKS.map(l => (
+                <button key={l.href} style={s.link}
+                  onMouseEnter={hoverOn} onMouseLeave={hoverOff}
+                  onClick={() => navigate(l.href)}>
+                  {l.label} →
+                </button>
+              ))}
+              <div style={{ marginTop: 20 }}>
+                <div style={s.colTitle}>Контакты</div>
+                <a href="mailto:hello@lovi.today" style={s.link}
+                  onMouseEnter={hoverOn} onMouseLeave={hoverOff}>
+                  hello@lovi.today
+                </a>
+              </div>
+            </div>
+
+            {/* Колонка — Сотрудничество */}
+            <div>
+              <div style={s.colTitle}>Сотрудничество</div>
+              {COLLAB_LINKS.map(l => (
+                <button
+                  key={l.href}
+                  style={{ ...s.link, marginBottom: 16 }}
+                  onMouseEnter={e => {
+                    e.currentTarget.querySelector('.collab-label').style.color = '#fff'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.querySelector('.collab-label').style.color = 'rgba(255,255,255,0.6)'
+                  }}
+                  onClick={() => navigate(l.href)}
+                >
+                  <div className="collab-label" style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', marginBottom: 3, transition: 'color 0.15s' }}>
+                    {l.label} →
+                  </div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>
+                    {l.sub}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Нижняя строка с юр. информацией */}
-        <div style={s.bottom}>
+        <div style={{ ...s.bottom, padding: isMobile ? '0 20px' : '0 40px' }}>
           <div style={s.legalText}>
             <div style={s.copy}>
               © 2026 Lovi.today. Все права защищены. ОГРН 324774600002041, ИП Васин Дмитрий Вячеславович

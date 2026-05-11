@@ -615,7 +615,12 @@ export default function Nav({ onCityChange, user: userProp, onUserChange, authOp
         background:'rgba(253,252,249,0.92)',backdropFilter:'blur(12px)',
         borderBottom:'1px solid var(--border)',
       }}>
-        <img src="/logo.svg" alt="LOVI.today" style={{ height:28 }} />
+        <img
+          src="/logo.svg"
+          alt="LOVI.today"
+          style={{ height:28, cursor:'pointer' }}
+          onClick={() => navigate('/')}
+        />
 
         <div style={{ display:'flex',alignItems:'center',gap:8 }}>
           <button onClick={() => setCityOpen(true)} style={{

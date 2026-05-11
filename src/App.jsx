@@ -28,6 +28,10 @@ import ScrollToTop from './components/ScrollToTop'
 import Privacy from './pages/Privacy'
 import Offer from './pages/Offer'
 import PartnerLanding from './pages/PartnerLanding'
+import Investorlanding from './pages/Investorlanding'
+import Research from './pages/Research'
+import Dataset from './pages/Dataset'
+import Library from './pages/Library'
 
 function PageWithLayout({ children }) {
   const [user, setUser] = useState(null)
@@ -95,6 +99,10 @@ export default function App() {
           <Route path="/salon/auth" element={<SalonAuth />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="/PartnerLanding" element={<PageWithLayout><PartnerLanding /></PageWithLayout>} />
+          <Route path="/Investor" element={<PageWithLayout><Investorlanding /></PageWithLayout>} />
+          <Route path="/Research" element={<PageWithLayout><Research /></PageWithLayout>} />
+          <Route path="/research/dataset" element={<PageWithLayout><Dataset /></PageWithLayout>} />
+          <Route path="/library" element={<PageWithLayout><Library /></PageWithLayout>} />
           <Route path="/my-bookings" element={<MyBookings user={user} onUserChange={setUser} openAuth={() => setAuthOpen(true)} authOpen={authOpen} setAuthOpen={setAuthOpen} />} />
         </Routes>
       </BrowserRouter>

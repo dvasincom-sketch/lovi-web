@@ -1,0 +1,149 @@
+// Статья 01: Скидка в рублях или процентах
+export default function Article01() {
+  return (
+    <div>
+      <p style={p}>
+        В современном маркетинге вопрос о том, как представить скидку — в абсолютных цифрах или в процентах — часто решается интуитивно, без опоры на данные. Однако ещё в конце 1990-х годов исследователи заложили фундамент для осознанного выбора формата скидки, а последующие работы углубили и уточнили эти выводы.
+      </p>
+
+      <Divider />
+
+      <h3 style={h3}>1. Chen, Monroe &amp; Lou (1998): как фрейминг скидки меняет восприятие ценности</h3>
+
+      <p style={p}>
+        Исследование, опубликованное в <em>Journal of Retailing</em>, стало классической работой, заложившей основы понимания того, как формат представления скидки влияет на восприятие потребителем выгодности предложения.
+      </p>
+
+      <Callout>
+        Для дорогих товаров скидка в абсолютных единицах воспринимается как более значительная, чем та же скидка в процентах. Для дешёвых товаров — обратное.
+      </Callout>
+
+      <p style={p}>
+        <strong>Как это было проверено.</strong> Исследователи сформулировали одно и то же ценовое снижение в двух форматах — процентном и абсолютном — и предъявляли его участникам на товарах с высокой и низкой ценой. Участники оценивали значительность скидки и сообщали о намерении купить.
+      </p>
+
+      <p style={p}>
+        <strong>Почему это работает.</strong> Когда продукт стоит дорого, сумма экономии в денежном выражении выглядит внушительно и конкретно. Когда продукт дёшев, процент создаёт иллюзию более существенной уступки — само число процентов велико́ относительно невысокой абсолютной скидки.
+      </p>
+
+      <p style={p}>
+        <strong>Дополнительный инсайт про купоны.</strong> В том же исследовании авторы показали, что купонные промоакции воспринимаются более благосклонно и сильнее влияют на намерение купить. Купон воспринимается как «заслуженное» вознаграждение — потребитель приложил усилие, и это повышает субъективную ценность предложения.
+      </p>
+
+      <Divider />
+
+      <h3 style={h3}>2. González et al. (2016): подтверждение и расширение</h3>
+
+      <p style={p}>
+        Спустя почти два десятилетия Ева Гонсалес, Эдуардо Эстева, Анне Роггевен и Дхрув Гревал опубликовали в <em>Journal of Business Research</em> исследование, которое подтвердило и существенно расширило выводы Chen et al.
+      </p>
+
+      <Callout>
+        Для товаров дороже $100 абсолютная скидка (amount off) приводит к более высокой оценке ценности и более сильному намерению купить.
+      </Callout>
+
+      <p style={p}>
+        Авторы провели три эксперимента. Первый подтвердил базовый эффект. Второй показал, что преимущество абсолютного формата сохраняется независимо от того, насколько товар превышает порог. Третий — что эффект не зависит от глубины скидки.
+      </p>
+
+      <p style={p}>
+        <strong>Что нового.</strong> Исследование установило пороговый характер эффекта: ключевая граница — психологический рубеж около $100. Преимущество абсолютного формата генерализуется на разных ценовых уровнях и при разной глубине скидки.
+      </p>
+
+      <Divider />
+
+      <h3 style={h3}>3. Что это означает для маркетолога</h3>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, margin: '0 0 20px' }}>
+        <RuleCard
+          title="Правило большого чека"
+          text="Выше ~10 000 ₽ — показывай рубли. «–3 000 ₽» конкретно и ощутимо. Процент такой предметности не даёт."
+        />
+        <RuleCard
+          title="Правило малого чека"
+          text="До 3 000–5 000 ₽ — процент выигрывает. «–40%» звучит внушительно, тогда как та же скидка в рублях может казаться мелочью."
+        />
+        <RuleCard
+          title="Купоны vs прямые скидки"
+          text="Купонный формат создаёт ощущение эксклюзивности и вознаграждает за усилие. Особенно актуально для программ лояльности."
+        />
+      </div>
+
+      <Divider />
+
+      <h3 style={h3}>4. Итог</h3>
+
+      <p style={p}>
+        Не существует универсального ответа. Базовое правило, сформулированное Chen, Monroe &amp; Lou в 1998 году и подтверждённое González et al. в 2016-м:
+      </p>
+
+      <div style={{ background: 'rgba(18,26,18,0.04)', borderLeft: '2px solid var(--accent)', borderRadius: '0 10px 10px 0', padding: '14px 18px', margin: '0 0 20px', fontSize: 14, color: 'var(--dark)', lineHeight: 1.65, fontWeight: 500 }}>
+        Дорогой товар — показывай рубли. Дешёвый — показывай проценты.
+      </div>
+
+      <p style={p}>
+        Всё остальное — нюансы, которые маркетолог проверяет на своей аудитории через A/B-тесты.
+      </p>
+
+      <Sources items={[
+        `Chen, S. F. S., Monroe, K. B., & Lou, Y. C. (1998). The effects of framing price promotion messages on consumers' perceptions and purchase intentions. Journal of Retailing, 74(3), 353–372.`,
+        `González, E. M., Esteva, E., Roggeveen, A. L., & Grewal, D. (2016). Amount off versus percentage off — when does it matter? Journal of Business Research, 69(3), 1022–1027.`,
+      ]} />
+    </div>
+  )
+}
+
+// ── Shared sub-components ────────────────────────────────────────────────────
+
+const p = {
+  fontSize: 14, lineHeight: 1.8, color: '#3a3a3a',
+  margin: '0 0 16px', fontFamily: 'Inter, sans-serif',
+}
+
+const h3 = {
+  fontFamily: 'Playfair Display, serif', fontSize: 18, fontWeight: 500,
+  color: 'var(--dark)', margin: '24px 0 12px', lineHeight: 1.3,
+}
+
+function Divider() {
+  return <div style={{ height: 1, background: 'rgba(18,26,18,0.07)', margin: '24px 0' }} />
+}
+
+function Callout({ children }) {
+  return (
+    <div style={{
+      background: 'rgba(249,115,22,0.06)', border: '1px solid rgba(249,115,22,0.15)',
+      borderRadius: 12, padding: '14px 18px', margin: '0 0 16px',
+      fontSize: 14, color: 'var(--dark)', lineHeight: 1.65, fontStyle: 'italic',
+    }}>
+      {children}
+    </div>
+  )
+}
+
+function RuleCard({ title, text }) {
+  return (
+    <div style={{
+      background: '#fff', border: '1px solid rgba(18,26,18,0.07)',
+      borderRadius: 12, padding: '14px 16px',
+    }}>
+      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--dark)', marginBottom: 4 }}>{title}</div>
+      <div style={{ fontSize: 13, color: '#666', lineHeight: 1.6 }}>{text}</div>
+    </div>
+  )
+}
+
+function Sources({ items }) {
+  return (
+    <div style={{ marginTop: 24, paddingTop: 16, borderTop: '1px solid rgba(18,26,18,0.07)' }}>
+      <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#999', marginBottom: 10 }}>
+        Источники
+      </div>
+      {items.map((s, i) => (
+        <div key={i} style={{ fontSize: 11, color: '#888', lineHeight: 1.6, marginBottom: 6 }}>
+          {i + 1}. {s}
+        </div>
+      ))}
+    </div>
+  )
+}
