@@ -100,7 +100,7 @@ const PILLARS = [
 const OPENNESS = [
   { icon: Check,    text: 'Каждое исследование получает DOI и входит в мировую систему цитирования' },
   { icon: Database, text: 'Обезличенные датасеты с воспроизводимым кодом — любой студент или профессор может проверить выводы' },
-  { icon: Users,    text: 'Мы закрываем уникальную нишу: рынок услуг, о behavioral economics которого известно прискорбно мало' },
+  { icon: Users,    text: 'Мы закрываем уникальную нишу: рынок услуг, об экономике поведения которого известно прискорбно мало' },
 ]
 
 // ── Yes/No chip ───────────────────────────────────────────────────────────────
@@ -347,7 +347,7 @@ export default function DatasetPage() {
               onMouseEnter={e => { e.target.style.color = 'var(--dark)' }}
               onMouseLeave={e => { e.target.style.color = 'var(--secondary)' }}
             >
-              Lovi Research
+              «Лови» Research
             </a>
             <Icon i={ChevronRight} size={12} color="var(--secondary)" stroke={1.5} />
             <span style={{ fontSize: 12, color: 'var(--dark)', fontWeight: 500 }}>Dataset</span>
@@ -364,7 +364,7 @@ export default function DatasetPage() {
             lineHeight: 1.07, letterSpacing: '-0.02em',
             color: 'var(--dark)', margin: '0 0 20px', maxWidth: 680,
           }}>
-            Почему данные LOVI уникальны: не просто цифры,{' '}
+            Почему данные «Лови» уникальны: не просто цифры,{' '}
             <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>а поведенческий полигон</em>
           </h1>
 
@@ -423,7 +423,7 @@ export default function DatasetPage() {
         <div style={wrap}>
           <div style={eyebrow}>Три кита нашего преимущества</div>
           <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: isMobile ? 28 : 38, fontWeight: 500, color: 'var(--dark)', margin: '0 0 56px', lineHeight: 1.2, maxWidth: 520 }}>
-            Почему именно наши данные<br />дают причинно-следственные связи
+            Почему именно наши данные дают причинно-следственные связи
           </h2>
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: isMobile ? 40 : 48 }}>
@@ -453,7 +453,7 @@ export default function DatasetPage() {
                 Мы строим LOVI Research как гибрид бизнеса и исследовательского центра
               </h2>
               <p style={{ fontSize: 15, color: 'var(--secondary)', lineHeight: 1.75, margin: '0 0 32px' }}>
-                Мы сознательно не конкурируем с гигантами вроде T-ECD — мы закрываем уникальную нишу: рынок услуг и впечатлений, о behavioral economics которого известно прискорбно мало.
+                Мы сознательно не конкурируем с гигантами вроде T-ECD — мы закрываем уникальную нишу: рынок услуг и впечатлений, об экономике поведения которого известно прискорбно мало.
               </p>
               {OPENNESS.map((o, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 18 }}>
@@ -471,9 +471,9 @@ export default function DatasetPage() {
                 Дорожная карта открытости
               </div>
               {[
-                { year: '2025', status: 'done',    text: 'Запущены рандомизированные A/B-тесты на реальных пользователях' },
-                { year: '2026', status: 'active',  text: 'Публикация обезличенного датасета и первых DOI-отчётов' },
-                { year: '2026', status: 'active',  text: 'Открытый доступ для независимых исследователей' },
+                { year: '2026 | Лето', status: 'done',    text: 'Запущены рандомизированные A/B-тесты на реальных пользователях' },
+                { year: '2026 | Осень', status: 'active',  text: 'Публикация обезличенного датасета и первых DOI-отчётов' },
+                { year: '2026 | Зима', status: 'active',  text: 'Открытый доступ для независимых исследователей' },
                 { year: '2027', status: 'planned', text: 'Первая LOVI Research Conference' },
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 14, paddingBottom: i < 3 ? 20 : 0, marginBottom: i < 3 ? 20 : 0, borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.06)' : 'none', alignItems: 'flex-start' }}>
@@ -509,10 +509,10 @@ export default function DatasetPage() {
                 Ранний доступ
               </div>
               <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: isMobile ? 30 : 44, fontWeight: 500, color: '#fff', margin: '0 0 20px', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
-                Станьте частью первого в Восточной Европе открытого полигона
+                Станьте частью первого в Европе открытого полигона
               </h2>
               <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.35)', lineHeight: 1.75, margin: '0 0 36px' }}>
-                Если вы независимый исследователь, журналист, пишущий о behavioral economics,
+                Если вы независимый исследователь, журналист, пишущий об экономике поведения,
                 или представитель университета — свяжитесь с нами.
               </p>
 
@@ -520,7 +520,7 @@ export default function DatasetPage() {
               {[
                 { icon: Database, label: 'Исследователи', sub: 'Поведенческая экономика, маркетинг, data science' },
                 { icon: Users,    label: 'Университеты',  sub: 'Реальные кейсы и полевые данные' },
-                { icon: BarChart2,label: 'Журналисты',    sub: 'Behavioral economics и рынок услуг' },
+                { icon: BarChart2,label: 'Журналисты',    sub: 'Экономика поведения и рынок услуг' },
               ].map((w, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
                   <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

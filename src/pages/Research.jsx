@@ -58,9 +58,9 @@ const STANDARDS = [
   { icon: Check,    title: 'Пререгистрация гипотез',    text: 'Фиксируем, что именно проверяем, до запуска теста — без корректировки постфактум.' },
   { icon: Database, title: 'Одна переменная за раз',    text: 'Меняем только формат скидки или только таймер — никогда оба сразу.' },
   { icon: Users,    title: 'Случайное распределение',   text: 'Без привязки к устройству, источнику трафика или географии пользователя.' },
-  { icon: BarChart2,title: 'Power analysis',            text: 'Не останавливаем тест, пока не набираем статистически значимый результат.' },
-  { icon: Award,    title: 'DOI через Crossref',        text: 'Каждому отчёту присваивается DOI — наши работы входят в глобальную систему цитирования.' },
-  { icon: Zap,      title: 'Этичность сигналов',       text: 'Все scarcity и urgency-сигналы отражают реальное положение дел — без симуляции дефицита.' },
+  { icon: BarChart2,title: 'Анализ мощности',            text: 'Не останавливаем тест, пока не набираем статистически значимый результат.' },
+  { icon: Award,    title: 'Проверено на международном уровне',        text: 'Каждому отчёту присваивается DOI — наши работы входят в глобальную систему цитирования.' },
+  { icon: Zap,      title: 'Этичность сигналов',       text: 'У нас нет нарисованных дедлайнов и липовых остатков. Если написано, что товар заканчивается или акция скоро сгорит — так и есть.' },
 ]
 
 const COLLAB = [
@@ -222,7 +222,7 @@ function SubscribeForm() {
         onMouseEnter={e => { e.currentTarget.style.opacity = '0.85' }}
         onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
       >
-        Подписаться на Data Insights
+        Подписаться на инсайты
       </button>
     </div>
   )
@@ -254,7 +254,7 @@ export default function ResearchLanding() {
           {/* Eyebrow badge */}
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(249,115,22,0.08)', color: 'var(--accent)', padding: '5px 14px', borderRadius: 20, fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 28 }}>
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)', animation: 'pulse 1.6s ease-in-out infinite' }} />
-            Lovi Research · Открытая лаборатория
+            Открытая лаборатория
           </div>
 
           <h1 style={{
@@ -268,8 +268,8 @@ export default function ResearchLanding() {
           </h1>
 
           <p style={{ fontSize: isMobile ? 15 : 17, color: 'var(--secondary)', lineHeight: 1.75, margin: '0 0 40px', maxWidth: 540 }}>
-            Мы превращаем LOVI в открытую лабораторию — проверяем гипотезы,
-            публикуем результаты и строим стандарты ценообразования в wellness.
+            Мы превращаем «Лови» в открытую лабораторию — проверяем гипотезы,
+            публикуем результаты и строим стандарты ценообразования.
           </p>
 
           {/* Subscribe inline */}
@@ -281,7 +281,7 @@ export default function ResearchLanding() {
           <div style={{ display: 'flex', gap: isMobile ? 24 : 48, marginTop: 48, flexWrap: 'wrap' }}>
             {[
               { value: '5',        label: 'активных исследований' },
-              { value: '10',       label: 'тем в Research Matrix' },
+              { value: '10',       label: 'тем в матрице исследований' },
               { value: 'DOI',      label: 'каждому отчёту' },
             ].map((s, i) => (
               <div key={i}>
@@ -306,13 +306,12 @@ export default function ResearchLanding() {
               </h2>
               <p style={{ fontSize: 15, color: 'var(--secondary)', lineHeight: 1.75, margin: '0 0 24px' }}>
                 Большинство сервисов применяют её вслепую: «все делают 30% — и мы сделаем».
-                Lovi контролирует время, дефицит, фрейминг, предоплату и географию.
-                Это позволяет запускать controlled experiments на тысячах реальных пользователей,
-                а не на студентах в лабораториях.
+                «Лови» контролирует время, дефицит, фрейминг, предоплату и географию.
+                Это позволяет запускать контролируемые эксперименты на тысячах реальных пользователей.
               </p>
               <p style={{ fontSize: 15, color: 'var(--secondary)', lineHeight: 1.75, margin: 0 }}>
-                Цель LOVI Research — создать самый большой в Восточной Европе
-                поведенческий датасет по спросу на wellness-услуги и сделать его
+                Цель «Лови» — создать самый большой в  Европе
+                поведенческий датасет по спросу на услуги и сделать его
                 полезным для бизнеса и науки.
               </p>
             </div>
@@ -320,9 +319,9 @@ export default function ResearchLanding() {
             {/* Right — три преимущества */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: 'var(--border)', borderRadius: 20, overflow: 'hidden' }}>
               {[
-                { icon: BarChart2, title: 'Видим полную картину', text: 'Не только «купили / не купили», но и как меняется доверие, willingness to pay и возвращаемость.' },
+                { icon: BarChart2, title: 'Видим полную картину', text: 'Не только «купили / не купили», но и как меняется доверие, готовность платить и возвращаемость.' },
                 { icon: Database,  title: 'Изолируем один фактор', text: 'Точно измеряем причинный эффект таймера или формулировки — без смешивания переменных.' },
-                { icon: Check,     title: 'Говорим честно', text: 'Публикуем что работает, а что разрушает бренд салона — без прикрас.' },
+                { icon: Check,     title: 'Говорим честно', text: 'Публикуем что работает, а что разрушает бренд — без прикрас.' },
               ].map((f, i) => (
                 <div key={i} style={{ background: 'var(--bg)', padding: '22px 24px', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                   <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(18,26,18,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -345,7 +344,7 @@ export default function ResearchLanding() {
           <div style={eyebrow}>Что мы исследуем</div>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 24 : 64, alignItems: 'start', marginBottom: 40 }}>
             <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: isMobile ? 28 : 38, fontWeight: 500, color: 'var(--dark)', margin: 0, lineHeight: 1.2 }}>
-              Research Matrix —<br />десять ключевых тем
+              Матрица исследований —<br />десять ключевых тем
             </h2>
             <p style={{ fontSize: 15, color: 'var(--secondary)', lineHeight: 1.75, margin: 0, paddingTop: isMobile ? 0 : 8 }}>
               По каждой теме готовятся отдельные статьи-отчёты с методологией,
@@ -367,11 +366,11 @@ export default function ResearchLanding() {
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: isMobile ? 40 : 48 }}>
             {[
-              { n: '01', title: 'Data Insights',           text: 'Регулярные аналитические записки с результатами завершённых экспериментов.' },
+              { n: '01', title: 'Инсайты',           text: 'Регулярные аналитические записки с результатами завершённых экспериментов.' },
               { n: '02', title: 'Индекс импульсивности',   text: 'Еженедельный срез по районам и категориям услуг — публичный рейтинг.' },
               { n: '03', title: 'Открытые датасеты',       text: 'Обезличенные данные для независимых исследователей и студентов.' },
               { n: '04', title: 'DOI для каждого отчёта',  text: 'Через Crossref — наши работы становятся частью глобальной системы цитирования.' },
-              { n: '05', title: 'LOVI Research Conference', text: 'Первая открытая конференция для владельцев салонов и маркетологов wellness-рынка.' },
+              { n: '05', title: 'Онлайн конференция', text: 'Первая открытая конференция для владельцев салонов и маркетологов.' },
             ].map((s, i) => (
               <div key={i}>
                 <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 48, fontWeight: 500, color: 'rgba(18,26,18,0.05)', lineHeight: 1, marginBottom: 14, letterSpacing: '-0.02em' }}>
@@ -386,7 +385,7 @@ export default function ResearchLanding() {
           {/* Цитата-цель */}
           <div style={{ marginTop: 64, borderLeft: '2px solid var(--accent)', paddingLeft: 28 }}>
             <div style={{ fontFamily: 'Playfair Display,serif', fontSize: isMobile ? 18 : 22, fontWeight: 500, color: 'var(--dark)', lineHeight: 1.5, fontStyle: 'italic', marginBottom: 12 }}>
-              «Не "где-то читал", а "по данным Lovi Research"»
+              Не «где-то читал», а по данным «Лови»»
             </div>
             <div style={{ fontSize: 13, color: 'var(--secondary)' }}>
               Ближайшая цель — стать точкой отсчёта, на которую ссылаются, когда говорят о скидках в индустрии красоты и здоровья
@@ -471,7 +470,7 @@ export default function ResearchLanding() {
           </div>
 
           <div style={{ marginTop: 20, fontSize: 13, color: 'var(--secondary)', textAlign: 'center', lineHeight: 1.6 }}>
-            Каждому отчёту LOVI Research можно доверять как рецензированной статье
+            Каждому отчёту «Лови» можно доверять как рецензированной статье
           </div>
         </div>
       </div>
@@ -518,7 +517,7 @@ export default function ResearchLanding() {
       <div style={{ background: 'var(--dark)', padding: isMobile ? '64px 0 80px' : '88px 0 104px' }}>
         <div style={{ ...wrap, textAlign: 'center', maxWidth: 600, margin: '0 auto', padding: isMobile ? '0 20px' : '0 40px' }}>
           <div style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)', marginBottom: 20 }}>
-            Data Insights
+            Инсайты
           </div>
           <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: isMobile ? 28 : 40, fontWeight: 500, color: '#fff', margin: '0 0 16px', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
             Хотите первыми получать<br />результаты исследований?
@@ -589,7 +588,7 @@ function SubscribeFormDark() {
         onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 28px rgba(249,115,22,0.4)' }}
         onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(249,115,22,0.3)' }}
       >
-        Подписаться на Data Insights
+        Подписаться на инсайты
       </button>
     </div>
   )

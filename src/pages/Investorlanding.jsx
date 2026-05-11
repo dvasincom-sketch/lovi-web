@@ -16,7 +16,7 @@ const PRODUCT = [
     n: '01', tag: 'B2C', icon: Zap,
     title: 'Мгновенная конверсия',
     items: [
-      'Таймеры, scarcity-сигналы, гео-привязка',
+      'Таймеры, сигналы дефицита, гео-привязка',
       'Импульсное бронирование «охотников за выгодой»',
       '100% предоплата — ноль возвратов и неявок',
     ],
@@ -25,14 +25,14 @@ const PRODUCT = [
     n: '02', tag: 'B2B', icon: Layers,
     title: 'Zero-Waste интеграция',
     items: [
-      'Прямая связка с CRM (API YClients) — слоты в real-time',
+      'Прямая связка с CRM (API) — слоты в real-time',
       'Автоматическая перепродажа отмен',
       'Выплаты салонам на следующий день',
     ],
   },
   {
     n: '03', tag: 'Data', icon: Database,
-    title: 'LOVI Data Intelligence',
+    title: 'Lovi Data Intelligence',
     items: [
       'CAC в 2–3 раза ниже традиционных каналов',
       'A/B-тесты на реальных деньгах — не в лаборатории',
@@ -42,7 +42,7 @@ const PRODUCT = [
 ]
 
 const MOAT = [
-  { n: '01', icon: Lock,     title: 'Operational Lock-in', text: 'Когда салон привыкает к загрузке 95%, отключиться от LOVI означает мгновенно потерять 25–35% выручки. Это не контрактная зависимость — физиологическая, от денежного потока.' },
+  { n: '01', icon: Lock,     title: 'Operational Lock-in', text: 'Когда салон привыкает к загрузке 95%, отключиться от «Лови» означает мгновенно потерять 25–35% выручки. Это не контрактная зависимость — физиологическая, от денежного потока.' },
   { n: '02', icon: Globe,    title: 'Сетевой эффект',      text: 'Каждый новый салон увеличивает ценность для клиентов (больше окошек) и точность алгоритмов (больше данных). Чем плотнее покрытие — тем ниже CAC для всей сети.' },
   { n: '03', icon: Database, title: 'Data Moat',            text: 'Проприетарный датасет: миллионы реальных бронирований с гео-привязкой, глубиной скидки и контрольными группами. Никто в мире не предоставляет такие полевые A/B-данные по рынку услуг.' },
 ]
@@ -54,7 +54,7 @@ const ROADMAP = [
   },
   {
     year: '2027', title: 'Масштабирование', active: false,
-    items: ['СПб, Варшава, Будапешт', 'Подписка на аналитику для сетей', 'Открытый обезличенный датасет', '~15% дохода от Data-продуктов'],
+    items: ['Города миллионики росиии', 'Подписка на аналитику для сетей', 'Открытый обезличенный датасет', '~15% дохода от Data-продуктов'],
   },
   {
     year: '2028', title: 'Category King', active: false,
@@ -171,7 +171,7 @@ export default function InvestorLanding() {
         <div style={{ position: 'relative', ...wrap, padding: isMobile ? '0 20px' : '0 40px' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '5px 12px', marginBottom: 24 }}>
             <span style={{ fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontWeight: 500 }}>
-              Инвестиционная возможность · Lovi.today
+              Инвестиционная возможность · «Лови»
             </span>
           </div>
 
@@ -187,11 +187,11 @@ export default function InvestorLanding() {
                 lineHeight: 1.05, letterSpacing: '-0.025em',
               }}>
                 Операционная система<br />
-                <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>доходности.</em>
+                <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>доходности</em>
               </h1>
               <p style={{ fontSize: isMobile ? 14 : 16, color: 'rgba(255,255,255,0.38)', lineHeight: 1.75, margin: 0, maxWidth: 440 }}>
                 Пустующие временные слоты → гарантированная выручка.
-                Без владения ни одним салоном. Asset-Light, маржа 70%+.
+                Бизнес, который не строит салоны, а «сдаёт в аренду» пустые часы, зарабатывая на комиссии, и благодаря отсутствию собственных «тяжелых» активов получает сверхвысокую маржинальность.
               </p>
             </div>
 
@@ -200,7 +200,7 @@ export default function InvestorLanding() {
               {/* €20 млрд + 65% в одну строку */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 {[
-                  { value: '€20 млрд', label: 'Рынок услуг\nВосточной Европы' },
+                  { value: '₽27 трлн', label: 'Рынок услуг в России\nпо данным Института Гайдара' },
                   { value: '65%',      label: 'Средняя загрузка\nсалонов' },
                 ].map((s, i) => (
                   <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '16px 18px' }}>
@@ -220,10 +220,10 @@ export default function InvestorLanding() {
                   Потери рынка ежегодно · только Москва
                 </div>
                 <div style={{ fontFamily: 'Playfair Display,serif', fontSize: isMobile ? 42 : 52, fontWeight: 500, color: 'var(--accent)', lineHeight: 1, letterSpacing: '-0.025em', marginBottom: 6 }}>
-                  €400 млн
+                  ₽19 млрд
                 </div>
                 <div style={{ fontSize: 11, color: 'rgba(249,115,22,0.45)' }}>
-                  €1.2 млн каждый день уходит в никуда
+                  ₽52,1 млн каждый день уходит в никуда
                 </div>
               </div>
             </div>
@@ -241,13 +241,13 @@ export default function InvestorLanding() {
                 Огромные потери,<br />которые мы конвертируем<br />в капитал
               </h2>
               <p style={{ fontSize: 15, color: 'var(--secondary)', lineHeight: 1.75, margin: '0 0 28px' }}>
-                Рынок услуг в Восточной Европе — более €20 млрд. Системы управления доходностью,
+                Рынок услуг в России — более ₽27 трлн. Системы управления доходностью,
                 давно ставшие стандартом в авиации и отелях, сюда ещё не пришли. Мы занимаем это место.
               </p>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '16px 18px', background: 'rgba(249,115,22,0.07)', border: '1px solid rgba(249,115,22,0.15)', borderRadius: 14 }}>
                 <Icon i={Zap} size={16} color="var(--accent)" stroke={2} style={{ marginTop: 2 }} />
                 <div style={{ fontSize: 14, color: 'var(--dark)', lineHeight: 1.65 }}>
-                  <strong>€1.2 млн в день</strong> — столько теряет рынок услуг только в Москве.
+                  <strong>₽52,1 млн в день</strong> — столько теряет рынок услуг только в Москве.
                   Мы — единственная технология, превращающая этот «цифровой мусор» в чистый кэшфлоу.
                 </div>
               </div>
@@ -259,7 +259,7 @@ export default function InvestorLanding() {
                 { value: '35%',    label: 'Средний простой\nмощностей',        sub: '65% средняя загрузка', accent: false },
                 { value: '80%',    label: 'Без динамического\nценообразования', sub: 'Нет yield management',  accent: false },
                 { value: '15–20%', label: 'No-show rate',                       sub: 'Сжигают маржу ежедневно', accent: false },
-                { value: '70%+',   label: 'Валовая маржа\nLovi',                sub: 'Asset-Light модель',    accent: true  },
+                { value: '70%+',   label: 'Валовая маржа\n«Лови»',                sub: 'Asset-Light модель',    accent: true  },
               ].map((s, i) => (
                 <div key={i} style={{
                   background: s.accent ? 'var(--dark)' : '#fff',
@@ -547,7 +547,7 @@ export default function InvestorLanding() {
                 То, что обычно<br />существует раздельно
               </h2>
               <p style={{ fontSize: 15, color: 'var(--secondary)', lineHeight: 1.75, margin: '0 0 32px' }}>
-                LOVI.TODAY не зависит от одного источника дохода, не боится копирования на уровне интерфейса
+                «Лови» не зависит от одного источника дохода, не боится копирования на уровне интерфейса
                 и создаёт ценность, которая только растёт с каждой новой транзакцией.
               </p>
               {[
