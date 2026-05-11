@@ -248,7 +248,7 @@ export default function Library() {
           {/* Eyebrow */}
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(249,115,22,0.08)', color: 'var(--accent)', padding: '4px 12px', borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 20 }}>
             <Icon i={BookOpen} size={11} color="var(--accent)" stroke={2} />
-            Lovi Research · Библиотека
+            Библиотека
           </div>
 
           <h1 style={{
@@ -262,7 +262,7 @@ export default function Library() {
           </h1>
 
           <p style={{ fontSize: isMobile ? 15 : 16, color: 'var(--secondary)', lineHeight: 1.75, margin: 0, maxWidth: 520 }}>
-            12 статей на основе академических исследований — о том, как скидки влияют
+            Статьи на основе академических исследований — о том, как скидки влияют
             на восприятие, конверсию и лояльность клиентов.
           </p>
         </div>
