@@ -7,7 +7,7 @@ import {
   // Actions
   Search, Filter, SlidersHorizontal, Plus, Minus, Check, Copy, Share2,
   // Status & feedback
-  Zap, Clock, Timer, AlertCircle, Info, Star, Heart,
+  Zap, Clock, Timer, AlertCircle, Info, Star, Heart, BarChart2,
   // Location & map
   MapPin, Navigation,
   // Commerce
@@ -23,7 +23,7 @@ import {
   // Media
   Play, Pause,
   // Misc
-  Leaf, Flame, Diamond, Gem,
+  Leaf, Flame, Diamond, Gem, BookOpen,
 } from 'lucide-react'
 
 // ─── Icon helper ─────────────────────────────────────────────────────────────
@@ -1787,6 +1787,322 @@ function AvatarDemo() {
   )
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// НОВЫЕ КОМПОНЕНТЫ
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ── Tooltip ──────────────────────────────────────────────────────────────────
+// Использование: <Tip text="Пояснение">подчёркнутый термин</Tip>
+function Tip({ children, text }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  // Закрытие по клику вне
+  useEffect(() => {
+    if (!open) return
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [open])
+
+  return (
+    <span ref={ref} style={{ position: 'relative', display: 'inline' }}>
+      <span
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        onClick={() => setOpen(v => !v)}
+        style={{
+          borderBottom: '1px dashed var(--accent)',
+          color: 'inherit', cursor: 'help',
+          paddingBottom: 1,
+        }}
+      >
+        {children}
+      </span>
+      {open && (
+        <span style={{
+          position: 'absolute', bottom: '100%', left: '50%',
+          transform: 'translateX(-50%)',
+          marginBottom: 8, zIndex: 100,
+          background: 'var(--dark)', color: '#fff',
+          fontSize: 12, lineHeight: 1.55,
+          padding: '8px 12px', borderRadius: 10,
+          whiteSpace: 'normal', maxWidth: 220, minWidth: 140,
+          boxShadow: '0 6px 20px rgba(18,26,18,0.2)',
+          pointerEvents: 'none',
+          display: 'block',
+          textAlign: 'center',
+        }}>
+          {text}
+          {/* Arrow */}
+          <span style={{
+            position: 'absolute', top: '100%', left: '50%',
+            transform: 'translateX(-50%)',
+            width: 0, height: 0,
+            borderLeft: '5px solid transparent',
+            borderRight: '5px solid transparent',
+            borderTop: '5px solid var(--dark)',
+            display: 'block',
+          }} />
+        </span>
+      )}
+    </span>
+  )
+}
+
+function TooltipDemo() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+      {/* Inline usage */}
+      <div>
+        <Label>Inline в тексте</Label>
+        <p style={{ fontSize: 15, lineHeight: 1.8, color: 'var(--dark)', maxWidth: 560 }}>
+          Lovi использует <Tip text="Yield Management — динамическое управление ценой для максимизации выручки. Стандарт в авиации и отелях.">yield management</Tip> для wellness-салонов. Каждый пустой слот — это <Tip text="Упущенная выручка которую уже нельзя вернуть. Если кресло пустовало в 17:00 — эти деньги сгорели навсегда.">сгоревшая маржа</Tip>. Наш алгоритм снижает <Tip text="Customer Acquisition Cost — стоимость привлечения одного клиента через любой канал.">CAC</Tip> в 2–3 раза по сравнению с традиционными каналами.
+        </p>
+      </div>
+
+      {/* Разные позиции */}
+      <div>
+        <Label>Примеры терминов</Label>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
+          {[
+            { term: 'No-show', tip: 'Клиент не пришёл на запись и не предупредил. Потеря времени мастера и выручки.' },
+            { term: 'Fill Rate', tip: 'Процент заполненности расписания. Цель Lovi — 85–95% у партнёров.' },
+            { term: 'LTV',      tip: 'Lifetime Value — суммарная выручка от клиента за всё время сотрудничества.' },
+            { term: 'A/B-тест', tip: 'Контролируемый эксперимент: две группы получают разные условия, результат измеряется статистически.' },
+            { term: 'Framing',  tip: 'Один и тот же факт поданный по-разному влияет на решение. «−50%» и «Сэкономь 3 000 ₽» — разный эффект.' },
+          ].map(({ term, tip }) => (
+            <span key={term} style={{ fontSize: 14, color: 'var(--dark)' }}>
+              <Tip text={tip}>{term}</Tip>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* На тёмном фоне */}
+      <div>
+        <Label>На тёмном фоне</Label>
+        <div style={{ background: 'var(--dark)', borderRadius: 16, padding: '20px 24px' }}>
+          <p style={{ fontSize: 14, lineHeight: 1.8, color: 'rgba(255,255,255,0.6)', margin: 0 }}>
+            Платформа накапливает <Tip text="Проприетарный датасет — данные которые принадлежат только нам и недоступны конкурентам.">проприетарный датасет</Tip> поведенческих данных. Это создаёт <Tip text="Data Moat — конкурентный барьер на основе уникальных данных. Чем больше транзакций — тем точнее модели.">data moat</Tip> который сложно скопировать.
+          </p>
+        </div>
+      </div>
+
+      {/* Code usage */}
+      <div>
+        <Label>Использование</Label>
+        <div style={{ background: '#1A1F1A', borderRadius: 12, padding: '14px 18px', fontFamily: 'monospace', fontSize: 12, lineHeight: 1.8 }}>
+          <span style={{ color: '#6B9EFF' }}>import</span>
+          <span style={{ color: 'rgba(255,255,255,0.5)' }}> {'{ Tip }'} </span>
+          <span style={{ color: '#6B9EFF' }}>from</span>
+          <span style={{ color: '#4ADE80' }}> '../components/Tip'</span>
+          <br />
+          <br />
+          <span style={{ color: 'rgba(255,255,255,0.4)' }}>{'//'} текст с пунктирным подчёркиванием</span>
+          <br />
+          <span style={{ color: 'rgba(255,255,255,0.5)' }}>{'<'}</span>
+          <span style={{ color: '#4ADE80' }}>Tip</span>
+          <span style={{ color: '#F97316' }}> text</span>
+          <span style={{ color: 'rgba(255,255,255,0.5)' }}>="Пояснение термина"{'>'}</span>
+          <span style={{ color: '#fff' }}>yield management</span>
+          <span style={{ color: 'rgba(255,255,255,0.5)' }}>{'</'}</span>
+          <span style={{ color: '#4ADE80' }}>Tip</span>
+          <span style={{ color: 'rgba(255,255,255,0.5)' }}>{'>'}</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Accordion Demo ────────────────────────────────────────────────────────────
+function AccordionDemo() {
+  const [open, setOpen] = useState(0)
+  const items = [
+    { icon: BarChart2, title: 'Глубина скидки и доверие', question: 'Где грань между «выгодно» и «подозрительно»?', text: 'Тестируем, как 20%, 40% и 60% скидки влияют на конверсию и желание вернуться. Результаты показывают нелинейную зависимость.', status: 'active' },
+    { icon: Clock,     title: 'Таймер обратного отсчёта', question: 'Помогает urgency продажам или только увеличивает отмены?', text: 'Сравниваем три группы: без таймера, мягкое напоминание, агрессивный countdown. Измеряем качество брони и возвращаемость.', status: 'pending' },
+    { icon: Zap,       title: 'Фрейминг выгоды',          question: '«−50%» против «Экономия 3 500 ₽» — что работает лучше?', text: 'Классический framing effect на реальных бронированиях. Ответ зависит от ценового сегмента.', status: 'done' },
+  ]
+  const STATUS = {
+    active:  { bg: 'rgba(74,222,128,0.1)',  color: '#16A34A',        dot: '#4ADE80',        label: 'Активный тест' },
+    pending: { bg: 'rgba(249,115,22,0.08)', color: 'var(--accent)',  dot: 'var(--accent)',  label: 'Сбор данных' },
+    done:    { bg: 'rgba(143,132,117,0.1)', color: 'var(--secondary)',dot: 'var(--secondary)',label: 'Завершён' },
+  }
+  return (
+    <div style={{ border: '1px solid var(--border)', borderRadius: 20, overflow: 'hidden', maxWidth: 700 }}>
+      {items.map((item, i) => {
+        const isOpen = open === i
+        const st = STATUS[item.status]
+        return (
+          <div key={i} style={{ borderBottom: i < items.length - 1 ? '1px solid var(--border)' : 'none', background: isOpen ? '#fff' : 'transparent', transition: 'background 0.2s' }}>
+            <button onClick={() => setOpen(isOpen ? -1 : i)} style={{ width: '100%', display: 'flex', alignItems: 'flex-start', gap: 12, padding: '18px 20px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
+              <div style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0, background: isOpen ? 'rgba(249,115,22,0.08)' : 'rgba(18,26,18,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
+                <Icon i={item.icon} size={15} color={isOpen ? 'var(--accent)' : 'var(--secondary)'} stroke={1.5} />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--dark)', marginBottom: 3, lineHeight: 1.4 }}>{item.title}</div>
+                <div style={{ fontSize: 12, color: 'var(--secondary)', lineHeight: 1.5 }}>{item.question}</div>
+              </div>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: st.bg, color: st.color, padding: '3px 10px', borderRadius: 20, fontSize: 10, fontWeight: 600, flexShrink: 0, whiteSpace: 'nowrap', marginTop: 2 }}>
+                <span style={{ width: 4, height: 4, borderRadius: '50%', background: st.dot, flexShrink: 0 }} />{st.label}
+              </div>
+              <div style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', flexShrink: 0, marginTop: 6 }}>
+                <Icon i={ChevronDown} size={16} color="var(--secondary)" stroke={1.5} />
+              </div>
+            </button>
+            {isOpen && (
+              <div style={{ padding: '0 20px 20px 66px' }}>
+                <div style={{ fontSize: 14, color: 'var(--secondary)', lineHeight: 1.75 }}>{item.text}</div>
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// ── Timeline Demo ─────────────────────────────────────────────────────────────
+function TimelineDemo() {
+  const years = [
+    { year: '2026', title: 'Захват Москвы', active: true,  items: ['1 000+ салонов', '10% онлайн-бронирований', 'Запуск предиктивной аналитики'] },
+    { year: '2027', title: 'Масштабирование', active: false, items: ['СПб, Варшава, Будапешт', 'Подписка на аналитику', '~15% дохода от Data'] },
+    { year: '2028', title: 'Category King', active: false, items: ['Стоматология, медицина', 'FinTech-слой', 'Серия B'] },
+  ]
+  return (
+    <div style={{ background: 'var(--dark)', borderRadius: 24, padding: '32px 28px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
+        {years.map((r, i) => (
+          <div key={i} style={{ background: r.active ? 'rgba(249,115,22,0.07)' : 'rgba(255,255,255,0.03)', border: `1px solid ${r.active ? 'rgba(249,115,22,0.22)' : 'rgba(255,255,255,0.1)'}`, borderRadius: 16, padding: '24px 20px', position: 'relative', overflow: 'hidden' }}>
+            {r.active && <div style={{ position: 'absolute', top: -30, right: -30, width: 120, height: 120, borderRadius: '50%', background: 'radial-gradient(circle,rgba(249,115,22,0.12) 0%,transparent 70%)', pointerEvents: 'none' }} />}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: r.active ? 'var(--accent)' : 'rgba(255,255,255,0.15)', boxShadow: r.active ? '0 0 10px rgba(249,115,22,0.5)' : 'none', flexShrink: 0 }} />
+              <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 36, fontWeight: 500, color: r.active ? 'var(--accent)' : 'rgba(255,255,255,0.25)', lineHeight: 1, letterSpacing: '-0.02em' }}>{r.year}</div>
+            </div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: r.active ? 'rgba(249,115,22,0.7)' : 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 16 }}>{r.title}</div>
+            {r.items.map((item, j) => (
+              <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
+                <span style={{ width: 4, height: 4, borderRadius: '50%', background: r.active ? 'var(--accent)' : 'rgba(255,255,255,0.2)', marginTop: 6, flexShrink: 0 }} />
+                <span style={{ fontSize: 12, color: r.active ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.3)', lineHeight: 1.5 }}>{item}</span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── Comparison Table Demo ─────────────────────────────────────────────────────
+function ComparisonTableDemo() {
+  const cols = ['Датасет', 'Отрасль', 'Эксперимент?', 'Гео', 'Доступ']
+  const rows = [
+    { name: 'T-ECD', sub: 'Т-Технологии', industry: 'E-commerce', exp: false, expNote: 'Наблюдения', geo: true, geoNote: 'Регионы', access: 'Только исследователи', lovi: false },
+    { name: 'MIT Open', sub: 'e-commerce 1.0', industry: 'Amazon reviews', exp: false, expNote: 'Исторические данные', geo: false, geoNote: 'Нет', access: 'Открытый, устаревший', lovi: false },
+    { name: 'LOVI Research', sub: 'Dataset', industry: 'Wellness', exp: true, expNote: 'Рандомизированные полевые A/B', geo: true, geoNote: 'До walking distance', access: 'Открытый в 2026', lovi: true },
+  ]
+
+  const YesNo = ({ yes, note, lovi }) => {
+    const [hov, setHov] = useState(false)
+    return (
+      <div style={{ position: 'relative', display: 'inline-block' }}>
+        <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 20, cursor: 'default', fontSize: 11, fontWeight: 600, background: yes ? 'rgba(74,222,128,0.12)' : 'rgba(18,26,18,0.06)', color: yes ? '#16A34A' : lovi ? 'rgba(255,255,255,0.3)' : 'var(--secondary)' }}>
+          <Icon i={yes ? Check : X} size={10} color={yes ? '#16A34A' : 'var(--secondary)'} stroke={2.5} />
+          {yes ? 'Да' : 'Нет'}
+        </div>
+        {hov && note && (
+          <div style={{ position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: 6, background: 'var(--dark)', color: '#fff', fontSize: 11, padding: '6px 10px', borderRadius: 8, whiteSpace: 'nowrap', zIndex: 10, boxShadow: '0 4px 16px rgba(18,26,18,0.2)' }}>
+            {note}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ border: '1px solid var(--border)', borderRadius: 20, overflow: 'hidden' }}>
+      <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+        <thead>
+          <tr style={{ background: 'var(--dark)' }}>
+            {cols.map((c, i) => (
+              <th key={c} style={{ padding: '12px 18px', textAlign: 'left', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', fontWeight: 500, borderRight: i < cols.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>{c}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={r.name} style={{ background: r.lovi ? 'var(--dark)' : i % 2 === 0 ? '#fff' : 'rgba(18,26,18,0.015)', borderTop: '1px solid var(--border)', outline: r.lovi ? '2px solid var(--accent)' : 'none', outlineOffset: r.lovi ? '-2px' : '0' }}>
+              <td style={{ padding: '14px 18px', borderRight: `1px solid ${r.lovi ? 'rgba(255,255,255,0.07)' : 'var(--border)'}` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  {r.lovi && <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 6px rgba(249,115,22,0.5)' }} />}
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: r.lovi ? '#fff' : 'var(--dark)' }}>{r.name}</div>
+                    <div style={{ fontSize: 10, color: r.lovi ? 'rgba(255,255,255,0.35)' : 'var(--secondary)' }}>{r.sub}</div>
+                  </div>
+                </div>
+              </td>
+              <td style={{ padding: '14px 18px', fontSize: 12, color: r.lovi ? 'rgba(255,255,255,0.5)' : 'var(--secondary)', borderRight: `1px solid ${r.lovi ? 'rgba(255,255,255,0.07)' : 'var(--border)'}` }}>{r.industry}</td>
+              <td style={{ padding: '14px 18px', borderRight: `1px solid ${r.lovi ? 'rgba(255,255,255,0.07)' : 'var(--border)'}` }}><YesNo yes={r.exp} note={r.expNote} lovi={r.lovi} /></td>
+              <td style={{ padding: '14px 18px', borderRight: `1px solid ${r.lovi ? 'rgba(255,255,255,0.07)' : 'var(--border)'}` }}><YesNo yes={r.geo} note={r.geoNote} lovi={r.lovi} /></td>
+              <td style={{ padding: '14px 18px', fontSize: 12, color: r.lovi ? 'var(--accent)' : 'var(--secondary)', fontWeight: r.lovi ? 600 : 400 }}>{r.access}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+// ── Article Card Demo ─────────────────────────────────────────────────────────
+function ArticleCardDemo() {
+  const articles = [
+    { id: 1, title: 'Скидка в рублях или процентах: что выбрать для чека 3 000 ₽ и чека 15 000 ₽', tag: 'Ценообразование', ref: 'Chen et al., 1998', ready: true },
+    { id: 2, title: 'Когнитивная нагрузка в карточке товара: как убрать трение и поднять конверсию', tag: 'UX & конверсия', ref: null, ready: false },
+    { id: 3, title: 'Якорь, который продаёт: как правильно ставить «старую цену»', tag: 'Ценообразование', ref: 'Urbany, 1988', ready: false },
+  ]
+  const TAG_COLORS = {
+    'Ценообразование': { bg: 'rgba(249,115,22,0.08)', color: 'var(--accent)' },
+    'UX & конверсия':  { bg: 'rgba(99,179,237,0.1)',  color: '#2B8CC4' },
+  }
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 0, border: '1px solid var(--border)', borderRadius: 20, overflow: 'hidden', maxWidth: 640 }}>
+      {articles.map((a, i) => {
+        const tc = TAG_COLORS[a.tag] || { bg: 'rgba(18,26,18,0.06)', color: 'var(--secondary)' }
+        return (
+          <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '18px 22px', borderBottom: i < articles.length - 1 ? '1px solid var(--border)' : 'none', background: '#fff', opacity: a.ready ? 1 : 0.6, cursor: a.ready ? 'pointer' : 'default', transition: 'background 0.15s' }}
+            onMouseEnter={e => { if (a.ready) e.currentTarget.style.background = 'rgba(249,115,22,0.02)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#fff' }}>
+            <div style={{ fontFamily: 'Playfair Display,serif', fontSize: 18, fontWeight: 500, color: a.ready ? 'var(--accent)' : 'rgba(18,26,18,0.2)', flexShrink: 0, width: 28 }}>
+              {String(a.id).padStart(2, '0')}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--dark)', lineHeight: 1.4, marginBottom: 6 }}>{a.title}</div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                <span style={{ background: tc.bg, color: tc.color, padding: '2px 8px', borderRadius: 8, fontSize: 10, fontWeight: 600 }}>{a.tag}</span>
+                {a.ref ? (
+                  <span style={{ fontSize: 11, color: 'var(--secondary)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Icon i={BookOpen} size={10} color="var(--secondary)" stroke={1.5} /> {a.ref}
+                  </span>
+                ) : (
+                  <span style={{ fontSize: 10, color: 'var(--secondary)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Icon i={Clock} size={10} color="var(--secondary)" stroke={1.5} /> Скоро
+                  </span>
+                )}
+              </div>
+            </div>
+            {a.ready && (
+              <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(249,115,22,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Icon i={ArrowRight} size={13} color="var(--accent)" stroke={2} />
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function UI() {
   const [pressed, setPressed] = useState(false)
   const isMobile = useIsMobile()
@@ -1809,6 +2125,7 @@ export default function UI() {
     { id: 'colors', label: 'Цвета' },
     { id: 'typography', label: 'Типографика' },
     { id: 'icons', label: 'Иконки' },
+    { id: 'tooltip', label: 'Tooltip' },
     { id: 'buttons', label: 'Кнопки' },
     { id: 'badges', label: 'Бейджи' },
     { id: 'inputs', label: 'Инпуты' },
@@ -1821,12 +2138,16 @@ export default function UI() {
     { id: 'pills', label: 'Pills' },
     { id: 'counter', label: 'Счётчик' },
     { id: 'drawer', label: 'Drawer' },
+    { id: 'accordion', label: 'Accordion' },
     { id: 'hero', label: 'Hero' },
     { id: 'features', label: 'Features' },
     { id: 'steps', label: 'Шаги' },
+    { id: 'timeline', label: 'Timeline' },
     { id: 'testimonials', label: 'Отзывы' },
     { id: 'logo-row', label: 'Логотипы' },
     { id: 'grids', label: 'Сетки' },
+    { id: 'comparison-table', label: 'Таблица' },
+    { id: 'article-card', label: 'Статьи' },
     { id: 'cta', label: 'CTA' },
     { id: 'form', label: 'Форма' },
     { id: 'planned', label: 'shadcn' },
@@ -2162,6 +2483,10 @@ export default function UI() {
 
         </Section>
 
+        <Section id="tooltip" title="Tooltip / Подсказка в тексте">
+          <TooltipDemo />
+        </Section>
+
         <Section id="buttons" title="Кнопки / Buttons">
           <Row gap={12} wrap>
             <div>
@@ -2364,6 +2689,10 @@ export default function UI() {
           <DrawerDemo />
         </Section>
 
+        <Section id="accordion" title="Accordion — раскрываемый список">
+          <AccordionDemo />
+        </Section>
+
         <Section id="hero" title="Hero-блоки">
           <HeroDemo />
         </Section>
@@ -2376,6 +2705,10 @@ export default function UI() {
           <StepsDemo />
         </Section>
 
+        <Section id="timeline" title="Timeline / Дорожная карта">
+          <TimelineDemo />
+        </Section>
+
         <Section id="testimonials" title="Отзывы / Testimonials">
           <TestimonialsDemo />
         </Section>
@@ -2386,6 +2719,14 @@ export default function UI() {
 
         <Section id="grids" title="Сетки / Grids">
           <GridsDemo />
+        </Section>
+
+        <Section id="comparison-table" title="Таблица сравнения / Comparison Table">
+          <ComparisonTableDemo />
+        </Section>
+
+        <Section id="article-card" title="Карточки статей / Article Cards">
+          <ArticleCardDemo />
         </Section>
 
         <Section id="cta" title="CTA-секции">

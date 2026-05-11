@@ -25,7 +25,7 @@ const ARTICLES = [
   {
     id: 1, component: Article01,
     title: 'Скидка в рублях или процентах: что выбрать для чека 3 000 ₽ и чека 15 000 ₽',
-    ref: 'Chen et al., 1998 · González et al., 2016',
+    ref: 'Чен, Монро и Лу (1998) · Гонсалес и др. (2016)',
     ready: true,
     tag: 'Ценообразование',
   },
@@ -172,7 +172,7 @@ function ArticleDrawer({ article, onClose }) {
               <span style={{ fontSize: 11, color: 'var(--secondary)' }}>Библиотека</span>
               <Icon i={ChevronRight} size={10} color="var(--secondary)" stroke={1.5} />
               <span style={{ fontSize: 11, color: 'var(--secondary)' }}>
-                Статья {String(article.id).padStart(2, '0')}
+                11 мая 2026 | {String(article.id).padStart(2, '0')}
               </span>
               {/* Tag */}
               {(() => {
