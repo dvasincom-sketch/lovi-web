@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useIsMobile } from '../hooks/useIsMobile'
 import {
   ChevronDown, Database, BarChart2, MapPin, Clock,
-  CreditCard, Check, Mail, Users, Zap, Award, ArrowRight,
+  CreditCard, Check, Mail, Users, Zap, Award,
 } from 'lucide-react'
 
 const Icon = ({ i: I, size = 16, color = 'currentColor', stroke = 1.5 }) => (
@@ -98,33 +98,24 @@ function Accordion({ items }) {
             <button
               onClick={() => setOpen(isOpen ? -1 : i)}
               style={{
-                width: '100%', display: 'flex', alignItems: 'center',
-                gap: 16, padding: '20px 24px', background: 'none',
+                width: '100%', display: 'flex', alignItems: 'flex-start',
+                gap: 12, padding: '18px 20px', background: 'none',
                 border: 'none', cursor: 'pointer', textAlign: 'left',
               }}
             >
-              {/* Number */}
-              <div style={{
-                fontFamily: 'Playfair Display,serif', fontSize: 22,
-                fontWeight: 500, color: isOpen ? 'var(--accent)' : 'rgba(18,26,18,0.15)',
-                flexShrink: 0, width: 28, transition: 'color 0.2s',
-              }}>
-                {item.n}
-              </div>
-
               {/* Icon */}
               <div style={{
-                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                width: 34, height: 34, borderRadius: 10, flexShrink: 0,
                 background: isOpen ? 'rgba(249,115,22,0.08)' : 'rgba(18,26,18,0.04)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'background 0.2s',
               }}>
-                <Icon i={item.icon} size={16} color={isOpen ? 'var(--accent)' : 'var(--secondary)'} stroke={1.5} />
+                <Icon i={item.icon} size={15} color={isOpen ? 'var(--accent)' : 'var(--secondary)'} stroke={1.5} />
               </div>
 
               {/* Title + question */}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--dark)', marginBottom: 2 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--dark)', marginBottom: 4, lineHeight: 1.4 }}>
                   {item.title}
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--secondary)', lineHeight: 1.5 }}>
@@ -132,42 +123,33 @@ function Accordion({ items }) {
                 </div>
               </div>
 
-              {/* Status pill */}
+              {/* Pill — правый край */}
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: 5,
                 background: st.bg, color: st.color,
                 padding: '3px 10px', borderRadius: 20,
                 fontSize: 10, fontWeight: 600, flexShrink: 0,
-                whiteSpace: 'nowrap',
+                whiteSpace: 'nowrap', marginTop: 2,
               }}>
-                <span style={{ width: 4, height: 4, borderRadius: '50%', background: st.dot }} />
+                <span style={{ width: 4, height: 4, borderRadius: '50%', background: st.dot, flexShrink: 0 }} />
                 {item.status}
               </div>
 
               {/* Chevron */}
               <div style={{
                 transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.25s', color: 'var(--secondary)', flexShrink: 0,
+                transition: 'transform 0.25s', flexShrink: 0, marginTop: 6,
               }}>
                 <Icon i={ChevronDown} size={16} color="var(--secondary)" stroke={1.5} />
               </div>
             </button>
 
-            {/* Body */}
+            {/* Body — отступ по иконке: 20px padding + 34px icon + 12px gap = 66px */}
             {isOpen && (
-              <div style={{ padding: '0 24px 24px 124px' }}>
+              <div style={{ padding: '0 20px 20px 66px' }}>
                 <div style={{ fontSize: 14, color: 'var(--secondary)', lineHeight: 1.75, maxWidth: 560 }}>
                   {item.text}
                 </div>
-                <a href="#subscribe" style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 6,
-                  marginTop: 16, fontSize: 12, fontWeight: 600,
-                  color: 'var(--accent)', textDecoration: 'none',
-                  letterSpacing: '0.04em', textTransform: 'uppercase',
-                }}>
-                  Получить результаты первым
-                  <Icon i={ArrowRight} size={12} color="var(--accent)" stroke={2} />
-                </a>
               </div>
             )}
           </div>
