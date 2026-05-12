@@ -224,11 +224,20 @@ function WaitlistModal({ open, onClose }) {
     }
     setLoading(true)
     try {
-      // TODO: POST /api/lovi/waitlist { email, kind: 'user' }
-      await new Promise(r => setTimeout(r, 400))
+      const r = await fetch('https://insalon.onrender.com/api/lovi/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, kind: 'user' }),
+      })
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({}))
+        throw new Error(data.error || 'Ошибка сервера')
+      }
       setSent(true)
-    } catch {
-      setError('Что-то пошло не так. Попробуйте ещё раз.')
+    } catch (e) {
+      setError(e.message === 'Failed to fetch'
+        ? 'Нет связи с сервером. Попробуйте позже.'
+        : 'Что-то пошло не так. Попробуйте ещё раз.')
     } finally {
       setLoading(false)
     }
@@ -273,8 +282,9 @@ function WaitlistModal({ open, onClose }) {
               Лента откроется этой осенью
             </div>
             <div style={{ fontSize: 13, color: 'var(--secondary)', lineHeight: 1.55 }}>
-              Бронирование через Лови запустим, когда подключим 20 салонов ЮЗАО.
-              Оставьте email — напишем одним письмом, когда всё готово.
+              Бронирование через Лови запустим, когда подключим по 2 салона
+              в каждой зоне спроса 4 районов ЮЗАО. Оставьте email — напишем
+              одним письмом, когда всё готово.
             </div>
           </div>
 
@@ -329,11 +339,20 @@ function PartnerModal({ open, onClose }) {
     if (!contact.trim()) { setError('Укажите email или телефон'); return }
     setLoading(true)
     try {
-      // TODO: POST /api/lovi/partner-leads { salon, name, contact }
-      await new Promise(r => setTimeout(r, 400))
+      const r = await fetch('https://insalon.onrender.com/api/lovi/partner-leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ salon, name, contact }),
+      })
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({}))
+        throw new Error(data.error || 'Ошибка сервера')
+      }
       setSent(true)
-    } catch {
-      setError('Что-то пошло не так. Попробуйте ещё раз.')
+    } catch (e) {
+      setError(e.message === 'Failed to fetch'
+        ? 'Нет связи с сервером. Попробуйте позже.'
+        : 'Что-то пошло не так. Попробуйте ещё раз.')
     } finally {
       setLoading(false)
     }
@@ -502,8 +521,9 @@ function Hero({ isMobile, onSubscribe }) {
         fontSize: isMobile ? 15 : 17, lineHeight: 1.55, color: 'var(--secondary)',
         maxWidth: 580, margin: `0 0 ${isMobile ? 32 : 44}px`,
       }}>
-        Собираем 20 салонов Юго-Запада Москвы в одну ленту: свободные слоты дня
-        со скидкой за 1–3 часа до начала. 100% предоплата, без переписок и звонков.
+        Собираем по 2 салона в каждой зоне спроса в 4 районах ЮЗАО —
+        Коньково, Обручевский, Ломоносовский, Черёмушки. Свободные слоты
+        со скидкой за 1–3 часа до начала, без переписок и звонков.
       </p>
 
       <div style={{ maxWidth: 460, marginBottom: isMobile ? 28 : 36 }}>
@@ -517,21 +537,21 @@ function Hero({ isMobile, onSubscribe }) {
               fontSize: isMobile ? 32 : 38, lineHeight: 1, color: 'var(--dark)',
             }}>1</span>
             <span style={{ fontSize: isMobile ? 13 : 14, color: 'var(--secondary)' }}>
-              из 20 салонов подключены
+              из 28 мест в 14 зонах спроса
             </span>
           </div>
           <span style={{
             fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',
             textTransform: 'uppercase', color: 'var(--secondary)',
           }}>
-            5%
+            4%
           </span>
         </div>
         <div style={{
           height: 4, background: 'var(--border)', borderRadius: 2, overflow: 'hidden',
         }}>
           <div style={{
-            height: '100%', width: '5%', background: 'var(--accent)',
+            height: '100%', width: '4%', background: 'var(--accent)',
             borderRadius: 2, transition: 'width 1.2s cubic-bezier(0.2,1,0.2,1)',
           }} />
         </div>
@@ -764,6 +784,70 @@ function PullQuote({ isMobile }) {
 }
 
 function PartnerCallout({ isMobile, onApply }) {
+  const [activeDistrictId, setActiveDistrictId] = useState(null)
+  const [activeZone, setActiveZone] = useState(null)
+
+  // ──────────────────────────────────────────────────────────────────
+  // ВРЕМЕННАЯ КОНСТАНТА — geographic abstraction layer
+  // Структура: округ ЮЗАО → 4 района → зоны спроса (по 2 слота)
+  // Зона = пешеходный радиус 7–15 минут вокруг центра притяжения
+  // taken: индексы кружков (0..slots-1), занятых салонами
+  // ──────────────────────────────────────────────────────────────────
+  const SLOTS_PER_ZONE = 2
+
+  const DISTRICTS = [
+    {
+      id: 'konkovo',
+      name: 'Коньково',
+      zones: [
+        { id: 'belyaevo-station',  name: 'У метро Беляево',     anchor: 'м. Беляево',     taken: [] },
+        { id: 'konkovo-station',   name: 'У метро Коньково',    anchor: 'м. Коньково',    taken: [] },
+        { id: 'vorontsovsky',      name: 'Воронцовский парк',   anchor: 'Парк, ул. Введенского', taken: [] },
+        { id: 'troparyovo-border', name: 'Тропарёво (граница)', anchor: 'Профсоюзная, юг', taken: [] },
+      ],
+    },
+    {
+      id: 'obruchevsky',
+      name: 'Обручевский',
+      zones: [
+        { id: 'kaluzhskaya', name: 'У метро Калужская',  anchor: 'м. Калужская',
+          taken: [{ index: 0, salon: 'Head Spa Beauty', address: 'ул. Миклухо-Маклая 37' }] },
+        { id: 'novatorskaya', name: 'У метро Новаторская', anchor: 'м. Новаторская', taken: [] },
+        { id: 'leninsky-gagarin', name: 'Ленинский · Гагаринская', anchor: 'Ленинский пр., север', taken: [] },
+      ],
+    },
+    {
+      id: 'lomonosovsky',
+      name: 'Ломоносовский',
+      zones: [
+        { id: 'universitet',         name: 'У метро Университет',  anchor: 'м. Университет',     taken: [] },
+        { id: 'lomonosovsky-avenue', name: 'Ломоносовский проспект', anchor: 'Ломоносовский пр.', taken: [] },
+        { id: 'vorobyovy-border',    name: 'Воробьёвы горы (граница)', anchor: 'Мичуринский пр.', taken: [] },
+      ],
+    },
+    {
+      id: 'cheremushki',
+      name: 'Черёмушки',
+      zones: [
+        { id: 'novye-cheremushki',    name: 'Новые Черёмушки',     anchor: 'м. Новые Черёмушки', taken: [] },
+        { id: 'profsoyuznaya-center', name: 'Профсоюзная (центр)', anchor: 'м. Профсоюзная',      taken: [] },
+        { id: 'nakhimovsky',          name: 'Нахимовский',         anchor: 'Нахимовский пр.',     taken: [] },
+        { id: 'akademicheskaya-border', name: 'Академическая граница', anchor: 'м. Академическая', taken: [] },
+      ],
+    },
+  ]
+
+  // Считаем плотность с учётом 2 слотов на зону
+  const zoneTotal = (d) => d.zones.length * SLOTS_PER_ZONE
+  const zoneTaken = (d) => d.zones.reduce((s, z) => s + z.taken.length, 0)
+
+  const totalSlots = DISTRICTS.reduce((s, d) => s + zoneTotal(d), 0)
+  const totalTaken = DISTRICTS.reduce((s, d) => s + zoneTaken(d), 0)
+  const totalLeft = totalSlots - totalTaken
+  const totalZones = DISTRICTS.reduce((s, d) => s + d.zones.length, 0)
+
+  const activeDistrict = DISTRICTS.find(d => d.id === activeDistrictId) || null
+
   return (
     <div style={{
       maxWidth: 1200, margin: '0 auto',
@@ -780,9 +864,9 @@ function PartnerCallout({ isMobile, onApply }) {
       <div style={{
         marginTop: isMobile ? 28 : 40,
         display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-        gap: isMobile ? 24 : 32,
-        alignItems: 'center',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr',
+        gap: isMobile ? 24 : 40,
+        alignItems: 'flex-start',
       }}>
         <div>
           <h2 style={{
@@ -791,15 +875,15 @@ function PartnerCallout({ isMobile, onApply }) {
             lineHeight: 1.1, color: 'var(--dark)',
             margin: '0 0 20px',
           }}>
-            19 мест в первом наборе
+            {totalLeft} мест в первом наборе
           </h2>
           <p style={{
             fontSize: isMobile ? 14 : 16, lineHeight: 1.6, color: 'var(--secondary)',
             margin: '0 0 28px', maxWidth: 480,
           }}>
-            Подключение для первых 20 салонов Юго-Запада — бесплатное.
-            Без комиссии за первые 3 месяца. Интеграция с YCLIENTS,
-            динамические скидки на пустые слоты, 100% предоплата клиента.
+            Подключаем по 2 салона в каждой из {totalZones} зон спроса,
+            покрывающих 4 района ЮЗАО. Один-два салона на пешеходный радиус —
+            больше не будет. Дальше — только следующая волна.
           </p>
 
           <div style={{
@@ -807,9 +891,9 @@ function PartnerCallout({ isMobile, onApply }) {
             marginBottom: 32,
           }}>
             {[
+              'Эксклюзив: максимум 2 салона на пешеходную зону',
               'Бесплатное подключение и интеграция с YCLIENTS',
               'Нулевая комиссия первые 3 месяца',
-              'Вы сами выбираете минимальную глубину скидки',
               'Прямая связь с основателем, без отделов поддержки',
             ].map(item => (
               <div key={item} style={{
@@ -835,60 +919,405 @@ function PartnerCallout({ isMobile, onApply }) {
           </BtnPrimary>
         </div>
 
+        {/* Тёмная карточка с двухуровневой картой */}
         <div style={{
           background: 'var(--dark)',
           borderRadius: isMobile ? 20 : 24,
-          padding: isMobile ? '28px 24px' : 32,
+          padding: isMobile ? '24px 20px' : '28px 28px',
           color: '#fff',
-          minHeight: isMobile ? 'auto' : 320,
-          display: 'flex', flexDirection: 'column',
         }}>
+          {/* Заголовок карточки — меняется в зависимости от drill-уровня */}
           <div style={{
-            fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',
-            textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)',
-            marginBottom: 18,
+            display: 'flex', justifyContent: 'space-between',
+            alignItems: 'center', marginBottom: 22, gap: 12, minHeight: 24,
           }}>
-            Карта первого набора
-          </div>
-          <div style={{
-            fontFamily: 'Playfair Display,serif',
-            fontSize: isMobile ? 72 : 96,
-            lineHeight: 0.9, color: 'var(--accent)',
-          }}>
-            19
-          </div>
-          <div style={{
-            fontSize: 15, color: 'rgba(255,255,255,0.7)',
-            marginTop: 8,
-            marginBottom: 40,
-          }}>
-            мест осталось в волне 1
+            {activeDistrict ? (
+              <>
+                <button
+                  onClick={() => setActiveDistrictId(null)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'rgba(255,255,255,0.65)',
+                    cursor: 'pointer',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    letterSpacing: '0.04em',
+                    padding: 0,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  ← все районы
+                </button>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
+                  {zoneTaken(activeDistrict)} из {zoneTotal(activeDistrict)}
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{
+                  fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',
+                  textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)',
+                }}>
+                  Карта зон спроса
+                </div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
+                  {totalTaken} из {totalSlots}
+                </div>
+              </>
+            )}
           </div>
 
-          <div style={{ marginTop: 'auto' }}>
+          {/* Drill: либо районы, либо зоны выбранного района */}
+          {!activeDistrict ? (
             <div style={{
-              display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)',
-              gap: isMobile ? 6 : 8, marginBottom: 16,
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(2, 1fr)',
+              gap: isMobile ? 10 : 12,
             }}>
-              {Array.from({ length: 20 }).map((_, i) => (
-                <div key={i} style={{
-                  aspectRatio: '1', borderRadius: '50%',
-                  background: i === 0 ? 'var(--accent)' : 'rgba(255,255,255,0.08)',
-                  border: i === 0 ? 'none' : '1px solid rgba(255,255,255,0.12)',
-                }} />
+              {DISTRICTS.map(d => (
+                <DistrictCell
+                  key={d.id}
+                  name={d.name}
+                  taken={zoneTaken(d)}
+                  total={zoneTotal(d)}
+                  zones={d.zones}
+                  slotsPerZone={SLOTS_PER_ZONE}
+                  onClick={() => setActiveDistrictId(d.id)}
+                />
               ))}
             </div>
-            <div style={{
-              fontSize: 11, color: 'rgba(255,255,255,0.4)',
-              display: 'flex', gap: 16, flexWrap: 'wrap',
-            }}>
-              <span><span style={{ color: 'var(--accent)' }}>●</span> Head Spa Beauty, Беляево</span>
-              <span style={{ color: 'rgba(255,255,255,0.35)' }}>○ свободно</span>
+          ) : (
+            <div>
+              <div style={{
+                fontFamily: 'Playfair Display,serif',
+                fontSize: isMobile ? 26 : 32,
+                color: '#fff', marginBottom: 4, lineHeight: 1.1,
+              }}>
+                {activeDistrict.name}
+              </div>
+              <div style={{
+                fontSize: 12, color: 'rgba(255,255,255,0.45)',
+                marginBottom: 18,
+              }}>
+                {activeDistrict.zones.length} зон спроса · по {SLOTS_PER_ZONE} места
+              </div>
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr',
+                gap: 8,
+              }}>
+                {activeDistrict.zones.map(z => (
+                  <ZoneRow
+                    key={z.id}
+                    zone={z}
+                    slotsPerZone={SLOTS_PER_ZONE}
+                    onClick={() => setActiveZone({ ...z, districtName: activeDistrict.name })}
+                  />
+                ))}
+              </div>
             </div>
+          )}
+
+          {/* Легенда */}
+          <div style={{
+            marginTop: 20, paddingTop: 16,
+            borderTop: '1px solid rgba(255,255,255,0.08)',
+            fontSize: 11, color: 'rgba(255,255,255,0.5)',
+            display: 'flex', gap: 18, flexWrap: 'wrap',
+          }}>
+            <span><span style={{ color: 'var(--accent)' }}>●</span> подключён</span>
+            <span style={{ color: 'rgba(255,255,255,0.4)' }}>○ свободно</span>
+            <span style={{ marginLeft: isMobile ? 0 : 'auto', color: 'rgba(255,255,255,0.35)' }}>
+              {activeDistrict ? 'нажмите зону' : 'нажмите район'}
+            </span>
           </div>
         </div>
       </div>
+
+      <ZoneDetailModal
+        zone={activeZone}
+        slotsPerZone={SLOTS_PER_ZONE}
+        onClose={() => setActiveZone(null)}
+        onApply={() => { setActiveZone(null); setTimeout(onApply, 200) }}
+      />
     </div>
+  )
+}
+
+// ─── Ячейка района (верхний уровень) ────────────────────────────────────────
+function DistrictCell({ name, taken, total, zones, slotsPerZone, onClick }) {
+  const [hov, setHov] = useState(false)
+  const left = total - taken
+  const filledZones = zones.filter(z => z.taken.length > 0).length
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        background: hov ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
+        border: hov
+          ? '1px solid rgba(249,115,22,0.35)'
+          : '1px solid rgba(255,255,255,0.08)',
+        borderRadius: 14,
+        padding: '16px 14px',
+        cursor: 'pointer',
+        textAlign: 'left',
+        transition: 'all 0.2s',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+        fontFamily: 'inherit',
+        color: 'inherit',
+        minHeight: 120,
+      }}
+    >
+      <div>
+        <div style={{
+          fontSize: 15, fontWeight: 600,
+          color: '#fff', lineHeight: 1.2,
+          marginBottom: 4,
+        }}>
+          {name}
+        </div>
+        <div style={{
+          fontSize: 11, color: 'rgba(255,255,255,0.45)',
+          letterSpacing: '0.02em',
+        }}>
+          {left} из {total} · {zones.length} зон
+        </div>
+      </div>
+
+      {/* Мини-визуализация заполненности зон */}
+      <div style={{
+        display: 'flex',
+        gap: 4,
+        marginTop: 'auto',
+        flexWrap: 'wrap',
+      }}>
+        {zones.map(z => {
+          const zoneFull = z.taken.length === slotsPerZone
+          const zonePartial = z.taken.length > 0 && z.taken.length < slotsPerZone
+          return (
+            <div key={z.id} style={{
+              flex: '1 1 0',
+              minWidth: 18,
+              height: 6,
+              borderRadius: 3,
+              background: zoneFull
+                ? 'var(--accent)'
+                : zonePartial
+                  ? 'rgba(249,115,22,0.45)'
+                  : 'rgba(255,255,255,0.1)',
+            }} />
+          )
+        })}
+      </div>
+    </button>
+  )
+}
+
+// ─── Строка зоны (второй уровень) ───────────────────────────────────────────
+function ZoneRow({ zone, slotsPerZone, onClick }) {
+  const [hov, setHov] = useState(false)
+  const takenIndices = zone.taken.map(t => t.index)
+  const left = slotsPerZone - zone.taken.length
+  const isFull = left === 0
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        background: hov ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
+        border: hov
+          ? '1px solid rgba(249,115,22,0.35)'
+          : '1px solid rgba(255,255,255,0.08)',
+        borderRadius: 12,
+        padding: '12px 14px',
+        cursor: 'pointer',
+        textAlign: 'left',
+        transition: 'all 0.2s',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 14,
+        fontFamily: 'inherit',
+        color: 'inherit',
+      }}
+    >
+      {/* Слева — название и якорь */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{
+          fontSize: 13, fontWeight: 600, color: '#fff',
+          marginBottom: 2, lineHeight: 1.3,
+        }}>
+          {zone.name}
+        </div>
+        <div style={{
+          fontSize: 11, color: 'rgba(255,255,255,0.4)',
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+        }}>
+          {zone.anchor}
+        </div>
+      </div>
+
+      {/* Справа — кружки слотов */}
+      <div style={{
+        display: 'flex', gap: 6, flexShrink: 0,
+      }}>
+        {Array.from({ length: slotsPerZone }).map((_, i) => {
+          const taken = takenIndices.includes(i)
+          return (
+            <div key={i} style={{
+              width: 14, height: 14, borderRadius: '50%',
+              background: taken ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
+              border: taken ? 'none' : '1px solid rgba(255,255,255,0.14)',
+            }} />
+          )
+        })}
+      </div>
+
+      {/* Статус */}
+      <div style={{
+        fontSize: 10, color: isFull ? 'rgba(255,255,255,0.4)' : 'var(--accent)',
+        fontWeight: 600, letterSpacing: '0.04em',
+        textTransform: 'uppercase',
+        flexShrink: 0,
+        minWidth: 42,
+        textAlign: 'right',
+      }}>
+        {isFull ? 'занято' : `${left} своб.`}
+      </div>
+    </button>
+  )
+}
+
+// ─── Модалка детализации зоны ───────────────────────────────────────────────
+function ZoneDetailModal({ zone, slotsPerZone, onClose, onApply }) {
+  if (!zone) return null
+
+  const left = slotsPerZone - zone.taken.length
+  const isFull = left === 0
+
+  return (
+    <Modal open={!!zone} onClose={onClose} maxWidth={460}>
+      <div style={{ marginBottom: 18 }}>
+        <div style={{
+          fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase',
+          color: 'var(--accent)', marginBottom: 8, fontWeight: 600,
+        }}>
+          {zone.districtName} · зона спроса
+        </div>
+        <div style={{
+          fontFamily: 'Playfair Display,serif',
+          fontSize: 26, color: 'var(--dark)', marginBottom: 6, lineHeight: 1.15,
+        }}>
+          {zone.name}
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--secondary)', marginBottom: 4 }}>
+          {zone.anchor}
+        </div>
+        <div style={{ fontSize: 14, color: 'var(--secondary)', marginTop: 10 }}>
+          {isFull
+            ? <>Все {slotsPerZone} места заняты в этой зоне</>
+            : <>Свободно <strong style={{ color: 'var(--dark)' }}>{left}</strong> из {slotsPerZone} мест</>
+          }
+        </div>
+      </div>
+
+      {/* Сетка слотов */}
+      <div style={{
+        background: 'rgba(18,26,18,0.03)',
+        borderRadius: 14,
+        padding: 16,
+        marginBottom: 18,
+      }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${slotsPerZone}, 1fr)`,
+          gap: 10,
+          maxWidth: 200,
+        }}>
+          {Array.from({ length: slotsPerZone }).map((_, i) => {
+            const taken = zone.taken.find(t => t.index === i)
+            return (
+              <div key={i} style={{
+                aspectRatio: '1',
+                borderRadius: 12,
+                background: taken ? 'var(--accent)' : 'rgba(18,26,18,0.04)',
+                border: taken ? 'none' : '1px dashed rgba(18,26,18,0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: taken ? '#fff' : 'rgba(18,26,18,0.3)',
+                fontSize: 16,
+                fontWeight: 600,
+              }}>
+                {taken ? '●' : (i + 1)}
+              </div>
+            )
+          })}
+        </div>
+
+        {zone.taken.length > 0 && (
+          <div style={{
+            marginTop: 14, paddingTop: 14,
+            borderTop: '1px solid rgba(18,26,18,0.06)',
+            display: 'flex', flexDirection: 'column', gap: 8,
+          }}>
+            {zone.taken.map(t => (
+              <div key={t.salon} style={{
+                display: 'flex', alignItems: 'flex-start', gap: 10,
+                fontSize: 13,
+              }}>
+                <span style={{
+                  color: 'var(--accent)', fontSize: 14, lineHeight: 1, marginTop: 2,
+                }}>●</span>
+                <div>
+                  <div style={{ color: 'var(--dark)', fontWeight: 500 }}>{t.salon}</div>
+                  <div style={{ color: 'var(--secondary)', fontSize: 12, marginTop: 2 }}>{t.address}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {isFull ? (
+        <div style={{
+          fontSize: 13, color: 'var(--secondary)', textAlign: 'center',
+          padding: '14px 16px', background: 'rgba(18,26,18,0.04)', borderRadius: 14,
+        }}>
+          Эта зона уже закрыта в первой волне. Вы можете подать заявку
+          в соседнюю зону или оставить email на следующую волну.
+        </div>
+      ) : (
+        <>
+          <BtnPrimary
+            onClick={onApply}
+            style={{
+              width: '100%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            }}
+          >
+            Подать заявку в эту зону
+            <Icon i={ArrowRight} size={14} color="#fff" />
+          </BtnPrimary>
+          <div style={{
+            marginTop: 10, fontSize: 12, color: 'var(--secondary)', textAlign: 'center',
+          }}>
+            Эксклюзив: не больше {slotsPerZone} салонов на пешеходный радиус
+          </div>
+        </>
+      )}
+    </Modal>
   )
 }
 

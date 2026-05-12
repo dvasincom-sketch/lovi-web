@@ -33,6 +33,7 @@ import Research from './pages/Research'
 import Dataset from './pages/Dataset'
 import Library from './pages/Library'
 import Home from './pages/Home.jsx'
+import ZoneMap from './pages/ZoneMap'
 
 function PageWithLayout({ children }) {
   const [user, setUser] = useState(null)
@@ -105,6 +106,7 @@ export default function App() {
           <Route path="/Research" element={<PageWithLayout><Research /></PageWithLayout>} />
           <Route path="/research/dataset" element={<PageWithLayout><Dataset /></PageWithLayout>} />
           <Route path="/library" element={<PageWithLayout><Library /></PageWithLayout>} />
+          <Route path="/zone-map" element={<ZoneMap />} />
           <Route path="/my-bookings" element={<MyBookings user={user} onUserChange={setUser} openAuth={() => setAuthOpen(true)} authOpen={authOpen} setAuthOpen={setAuthOpen} />} />
         </Routes>
       </BrowserRouter>
