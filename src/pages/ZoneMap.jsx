@@ -1,15 +1,20 @@
-import { useState, useCallback } from 'react'
-import { MapPin, Search, ChevronLeft, AlertCircle, CheckCircle, Star } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { Search, ChevronLeft, AlertCircle, CheckCircle, Star, RefreshCw } from 'lucide-react'
 
-// ─── Иконка-helper ──────────────────────────────────────────────────────────
+// ─── Icon ────────────────────────────────────────────────────────────────────
 const Icon = ({ i: I, size = 16, color = 'currentColor', stroke = 1.5, style = {} }) => (
   <I size={size} color={color} strokeWidth={stroke} style={{ flexShrink: 0, ...style }} />
 )
 
-// ─── Доменная модель v0 ──────────────────────────────────────────────────────
-// Временно в коде — потом вынесем в БД вместе с DISTRICTS из Home.jsx
-// Все координаты — центроид зоны, радиус — пешеходный охват в метрах
+// ═══════════════════════════════════════════════════════════════════════════
+// ДОМЕННАЯ МОДЕЛЬ v1
+// Округ ЮЗАО → Район → Зона спроса → Слот партнёра
+// Координаты — центроид зоны (точка минимального среднего расстояния до её краёв)
+// Радиус — пешеходный охват зоны в метрах
+// ВРЕМЕННО В КОДЕ — вынести в БД после накопления реальных данных
+// ═══════════════════════════════════════════════════════════════════════════
 const DISTRICTS = [
+  // ── КОНЬКОВО ────────────────────────────────────────────────────────────
   {
     id: 'konkovo',
     name: 'Коньково',
@@ -18,67 +23,208 @@ const DISTRICTS = [
         id: 'yabloneviy-sad',
         name: 'Яблоневый сад',
         anchor: 'м. Беляево, выходы 1–2',
-        lat: 55.6445, lon: 37.5297, radius: 600,
-        barrier: 'Профсоюзная (восток), Миклухо-Маклая (юг)',
+        // Западнее Профсоюзной, парк Яблоневый сад
+        lat: 55.6455, lon: 37.5185, radius: 550,
+        barrier: 'Профсоюзная (восток), Миклухо-Маклая (юг), Битцевский лес (запад)',
         slots: 2, taken: [],
       },
       {
         id: 'konkovskie-prudy',
         name: 'Коньковские пруды',
         anchor: 'м. Беляево вых. 3–4 / м. Коньково',
-        lat: 55.6370, lon: 37.5210, radius: 650,
-        barrier: 'Профсоюзная (запад), Битцевский лес (юг)',
+        // Южнее, у прудов, Битцевский лес на юге
+        lat: 55.6370, lon: 37.5155, radius: 600,
+        barrier: 'Профсоюзная (восток), Битцевский лес (юг и запад)',
         slots: 2, taken: [],
       },
       {
         id: 'derevlyovskiy-prud',
         name: 'Деревлёвский пруд',
         anchor: 'м. Беляево, выходы 7–8',
-        lat: 55.6500, lon: 37.5450, radius: 600,
-        barrier: 'Миклухо-Маклая (север), Севастопольский пр. (восток)',
+        // Восточнее Профсоюзной, к северу от Миклухо-Маклая
+        lat: 55.6505, lon: 37.5490, radius: 580,
+        barrier: 'Миклухо-Маклая (юг), Профсоюзная (запад), Севастопольский пр. (восток)',
         slots: 2, taken: [],
       },
       {
         id: 'belyaevo-center',
         name: 'Беляево центр',
         anchor: 'м. Беляево, выход 6',
-        lat: 55.6480, lon: 37.5350, radius: 550,
-        barrier: 'Миклухо-Маклая (ось), Профсоюзная (запад)',
+        // Квартал вдоль Миклухо-Маклая к востоку от метро — здесь Head Spa Beauty
+        lat: 55.6468, lon: 37.5360, radius: 480,
+        barrier: 'Миклухо-Маклая (ось-юг), Профсоюзная (запад), Обручева (север)',
         slots: 2,
         taken: [{ index: 0, salon: 'Head Spa Beauty', address: 'ул. Миклухо-Маклая 37' }],
       },
       {
-        id: 'obrucheva',
-        name: 'Обручева',
-        anchor: 'ул. Обручева (авт. от Беляево)',
-        lat: 55.6570, lon: 37.5280, radius: 600,
-        barrier: 'Профсоюзная (барьер на юге)',
+        id: 'obrucheva-st',
+        name: 'Улица Обручева',
+        anchor: 'ул. Обручева, авт. 616 от м. Беляево',
+        // Полоса вдоль ул. Обручева, севернее Миклухо-Маклая, до Профсоюзной
+        lat: 55.6560, lon: 37.5310, radius: 560,
+        barrier: 'Профсоюзная (запад/барьер), ул. Обручева (ось)',
         slots: 2, taken: [],
       },
       {
         id: 'kaluzhskaya-border',
         name: 'Калужская (граница)',
         anchor: 'м. Калужская',
-        lat: 55.6630, lon: 37.5175, radius: 550,
-        barrier: 'Профсоюзная (барьер с севера)',
+        // Северо-западный угол Коньково, у Калужской
+        lat: 55.6635, lon: 37.5145, radius: 520,
+        barrier: 'Профсоюзная (восток/барьер), граница с Обручевским',
         slots: 2, taken: [],
       },
     ],
   },
-  // Обручевский, Ломоносовский, Черёмушки — добавить после описания районов
+
+  // ── ОБРУЧЕВСКИЙ ──────────────────────────────────────────────────────────
+  {
+    id: 'obruchevsky',
+    name: 'Обручевский',
+    zones: [
+      {
+        id: 'rudn',
+        name: 'РУДН',
+        anchor: 'ул. Миклухо-Маклая, РУДН',
+        // Кампус РУДН и жилые кварталы вокруг, восточная часть Обручевского
+        lat: 55.6530, lon: 37.5655, radius: 600,
+        barrier: 'Севастопольский пр. (запад), Миклухо-Маклая (юг)',
+        slots: 2, taken: [],
+      },
+      {
+        id: 'samorodinka',
+        name: 'Лес на Самородинке',
+        anchor: 'Восточная часть, р. Самородинка',
+        // Лесопарк у реки Самородинка, восток Обручевского
+        lat: 55.6620, lon: 37.5720, radius: 580,
+        barrier: 'Севастопольский пр. (запад), Нахимовский пр. (север)',
+        slots: 2, taken: [],
+      },
+      {
+        id: 'vorontsovskaya',
+        name: 'Воронцовская',
+        anchor: 'Воронцовский парк, между Обручева и Наметкина',
+        // Центральная часть Воронцовского парка и кварталы к востоку
+        lat: 55.6680, lon: 37.5350, radius: 580,
+        barrier: 'ул. Обручева (юг), ул. Наметкина (север)',
+        slots: 2, taken: [],
+      },
+      {
+        id: 'novye-cheremushki',
+        name: 'Новые Черёмушки',
+        anchor: 'м. Новые Черёмушки, от Наметкина до Гарибальди',
+        // Квартал у м. Новые Черёмушки, между ул. Наметкина и Гарибальди
+        lat: 55.6740, lon: 37.5440, radius: 560,
+        barrier: 'ул. Наметкина (юг), ул. Гарибальди (север)',
+        slots: 2, taken: [],
+      },
+      {
+        id: 'novatorskaya',
+        name: 'Новаторская',
+        anchor: 'м. Новаторская (БКЛ), от Обручева до Ленинского',
+        // Зона у м. Новаторская, между ул. Обручева и Ленинским пр., ул. Пилюгина
+        lat: 55.6760, lon: 37.5210, radius: 570,
+        barrier: 'ул. Обручева (юг), Ленинский пр. (север/запад), Акад. Пилюгина (восток)',
+        slots: 2, taken: [],
+      },
+    ],
+  },
+
+  // ── ЧЕРЁМУШКИ ────────────────────────────────────────────────────────────
+  {
+    id: 'cheryomushki',
+    name: 'Черёмушки',
+    zones: [
+      {
+        id: 'cheremushki-north',
+        name: 'Черёмушки — Север',
+        anchor: 'От Обручева до Наметкина, у Севастопольского пр.',
+        // Северная полоса Черёмушек, примыкает к Севастопольскому
+        lat: 55.6650, lon: 37.5580, radius: 560,
+        barrier: 'ул. Обручева (юг), ул. Наметкина (север), Севастопольский пр. (восток)',
+        slots: 2, taken: [],
+      },
+      {
+        id: 'cheremushki-center',
+        name: 'Черёмушки — Центр',
+        anchor: 'От Наметкина до Гарибальди',
+        // Центральная полоса, м. Профсоюзная рядом
+        lat: 55.6720, lon: 37.5600, radius: 560,
+        barrier: 'ул. Наметкина (юг), ул. Гарибальди (север), Профсоюзная (запад)',
+        slots: 2, taken: [],
+      },
+      {
+        id: 'cheremushki-south',
+        name: 'Черёмушки — Юг',
+        anchor: 'От Гарибальди до Нахимовского пр.',
+        // Южная полоса, граница с Обручевским/Академическим
+        lat: 55.6790, lon: 37.5620, radius: 550,
+        barrier: 'ул. Гарибальди (юг), Нахимовский пр. (север), Профсоюзная (запад)',
+        slots: 2, taken: [],
+      },
+    ],
+  },
+
+  // ── ЛОМОНОСОВСКИЙ ────────────────────────────────────────────────────────
+  {
+    id: 'lomonosovsky',
+    name: 'Ломоносовский',
+    zones: [
+      {
+        id: 'lomonosovsky-vorontsovsky',
+        name: 'Воронцовский — Ломоносовский',
+        anchor: 'От Воронцовского парка до Гарибальди',
+        // Западная часть района, у Воронцовского парка
+        lat: 55.6710, lon: 37.5080, radius: 580,
+        barrier: 'Воронцовский парк (восток), ул. Гарибальди (север)',
+        slots: 2, taken: [],
+      },
+      {
+        id: 'lomonosovsky-leninsky',
+        name: 'Ленинский — Вернадского',
+        anchor: 'От Ленинского до Вернадского, ул. Крупской и Строителей',
+        // Центральная часть, жилые кварталы между Ленинским и Вернадского
+        lat: 55.6820, lon: 37.5010, radius: 600,
+        barrier: 'Ленинский пр. (север), пр. Вернадского (запад), ул. Крупской (ось)',
+        slots: 2, taken: [],
+      },
+      {
+        id: 'lomonosovsky-nakhimovsky',
+        name: 'Ломоносовский — Нахимовский',
+        anchor: 'От Гарибальди до Нахимовского пр.',
+        // Восточная полоса, граница с Черёмушками
+        lat: 55.6790, lon: 37.5170, radius: 560,
+        barrier: 'ул. Гарибальди (юг), Нахимовский пр. (север), граница с Черёмушками (восток)',
+        slots: 2, taken: [],
+      },
+    ],
+  },
 ]
 
-// ─── Утилиты ────────────────────────────────────────────────────────────────
+// Плоский список всех зон — для отправки на бэкенд одним запросом
+const ALL_ZONES = DISTRICTS.flatMap(d =>
+  d.zones.map(z => ({ ...z, districtId: d.id, districtName: d.name }))
+)
+
+// ═══════════════════════════════════════════════════════════════════════════
+// API
+// ═══════════════════════════════════════════════════════════════════════════
 const API_BASE = 'https://insalon.onrender.com/api/lovi'
 
-async function searchZone(zone) {
-  const params = new URLSearchParams({
-    lat: zone.lat,
-    lon: zone.lon,
-    radius: zone.radius,
-    q: 'массаж',
+async function loadFromCache(zoneId) {
+  const r = await fetch(`${API_BASE}/zones/search?zone_id=${zoneId}`)
+  if (!r.ok) throw new Error(`HTTP ${r.status}`)
+  return r.json()
+}
+
+async function refreshAllZones(zones) {
+  const r = await fetch(`${API_BASE}/zones/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      zones: zones.map(z => ({ id: z.id, lat: z.lat, lon: z.lon, radius: z.radius })),
+    }),
   })
-  const r = await fetch(`${API_BASE}/zones/search?${params}`)
   if (!r.ok) {
     const err = await r.json().catch(() => ({}))
     throw new Error(err.error || `HTTP ${r.status}`)
@@ -86,17 +232,28 @@ async function searchZone(zone) {
   return r.json()
 }
 
-function competitionLabel(count) {
-  if (count === 0) return { text: 'нет конкурентов', level: 'success' }
-  if (count <= 2) return { text: `${count} конкурента`, level: 'success' }
-  if (count <= 5) return { text: `${count} конкурентов`, level: 'warning' }
-  return { text: `${count} конкурентов`, level: 'danger' }
+// ═══════════════════════════════════════════════════════════════════════════
+// УТИЛИТЫ
+// ═══════════════════════════════════════════════════════════════════════════
+function densityLabel(count) {
+  if (count === null || count === undefined) return null
+  if (count === 0)  return { text: 'нет объектов',    level: 'success' }
+  if (count <= 2)   return { text: `${count} объекта`, level: 'success' }
+  if (count <= 5)   return { text: `${count} объектов`, level: 'warning' }
+  return               { text: `${count} объектов`, level: 'danger' }
 }
 
-const LEVEL_COLORS = {
-  success: { bg: 'rgba(16,185,129,0.1)', color: '#065f46' },
+const COLORS = {
+  success: { bg: 'rgba(16,185,129,0.1)',  color: '#065f46' },
   warning: { bg: 'rgba(245,158,11,0.1)', color: '#78350f' },
   danger:  { bg: 'rgba(239,68,68,0.1)',  color: '#7f1d1d' },
+}
+
+function fmt(dateStr) {
+  if (!dateStr) return '—'
+  return new Date(dateStr).toLocaleDateString('ru-RU', {
+    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+  })
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -104,13 +261,13 @@ const LEVEL_COLORS = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function Badge({ level, text }) {
-  const c = LEVEL_COLORS[level]
+  const c = COLORS[level]
   return (
     <span style={{
       background: c.bg, color: c.color,
       fontSize: 11, fontWeight: 600,
       padding: '3px 8px', borderRadius: 6,
-      whiteSpace: 'nowrap',
+      whiteSpace: 'nowrap', flexShrink: 0,
     }}>
       {text}
     </span>
@@ -120,26 +277,22 @@ function Badge({ level, text }) {
 function SlotDots({ zone }) {
   return (
     <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-      {Array.from({ length: zone.slots }).map((_, i) => {
-        const isTaken = i < zone.taken.length
-        return (
-          <div key={i} style={{
-            width: 9, height: 9, borderRadius: '50%',
-            background: isTaken ? '#F97316' : 'rgba(18,26,18,0.15)',
-            border: isTaken ? 'none' : '1px solid rgba(18,26,18,0.2)',
-          }} />
-        )
-      })}
+      {Array.from({ length: zone.slots }).map((_, i) => (
+        <div key={i} style={{
+          width: 9, height: 9, borderRadius: '50%',
+          background: i < (zone.taken?.length ?? 0) ? '#F97316' : 'rgba(18,26,18,0.15)',
+          border: i < (zone.taken?.length ?? 0) ? 'none' : '1px solid rgba(18,26,18,0.2)',
+        }} />
+      ))}
       <span style={{ fontSize: 11, color: '#8F8475', marginLeft: 4 }}>
-        {zone.slots - zone.taken.length} из {zone.slots}
+        {zone.slots - (zone.taken?.length ?? 0)} из {zone.slots}
       </span>
     </div>
   )
 }
 
-// Карточка зоны в списке
-function ZoneCard({ zone, data, loading, onClick, active }) {
-  const label = data ? competitionLabel(data.count) : null
+function ZoneCard({ zone, data, loading, active, onClick }) {
+  const label = data && !data.cache_miss ? densityLabel(data.count) : null
 
   return (
     <div
@@ -150,27 +303,28 @@ function ZoneCard({ zone, data, loading, onClick, active }) {
         borderRadius: 16,
         padding: '14px 16px',
         cursor: 'pointer',
-        transition: 'all 0.2s',
+        transition: 'all 0.15s',
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-        <div style={{ fontSize: 14, fontWeight: 600, color: '#121A12', lineHeight: 1.2 }}>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between',
+        alignItems: 'flex-start', marginBottom: 6, gap: 8,
+      }}>
+        <div style={{ fontSize: 14, fontWeight: 600, color: '#121A12', lineHeight: 1.25, flex: 1 }}>
           {zone.name}
         </div>
-        {loading && (
-          <span style={{ fontSize: 11, color: '#8F8475' }}>загрузка…</span>
-        )}
+        {loading && <span style={{ fontSize: 11, color: '#8F8475', flexShrink: 0 }}>загрузка…</span>}
         {label && !loading && <Badge level={label.level} text={label.text} />}
+        {data?.cache_miss && !loading && (
+          <span style={{ fontSize: 11, color: '#8F8475', flexShrink: 0 }}>нет данных</span>
+        )}
       </div>
-      <div style={{ fontSize: 12, color: '#8F8475', marginBottom: 10 }}>
-        {zone.anchor}
-      </div>
+      <div style={{ fontSize: 12, color: '#8F8475', marginBottom: 10 }}>{zone.anchor}</div>
       <SlotDots zone={zone} />
     </div>
   )
 }
 
-// Панель деталей зоны
 function ZoneDetail({ zone, data, loading, onClose }) {
   if (!zone) return null
 
@@ -179,10 +333,9 @@ function ZoneDetail({ zone, data, loading, onClose }) {
       background: '#fff',
       border: '1px solid rgba(18,26,18,0.08)',
       borderRadius: 20,
-      padding: '24px',
-      height: '100%',
-      boxSizing: 'border-box',
+      padding: 24,
       overflowY: 'auto',
+      maxHeight: 'calc(100vh - 140px)',
     }}>
       <button
         onClick={onClose}
@@ -200,29 +353,30 @@ function ZoneDetail({ zone, data, loading, onClose }) {
       <div style={{ fontSize: 22, fontFamily: 'Playfair Display,serif', color: '#121A12', marginBottom: 4 }}>
         {zone.name}
       </div>
-      <div style={{ fontSize: 13, color: '#8F8475', marginBottom: 20 }}>
-        {zone.anchor}
-      </div>
+      <div style={{ fontSize: 13, color: '#8F8475', marginBottom: 20 }}>{zone.anchor}</div>
 
-      {/* Мета-строки */}
       {[
         ['Барьеры', zone.barrier],
-        ['Радиус поиска', `${zone.radius} м`],
-        ['Слотов', `${zone.slots - zone.taken.length} свободно из ${zone.slots}`],
+        ['Радиус', `${zone.radius} м`],
+        ['Слоты', `${zone.slots - (zone.taken?.length ?? 0)} свободно из ${zone.slots}`],
+        ['Данные обновлены', data?.fetched_at ? fmt(data.fetched_at) : '—'],
       ].map(([label, val]) => (
         <div key={label} style={{
           display: 'flex', gap: 12, fontSize: 13,
           padding: '8px 0', borderBottom: '1px solid rgba(18,26,18,0.06)',
         }}>
-          <span style={{ color: '#8F8475', minWidth: 110 }}>{label}</span>
+          <span style={{ color: '#8F8475', minWidth: 130 }}>{label}</span>
           <span style={{ color: '#121A12' }}>{val}</span>
         </div>
       ))}
 
-      {/* Наши партнёры */}
-      {zone.taken.length > 0 && (
-        <div style={{ marginTop: 16 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#8F8475', marginBottom: 8 }}>
+      {/* Наш партнёр */}
+      {(zone.taken?.length ?? 0) > 0 && (
+        <div style={{ marginTop: 18 }}>
+          <div style={{
+            fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',
+            textTransform: 'uppercase', color: '#8F8475', marginBottom: 8,
+          }}>
             Наш партнёр
           </div>
           {zone.taken.map(t => (
@@ -242,26 +396,43 @@ function ZoneDetail({ zone, data, loading, onClose }) {
         </div>
       )}
 
-      {/* Конкуренты из 2GIS */}
+      {/* Объекты 2GIS */}
       <div style={{ marginTop: 20 }}>
-        <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#8F8475', marginBottom: 10 }}>
-          Конкуренты в зоне
+        <div style={{
+          fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',
+          textTransform: 'uppercase', color: '#8F8475', marginBottom: 10,
+        }}>
+          Объекты в зоне
         </div>
 
         {loading && (
-          <div style={{ fontSize: 13, color: '#8F8475' }}>Загружаем данные 2GIS…</div>
+          <div style={{ fontSize: 13, color: '#8F8475' }}>Читаем из кэша…</div>
         )}
 
-        {!loading && data && data.count === 0 && (
-          <div style={{ fontSize: 13, color: '#065f46', background: 'rgba(16,185,129,0.08)', borderRadius: 10, padding: '10px 12px' }}>
-            Конкурентов в зоне не найдено — хорошая возможность.
+        {!loading && (!data || data.cache_miss) && (
+          <div style={{
+            fontSize: 13, color: '#8F8475',
+            background: 'rgba(18,26,18,0.03)',
+            borderRadius: 10, padding: '10px 12px',
+          }}>
+            Данных нет. Нажмите «Обновить данные» в шапке чтобы загрузить из 2GIS.
           </div>
         )}
 
-        {!loading && data && data.items.length > 0 && (
+        {!loading && data && !data.cache_miss && data.count === 0 && (
+          <div style={{
+            fontSize: 13, color: '#065f46',
+            background: 'rgba(16,185,129,0.08)',
+            borderRadius: 10, padding: '10px 12px',
+          }}>
+            Объектов в зоне не найдено — хорошая возможность.
+          </div>
+        )}
+
+        {!loading && data?.items?.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {data.items.map((item, i) => (
-              <div key={i} style={{
+              <div key={item.dgis_id ?? i} style={{
                 background: 'rgba(18,26,18,0.03)',
                 border: '1px solid rgba(18,26,18,0.06)',
                 borderRadius: 10, padding: '10px 12px',
@@ -283,19 +454,13 @@ function ZoneDetail({ zone, data, loading, onClose }) {
                 {item.address && (
                   <div style={{ fontSize: 12, color: '#8F8475', marginTop: 3 }}>{item.address}</div>
                 )}
-                {item.rubrics && item.rubrics.length > 0 && (
+                {item.rubrics?.length > 0 && (
                   <div style={{ fontSize: 11, color: '#8F8475', marginTop: 4 }}>
                     {item.rubrics.join(' · ')}
                   </div>
                 )}
               </div>
             ))}
-          </div>
-        )}
-
-        {!loading && !data && (
-          <div style={{ fontSize: 13, color: '#8F8475' }}>
-            Нажмите «Загрузить все» чтобы получить данные.
           </div>
         )}
       </div>
@@ -309,65 +474,75 @@ function ZoneDetail({ zone, data, loading, onClose }) {
 export default function ZoneMap() {
   const [activeDistrictId, setActiveDistrictId] = useState(DISTRICTS[0].id)
   const [activeZoneId, setActiveZoneId] = useState(null)
-  const [zoneData, setZoneData] = useState({})
-  const [loading, setLoading] = useState({})
-  const [globalLoading, setGlobalLoading] = useState(false)
+  const [zoneData, setZoneData]   = useState({})
+  const [loadingMap, setLoadingMap] = useState({})
+  const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState(null)
-  const [lastFetched, setLastFetched] = useState(null)
+  const [refreshedAt, setRefreshedAt] = useState(null)
 
   const activeDistrict = DISTRICTS.find(d => d.id === activeDistrictId)
-  const activeZone = activeDistrict?.zones.find(z => z.id === activeZoneId)
+  const activeZone = ALL_ZONES.find(z => z.id === activeZoneId)
 
-  const fetchAll = useCallback(async () => {
-    setGlobalLoading(true)
-    setError(null)
-    const allZones = DISTRICTS.flatMap(d => d.zones)
-    for (const z of allZones) {
-      setLoading(prev => ({ ...prev, [z.id]: true }))
-      try {
-        const data = await searchZone(z)
-        setZoneData(prev => ({ ...prev, [z.id]: data }))
-      } catch (e) {
-        setZoneData(prev => ({ ...prev, [z.id]: { count: 0, items: [], error: e.message } }))
-      } finally {
-        setLoading(prev => ({ ...prev, [z.id]: false }))
-      }
-      await new Promise(r => setTimeout(r, 350))
+  // При монтировании — читаем все зоны из кэша параллельно
+  useEffect(() => {
+    async function loadAll() {
+      await Promise.all(
+        ALL_ZONES.map(async (z) => {
+          setLoadingMap(prev => ({ ...prev, [z.id]: true }))
+          try {
+            const data = await loadFromCache(z.id)
+            setZoneData(prev => ({ ...prev, [z.id]: data }))
+          } catch {
+            // не блокируем — просто нет данных
+          } finally {
+            setLoadingMap(prev => ({ ...prev, [z.id]: false }))
+          }
+        })
+      )
     }
-    setGlobalLoading(false)
-    setLastFetched(new Date())
+    loadAll()
   }, [])
 
-  const fetchOne = useCallback(async (zone) => {
-    setLoading(prev => ({ ...prev, [zone.id]: true }))
+  // Кнопка «Обновить данные» — запрашивает 2GIS и обновляет кэш
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true)
     setError(null)
     try {
-      const data = await searchZone(zone)
-      setZoneData(prev => ({ ...prev, [zone.id]: data }))
+      await refreshAllZones(ALL_ZONES)
+      // После сохранения в кэш — перечитываем
+      await Promise.all(
+        ALL_ZONES.map(async (z) => {
+          try {
+            const data = await loadFromCache(z.id)
+            setZoneData(prev => ({ ...prev, [z.id]: data }))
+          } catch { /* ignore */ }
+        })
+      )
+      setRefreshedAt(new Date())
     } catch (e) {
       setError(e.message)
     } finally {
-      setLoading(prev => ({ ...prev, [zone.id]: false }))
+      setRefreshing(false)
     }
   }, [])
 
-  const totalZones = DISTRICTS.flatMap(d => d.zones).length
-  const loadedCount = Object.keys(zoneData).length
+  const totalZones   = ALL_ZONES.length
+  const cachedZones  = Object.values(zoneData).filter(d => d && !d.cache_miss).length
+  const totalObjects = Object.values(zoneData).reduce((s, d) => s + (d?.count ?? 0), 0)
 
   return (
     <div style={{
       background: '#FDFCF9', minHeight: '100vh',
-      fontFamily: 'Inter, system-ui, sans-serif',
-      color: '#121A12',
+      fontFamily: 'Inter, system-ui, sans-serif', color: '#121A12',
     }}>
       {/* Шапка */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 50,
-        background: 'rgba(253,252,249,0.9)', backdropFilter: 'blur(12px)',
+        background: 'rgba(253,252,249,0.92)', backdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(18,26,18,0.08)',
-        padding: '14px 32px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
-        flexWrap: 'wrap',
+        padding: '12px 32px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        gap: 16, flexWrap: 'wrap',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <img src="/logo.svg" alt="Лови" style={{ height: 20 }} />
@@ -375,36 +550,32 @@ export default function ZoneMap() {
             fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase',
             color: '#8F8475', fontWeight: 600,
           }}>
-            Аналитика зон спроса
+            Аналитика зон спроса · ЮЗАО
           </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          {lastFetched && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          {cachedZones > 0 && (
             <span style={{ fontSize: 12, color: '#8F8475' }}>
-              Обновлено: {lastFetched.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
-            </span>
-          )}
-          {loadedCount > 0 && (
-            <span style={{ fontSize: 12, color: '#8F8475' }}>
-              {loadedCount} из {totalZones} зон
+              данные по {cachedZones}/{totalZones} зонам
+              {refreshedAt && ` · обновлено ${fmt(refreshedAt.toISOString())}`}
             </span>
           )}
           <button
-            onClick={fetchAll}
-            disabled={globalLoading}
+            onClick={handleRefresh}
+            disabled={refreshing}
             style={{
-              background: globalLoading ? 'rgba(18,26,18,0.4)' : '#121A12',
+              background: refreshing ? 'rgba(18,26,18,0.3)' : '#121A12',
               color: '#fff', border: 'none',
               padding: '8px 16px', borderRadius: 12,
               fontSize: 13, fontWeight: 600,
-              cursor: globalLoading ? 'not-allowed' : 'pointer',
+              cursor: refreshing ? 'not-allowed' : 'pointer',
               fontFamily: 'inherit',
               display: 'flex', alignItems: 'center', gap: 8,
             }}
           >
-            <Icon i={Search} size={14} color="#fff" />
-            {globalLoading ? 'Загружаем…' : 'Загрузить все зоны'}
+            <Icon i={refreshing ? Search : RefreshCw} size={14} color="#fff" />
+            {refreshing ? 'Загружаем из 2GIS…' : 'Обновить данные'}
           </button>
         </div>
       </div>
@@ -412,8 +583,7 @@ export default function ZoneMap() {
       {error && (
         <div style={{
           margin: '16px 32px 0',
-          background: 'rgba(239,68,68,0.08)',
-          border: '1px solid rgba(239,68,68,0.2)',
+          background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
           borderRadius: 10, padding: '10px 14px',
           display: 'flex', gap: 10, alignItems: 'center',
           fontSize: 13, color: '#7f1d1d',
@@ -423,12 +593,12 @@ export default function ZoneMap() {
         </div>
       )}
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 32px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '28px 32px' }}>
+
         {/* Табы районов */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
           {DISTRICTS.map(d => {
-            const zones = d.zones
-            const loaded = zones.filter(z => zoneData[z.id]).length
+            const cached = d.zones.filter(z => zoneData[z.id] && !zoneData[z.id].cache_miss).length
             const isActive = d.id === activeDistrictId
             return (
               <button
@@ -445,12 +615,12 @@ export default function ZoneMap() {
                 }}
               >
                 {d.name}
-                {loaded > 0 && (
+                {cached > 0 && (
                   <span style={{
-                    background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(18,26,18,0.08)',
+                    background: isActive ? 'rgba(255,255,255,0.18)' : 'rgba(18,26,18,0.08)',
                     fontSize: 10, padding: '2px 6px', borderRadius: 6,
                   }}>
-                    {loaded}/{zones.length}
+                    {cached}/{d.zones.length}
                   </span>
                 )}
               </button>
@@ -461,36 +631,31 @@ export default function ZoneMap() {
         {/* Двухколоночный лейаут */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: activeZone ? '1fr 1.4fr' : '1fr',
+          gridTemplateColumns: activeZone ? '340px 1fr' : '1fr',
           gap: 16,
           alignItems: 'flex-start',
         }}>
-          {/* Список зон */}
+          {/* Список зон текущего района */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {activeDistrict?.zones.map(zone => (
               <ZoneCard
                 key={zone.id}
                 zone={zone}
                 data={zoneData[zone.id]}
-                loading={!!loading[zone.id]}
+                loading={!!loadingMap[zone.id]}
                 active={activeZoneId === zone.id}
-                onClick={() => {
-                  setActiveZoneId(prev => prev === zone.id ? null : zone.id)
-                  if (!zoneData[zone.id] && !loading[zone.id]) {
-                    fetchOne(zone)
-                  }
-                }}
+                onClick={() => setActiveZoneId(prev => prev === zone.id ? null : zone.id)}
               />
             ))}
           </div>
 
-          {/* Деталь */}
+          {/* Детальная панель */}
           {activeZone && (
-            <div style={{ position: 'sticky', top: 80 }}>
+            <div style={{ position: 'sticky', top: 72 }}>
               <ZoneDetail
                 zone={activeZone}
                 data={zoneData[activeZone.id]}
-                loading={!!loading[activeZone.id]}
+                loading={!!loadingMap[activeZone.id]}
                 onClose={() => setActiveZoneId(null)}
               />
             </div>
@@ -498,14 +663,14 @@ export default function ZoneMap() {
         </div>
 
         {/* Сводная статистика */}
-        {loadedCount > 0 && (
+        {cachedZones > 0 && (
           <div style={{
-            marginTop: 40, paddingTop: 32,
+            marginTop: 40, paddingTop: 28,
             borderTop: '1px solid rgba(18,26,18,0.08)',
           }}>
             <div style={{
-              fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase',
-              color: '#8F8475', marginBottom: 16, fontWeight: 600,
+              fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
+              textTransform: 'uppercase', color: '#8F8475', marginBottom: 16,
             }}>
               Сводка по всем загруженным зонам
             </div>
@@ -515,29 +680,26 @@ export default function ZoneMap() {
               gap: 12,
             }}>
               {[
+                { label: 'Всего объектов', value: totalObjects },
                 {
-                  label: 'Всего конкурентов',
-                  value: Object.values(zoneData).reduce((s, d) => s + (d?.count || 0), 0),
-                },
-                {
-                  label: 'Зон без конкурентов',
-                  value: Object.values(zoneData).filter(d => d?.count === 0).length,
+                  label: 'Зон без объектов',
+                  value: Object.values(zoneData).filter(d => d && !d.cache_miss && d.count === 0).length,
                 },
                 {
                   label: 'Высокая плотность (6+)',
-                  value: Object.values(zoneData).filter(d => d?.count >= 6).length,
+                  value: Object.values(zoneData).filter(d => d && !d.cache_miss && d.count >= 6).length,
                 },
-                {
-                  label: 'Зон загружено',
-                  value: `${loadedCount} / ${totalZones}`,
-                },
+                { label: 'Зон с данными', value: `${cachedZones} / ${totalZones}` },
               ].map(({ label, value }) => (
                 <div key={label} style={{
                   background: 'rgba(18,26,18,0.03)',
                   border: '1px solid rgba(18,26,18,0.06)',
                   borderRadius: 14, padding: '14px 16px',
                 }}>
-                  <div style={{ fontSize: 24, fontWeight: 600, color: '#121A12', fontFamily: 'Playfair Display,serif' }}>
+                  <div style={{
+                    fontSize: 24, fontWeight: 600, color: '#121A12',
+                    fontFamily: 'Playfair Display,serif',
+                  }}>
                     {value}
                   </div>
                   <div style={{ fontSize: 12, color: '#8F8475', marginTop: 4 }}>{label}</div>
