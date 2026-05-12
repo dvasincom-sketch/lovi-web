@@ -32,6 +32,7 @@ import Investorlanding from './pages/Investorlanding'
 import Research from './pages/Research'
 import Dataset from './pages/Dataset'
 import Library from './pages/Library'
+import Home from './pages/Home.jsx'
 
 function PageWithLayout({ children }) {
   const [user, setUser] = useState(null)
@@ -47,7 +48,7 @@ function PageWithLayout({ children }) {
   )
 }
 
-function Home({ user, setUser, authOpen, setAuthOpen }) {
+function HomeArchive({ user, setUser, authOpen, setAuthOpen }) {
   const [city, setCity] = useState('Москва')
   const [searchQuery, setSearchQuery] = useState(null)
   const isMoscow = city === 'Москва'
@@ -83,7 +84,8 @@ export default function App() {
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<Home user={user} setUser={setUser} authOpen={authOpen} setAuthOpen={setAuthOpen} />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/archive" element={<HomeArchive user={user} setUser={setUser} authOpen={authOpen} setAuthOpen={setAuthOpen} />} />
           <Route path="/ui" element={<UI />} />
           <Route path="/confirm" element={<Confirm />} />
           <Route path="/reset-password" element={<ResetPassword />} />
