@@ -310,7 +310,7 @@ function ZoneCard({ zone, data, loading, active, onClick }) {
         display: 'flex', justifyContent: 'space-between',
         alignItems: 'flex-start', marginBottom: 6, gap: 8,
       }}>
-        <div style={{ fontSize: 14, fontWeight: 600, color: '#121A12', lineHeight: 1.25, flex: 1 }}>
+        <div className="zone-card-title" style={{ fontSize: 14, fontWeight: 600, color: '#121A12', lineHeight: 1.25, flex: 1 }}>
           {zone.name}
         </div>
         {loading && <span style={{ fontSize: 11, color: '#8F8475', flexShrink: 0 }}>загрузка…</span>}
@@ -319,7 +319,7 @@ function ZoneCard({ zone, data, loading, active, onClick }) {
           <span style={{ fontSize: 11, color: '#8F8475', flexShrink: 0 }}>нет данных</span>
         )}
       </div>
-      <div style={{ fontSize: 12, color: '#8F8475', marginBottom: 10 }}>{zone.anchor}</div>
+      <div className="zone-card-anchor" style={{ fontSize: 12, color: '#8F8475', marginBottom: 10 }}>{zone.anchor}</div>
       <SlotDots zone={zone} />
     </div>
   )
@@ -329,7 +329,7 @@ function ZoneDetail({ zone, data, loading, onClose }) {
   if (!zone) return null
 
   return (
-    <div style={{
+    <div className="zone-detail" style={{
       background: '#fff',
       border: '1px solid rgba(18,26,18,0.08)',
       borderRadius: 20,
@@ -472,6 +472,14 @@ function ZoneDetail({ zone, data, loading, onClose }) {
 // ГЛАВНАЯ СТРАНИЦА
 // ═══════════════════════════════════════════════════════════════════════════
 export default function ZoneMap() {
+  // 📱 Адаптивность
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const [activeDistrictId, setActiveDistrictId] = useState(DISTRICTS[0].id)
   const [activeZoneId, setActiveZoneId] = useState(null)
   const [zoneData, setZoneData]   = useState({})
@@ -535,18 +543,32 @@ export default function ZoneMap() {
       background: '#FDFCF9', minHeight: '100vh',
       fontFamily: 'Inter, system-ui, sans-serif', color: '#121A12',
     }}>
+      {/* Медиа‑запросы для мобильных */}
+      <style>{`
+        @media (max-width: 767px) {
+          .zone-header { font-size: 11px !important; }
+          .zone-card-title { font-size: 13px !important; }
+          .zone-card-anchor { font-size: 11px !important; }
+          .zone-detail {
+            max-height: none !important;
+            position: static !important;
+            top: auto !important;
+          }
+        }
+      `}</style>
+
       {/* Шапка */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 50,
         background: 'rgba(253,252,249,0.92)', backdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(18,26,18,0.08)',
-        padding: '12px 32px',
+        padding: isMobile ? '10px 16px' : '12px 32px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         gap: 16, flexWrap: 'wrap',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <img src="/logo.svg" alt="Лови" style={{ height: 20 }} />
-          <span style={{
+          <span className="zone-header" style={{
             fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase',
             color: '#8F8475', fontWeight: 600,
           }}>
@@ -567,7 +589,8 @@ export default function ZoneMap() {
             style={{
               background: refreshing ? 'rgba(18,26,18,0.3)' : '#121A12',
               color: '#fff', border: 'none',
-              padding: '8px 16px', borderRadius: 12,
+              padding: isMobile ? '6px 12px' : '8px 16px',
+              borderRadius: 12,
               fontSize: 13, fontWeight: 600,
               cursor: refreshing ? 'not-allowed' : 'pointer',
               fontFamily: 'inherit',
@@ -575,7 +598,7 @@ export default function ZoneMap() {
             }}
           >
             <Icon i={refreshing ? Search : RefreshCw} size={14} color="#fff" />
-            {refreshing ? 'Загружаем из 2GIS…' : 'Обновить данные'}
+            {refreshing ? 'Загружаем…' : 'Обновить данные'}
           </button>
         </div>
       </div>
@@ -593,7 +616,11 @@ export default function ZoneMap() {
         </div>
       )}
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '28px 32px' }}>
+      <div style={{
+        maxWidth: 1200,
+        margin: '0 auto',
+        padding: isMobile ? '16px 12px' : '28px 32px',
+      }}>
 
         {/* Табы районов */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
@@ -608,7 +635,8 @@ export default function ZoneMap() {
                   background: isActive ? '#121A12' : 'transparent',
                   color: isActive ? '#fff' : '#121A12',
                   border: isActive ? 'none' : '1px solid rgba(18,26,18,0.15)',
-                  padding: '8px 16px', borderRadius: 12,
+                  padding: isMobile ? '6px 12px' : '8px 16px',
+                  borderRadius: 12,
                   fontSize: 13, fontWeight: isActive ? 600 : 400,
                   cursor: 'pointer', fontFamily: 'inherit',
                   display: 'flex', alignItems: 'center', gap: 8,
@@ -628,30 +656,35 @@ export default function ZoneMap() {
           })}
         </div>
 
-        {/* Двухколоночный лейаут */}
+        {/* Основной контент */}
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: activeZone ? '340px 1fr' : '1fr',
+          display: isMobile ? 'block' : 'grid',
+          gridTemplateColumns: !isMobile && activeZone ? '340px 1fr' : '1fr',
           gap: 16,
           alignItems: 'flex-start',
         }}>
-          {/* Список зон текущего района */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {activeDistrict?.zones.map(zone => (
-              <ZoneCard
-                key={zone.id}
-                zone={zone}
-                data={zoneData[zone.id]}
-                loading={!!loadingMap[zone.id]}
-                active={activeZoneId === zone.id}
-                onClick={() => setActiveZoneId(prev => prev === zone.id ? null : zone.id)}
-              />
-            ))}
-          </div>
+          {/* Список зон — на мобильных скрываем, если выбрана зона */}
+          {(!isMobile || !activeZone) && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {activeDistrict?.zones.map(zone => (
+                <ZoneCard
+                  key={zone.id}
+                  zone={zone}
+                  data={zoneData[zone.id]}
+                  loading={!!loadingMap[zone.id]}
+                  active={activeZoneId === zone.id}
+                  onClick={() => setActiveZoneId(prev => prev === zone.id ? null : zone.id)}
+                />
+              ))}
+            </div>
+          )}
 
           {/* Детальная панель */}
           {activeZone && (
-            <div style={{ position: 'sticky', top: 72 }}>
+            <div style={{
+              position: isMobile ? 'static' : 'sticky',
+              top: isMobile ? 'auto' : 72,
+            }}>
               <ZoneDetail
                 zone={activeZone}
                 data={zoneData[activeZone.id]}
