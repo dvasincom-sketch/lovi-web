@@ -9,6 +9,7 @@ Source of Truth: yes
 
 ## 00-meta
 - [DOCUMENT_SYSTEM.md](/documentation_system/00-meta/DOCUMENT_SYSTEM.md) — описание структуры и правил документации
+- [SESSION_PROTOCOL.md](/documentation_system/00-meta/SESSION_PROTOCOL.md) — стандарт открытия и закрытия сессии разработки
 
 ## 10-core
 - [VISION.md](/documentation_system/10-core/VISION.md) — миссия, видение, главная цель

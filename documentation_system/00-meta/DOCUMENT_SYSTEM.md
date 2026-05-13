@@ -17,3 +17,9 @@ Source of Truth: yes
 2. Доменные инварианты, пограничные случаи и исключения фиксируются в соответствующих доменных файлах.
 3. Каждый файл начинается с заголовка: Status, Owner, Last Updated, Source of Truth, Related Documents.
 4. Изменения вносятся через AI или разработчиком, с обновлением даты.
+
+## Правило закрытия сессии
+После каждой сессии разработки (соло, с командой или AI) обязательно:
+1. Обновить runtime-файлы (CURRENT_STATE, ACTIVE_SPRINT, BLOCKERS, KNOWN_ISSUES, DEPLOY_STATUS)
+2. При изменениях в логике — соответствующий canonic-файл
+3. Залогировать сессию в Dev Log: `POST /dev-sessions` на insalon.onrender.com
