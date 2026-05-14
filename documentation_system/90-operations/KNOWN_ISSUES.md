@@ -35,3 +35,9 @@ Last Updated: 2026-05-14
 - Timezone баг: слоты показывались в UTC вместо +03:00 — исправлено 2026-05-09
 - Дубликаты в slots-stream — исправлено дедупликацией по (service_id, datetime)
 - duration_min из seance_length был неверным — исправлено 2026-05-13
+
+### ZoneMap — 500 на /zones/search
+- Эндпоинт GET /api/lovi/zones/search?zone_id=... возвращает 500
+- Роутер zones.py удалён, логика в lovi.py — возможна потеря переменной DGIS_API_KEY
+- Проверить: Render Dashboard → Environment → DGIS_API_KEY
+- Приоритет: P1

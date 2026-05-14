@@ -41,3 +41,16 @@ Last Updated: 2026-05-14
 - Бандл 613 КБ — нужен lazy loading
 - YooKassa refund при отмене не реализован
 - Баланс Lovi в /my-bookings не отображается
+
+### ZoneMap (/zone-map)
+- 17 зон в 4 районах ЮЗАО (Коньково, Обручевский, Черёмушки, Ломоносовский)
+- Таблица zone_2gis_cache в Supabase с предохранителем (не перезаписывать 0)
+- Эндпоинты: GET /api/lovi/zones/search, GET /api/lovi/zones/refresh
+- 176 объектов в кэше, Overpass API реализован но отключён
+- Баг: 500 на zones/search — см. KNOWN_ISSUES.md
+
+### UI Kit (/ui)
+- 27 секций включая: Accordion, Timeline, Tooltip, ComparisonTable, ArticleCard
+- Tip компонент с пунктирным подчёркиванием
+- ScrollToTop через MutationObserver для якорей
+- Страницы: Library (/library), Article01 (/library/article-01)
