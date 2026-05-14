@@ -67,3 +67,9 @@ Last Updated: 2026-05-14
 - Цель: показать data-driven подход — реальная база массажных салонов ЮЗАО
 - Смысл: объём рынка в зоне → понятно почему слоты ограничены
 - Страница /zone-map уже существует, данные есть в Supabase
+
+### Email-уведомления
+- POST /api/lovi/waitlist — сохраняет в lovi_waitlist, письмо пользователю + уведомление админу
+- POST /api/lovi/partner-leads — сохраняет в lovi_partner_leads, письмо пользователю (если email) + уведомление админу
+- Шаблоны: waitlist_user.html, waitlist_admin.html, partner_lead_user.html, partner_lead_admin.html
+- Провайдер: Resend, from: noreply@lovi.today, admin: dvasin.com@gmail.com

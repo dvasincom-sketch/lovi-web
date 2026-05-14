@@ -410,7 +410,7 @@ function WaitlistModal({ open, onClose }) {
               Лента откроется этой осенью
             </div>
             <div style={{ fontSize: 13, color: 'var(--secondary)', lineHeight: 1.55 }}>
-              Бронирование через Лови запустим, когда подключим по 2 салона
+              Бронирование через «Лови» запустим, когда подключим по 2 салона
               в каждой зоне спроса 4 районов ЮЗАО. Оставьте email — напишем
               одним письмом, когда всё готово.
             </div>
@@ -855,6 +855,430 @@ function PartnerModal({ open, onClose, preselectedZone = null, preselectedSalon 
 // СЕКЦИИ
 // ═══════════════════════════════════════════════════════════════════════════════
 
+// ─── ClientPromise — откуда клиенты ─────────────────────────────────────────
+function ClientPromise({ isMobile }) {
+  return (
+    <div style={{
+      maxWidth: 1200, margin: '0 auto',
+      padding: isMobile ? '24px 20px 40px' : '32px 32px 56px',
+    }}>
+      <div style={{
+        background: 'var(--dark)', color: '#fff',
+        borderRadius: isMobile ? 20 : 24,
+        padding: isMobile ? '28px 24px' : '44px 48px',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: isMobile ? 24 : 56,
+        alignItems: 'center',
+      }}>
+        <div>
+          <div style={{
+            fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
+            textTransform: 'uppercase', color: 'var(--accent)',
+            marginBottom: 16,
+          }}>
+            Откуда клиенты
+          </div>
+          <div style={{
+            fontFamily: 'Playfair Display,serif', fontWeight: 400,
+            fontSize: isMobile ? 26 : 36, lineHeight: 1.15,
+            marginBottom: 16,
+          }}>
+            Летом 2026 запускаем приложение «Лови»
+            {isMobile ? ' ' : <br />}
+            для клиентов — iOS и Android.
+          </div>
+          <p style={{
+            fontSize: isMobile ? 14 : 15, lineHeight: 1.65,
+            color: 'rgba(255,255,255,0.65)',
+            margin: 0,
+          }}>
+            Привлечение клиентов и реклама — на нашей стороне.
+            У нас уже есть база лояльных пользователей, на которую
+            мы запускаем приложение. Вы получаете готовых клиентов
+            в свои пустые окна — без затрат на маркетинг.
+          </p>
+        </div>
+
+        <div style={{
+          display: 'flex', flexDirection: 'column', gap: 14,
+        }}>
+          {[
+            ['Приложение клиентам', 'бесплатно, лето 2026'],
+            ['Маркетинг и реклама', 'на стороне «Лови»'],
+            ['Стоимость для салона', 'первые 3 месяца — 0 ₽'],
+            ['Привлечение клиентов', 'мы платим, не вы'],
+          ].map(([label, val]) => (
+            <div key={label} style={{
+              display: 'flex', justifyContent: 'space-between',
+              alignItems: 'baseline', gap: 16,
+              padding: '12px 0',
+              borderBottom: '1px solid rgba(255,255,255,0.08)',
+            }}>
+              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>{label}</span>
+              <span style={{ fontSize: 14, fontWeight: 500, textAlign: 'right' }}>{val}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── FAQ ────────────────────────────────────────────────────────────────────
+function FAQ({ isMobile }) {
+  const [openIdx, setOpenIdx] = useState(null)
+
+  const items = [
+    {
+      q: 'Бесплатно сейчас — а потом сколько это будет стоить?',
+      a: 'Первые 3 месяца — бесплатно для всех салонов первой волны. Дальнейшие условия мы зафиксируем индивидуально с каждым партнёром по результатам этих 3 месяцев — когда у нас будет реальная статистика по вашему салону. Никаких сюрпризов: ценообразование обсудим до конца бесплатного периода.',
+    },
+    {
+      q: 'Как именно происходит механика, когда клиент приходит?',
+      a: 'У вас в YCLIENTS появилось свободное окно — «Лови» видит это через интеграцию. Окно публикуется в приложении со скидкой, которую вы установили. Клиент бронирует и оплачивает 100% сразу. Бронь автоматически появляется в вашем YCLIENTS как обычная запись. Вы получаете выплату после визита клиента.',
+    },
+    {
+      q: 'Какие скидки и кто их устанавливает?',
+      a: 'Скидки устанавливаете вы сами для каждой услуги. Можно задать минимум и максимум — «Лови» будет работать в этих рамках. Можно вообще выключить скидки для конкретных услуг или мастеров.',
+    },
+    {
+      q: 'Откуда возьмутся клиенты — у вас же ещё нет приложения?',
+      a: 'Приложение «Лови» запускаем летом 2026 года для iOS и Android. У нас уже есть база лояльных клиентов, на которую мы будем продвигать приложение и делать рекламную кампанию. Привлечение клиентов и маркетинг — полностью на нашей стороне, для салона это бесплатно.',
+    },
+    {
+      q: 'Что если клиент со скидкой потом будет приходить только по скидке?',
+      a: '«Лови» работает только с пустыми окнами в реальном времени — слот открывается за 1–3 часа до начала и исчезает после. Клиент не может «забронировать заранее» по скидке, потому что скидки на будущие даты в системе нет. Это защищает ваш основной прайс.',
+    },
+    {
+      q: 'Можно ли ограничить какие услуги попадают на витрину?',
+      a: 'Да. Вы выбираете в кабинете партнёра, какие услуги, мастера и часы участвуют в «Лови». Например, можно включить только массаж и SPA, исключить «звёздных» мастеров и работать только с 11:00 до 17:00 в будни.',
+    },
+    {
+      q: 'Что если я хочу попробовать и потом отключиться?',
+      a: 'Отключение в один клик в кабинете партнёра. Никаких штрафов, договоров с обязательствами и периодов уведомления. Активные брони доводятся до конца, новые слоты не публикуются.',
+    },
+    {
+      q: 'Как технически работает интеграция с YCLIENTS?',
+      a: 'Подключение занимает 5 минут: вы выдаёте «Лови» доступ к вашему YCLIENTS через стандартный механизм партнёров. Никакого нового софта устанавливать не нужно. После подключения «Лови» работает в фоне, ваш персонал ничего не меняет в привычной работе.',
+    },
+  ]
+
+  return (
+    <div id="how" style={{
+      maxWidth: 1200, margin: '0 auto',
+      padding: isMobile ? '32px 20px 40px' : '56px 32px 80px',
+    }}>
+      <div style={{
+        fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: 'var(--secondary)',
+        marginBottom: 16,
+      }}>
+        Частые вопросы
+      </div>
+      <h2 style={{
+        fontFamily: 'Playfair Display,serif', fontWeight: 400,
+        fontSize: isMobile ? 28 : 'clamp(32px, 4vw, 48px)',
+        lineHeight: 1.15, color: 'var(--dark)',
+        margin: '0 0 32px', maxWidth: 720,
+      }}>
+        Что обычно спрашивают{isMobile ? ' ' : <br />}владельцы салонов
+      </h2>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {items.map((item, i) => {
+          const isOpen = openIdx === i
+          return (
+            <div
+              key={i}
+              style={{
+                background: 'var(--bg)',
+                border: '1px solid var(--border)',
+                borderRadius: 16,
+                overflow: 'hidden',
+                transition: 'border-color 0.15s',
+                borderColor: isOpen ? 'var(--accent)' : 'var(--border)',
+              }}
+            >
+              <button
+                onClick={() => setOpenIdx(isOpen ? null : i)}
+                style={{
+                  width: '100%',
+                  padding: isMobile ? '18px 18px' : '22px 28px',
+                  background: 'transparent', border: 'none',
+                  cursor: 'pointer', textAlign: 'left',
+                  fontFamily: 'inherit',
+                  display: 'flex', justifyContent: 'space-between',
+                  alignItems: 'center', gap: 16,
+                }}
+              >
+                <span style={{
+                  fontSize: isMobile ? 15 : 17,
+                  fontWeight: 500, color: 'var(--dark)',
+                  lineHeight: 1.4,
+                }}>
+                  {item.q}
+                </span>
+                <span style={{
+                  flexShrink: 0,
+                  width: 28, height: 28, borderRadius: '50%',
+                  background: isOpen ? 'var(--accent)' : 'rgba(18,26,18,0.06)',
+                  color: isOpen ? '#fff' : 'var(--dark)',
+                  fontSize: 18, fontWeight: 400,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  transition: 'all 0.15s',
+                }}>
+                  {isOpen ? '−' : '+'}
+                </span>
+              </button>
+              {isOpen && (
+                <div style={{
+                  padding: isMobile ? '0 18px 20px' : '0 28px 24px',
+                  fontSize: isMobile ? 14 : 15, lineHeight: 1.65,
+                  color: 'var(--secondary)',
+                  maxWidth: 760,
+                }}>
+                  {item.a}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ─── EarningsCalculator — сколько денег приносят пустые окна ────────────────
+function EarningsCalculator({ isMobile, onApply }) {
+  const FILL_RATE = 0.70
+
+  const [slotsWeek, setSlotsWeek] = useState(5)
+  const [price, setPrice]         = useState(4000)
+  const [discount, setDiscount]   = useState(25)
+
+  const slotsMonth = slotsWeek * 4
+  const filled     = Math.round(slotsMonth * FILL_RATE)
+  const avgCheck   = Math.round(price * (1 - discount / 100))
+  const revenue    = filled * avgCheck
+
+  const fmt = (n) => new Intl.NumberFormat('ru-RU').format(Math.round(n))
+
+  const sliderStyle = {
+    width: '100%',
+    height: 4,
+    appearance: 'none',
+    background: 'var(--border)',
+    borderRadius: 2,
+    outline: 'none',
+    cursor: 'pointer',
+  }
+
+  return (
+    <div style={{
+      maxWidth: 1200, margin: '0 auto',
+      padding: isMobile ? '24px 20px 40px' : '32px 32px 56px',
+    }}>
+      <div style={{
+        background: 'var(--bg)',
+        border: '1px solid var(--border)',
+        borderRadius: isMobile ? 20 : 24,
+        padding: isMobile ? '28px 24px' : '44px 48px',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: isMobile ? 28 : 56,
+        alignItems: 'flex-start',
+      }}>
+        {/* Левая колонка — слайдеры */}
+        <div>
+          <div style={{
+            fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
+            textTransform: 'uppercase', color: 'var(--accent)',
+            marginBottom: 16,
+          }}>
+            Калькулятор
+          </div>
+          <div style={{
+            fontFamily: 'Playfair Display,serif', fontWeight: 400,
+            fontSize: isMobile ? 24 : 30, lineHeight: 1.2,
+            color: 'var(--dark)', marginBottom: 12,
+          }}>
+            Сколько денег приносят пустые окна вашего салона
+          </div>
+          <p style={{
+            fontSize: isMobile ? 14 : 15, lineHeight: 1.6,
+            color: 'var(--secondary)', margin: '0 0 28px',
+          }}>
+            Подвиньте слайдеры под свой салон — посчитаем потенциал заполнения через «Лови»
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+            {/* Окна в неделю */}
+            <div>
+              <div style={{
+                display: 'flex', justifyContent: 'space-between',
+                alignItems: 'baseline', marginBottom: 10,
+              }}>
+                <label style={{ fontSize: 13, color: 'var(--secondary)' }}>
+                  Свободных окон в неделю
+                </label>
+                <span style={{
+                  fontFamily: 'Playfair Display,serif',
+                  fontSize: 22, color: 'var(--dark)',
+                }}>
+                  {slotsWeek}
+                </span>
+              </div>
+              <input
+                type="range" min={1} max={20} step={1}
+                value={slotsWeek}
+                onChange={e => setSlotsWeek(Number(e.target.value))}
+                style={sliderStyle}
+              />
+              <div style={{
+                display: 'flex', justifyContent: 'space-between',
+                fontSize: 11, color: 'var(--secondary)', marginTop: 6,
+              }}>
+                <span>1</span><span>20</span>
+              </div>
+            </div>
+
+            {/* Средний чек */}
+            <div>
+              <div style={{
+                display: 'flex', justifyContent: 'space-between',
+                alignItems: 'baseline', marginBottom: 10,
+              }}>
+                <label style={{ fontSize: 13, color: 'var(--secondary)' }}>
+                  Средний чек услуги
+                </label>
+                <span style={{
+                  fontFamily: 'Playfair Display,serif',
+                  fontSize: 22, color: 'var(--dark)',
+                }}>
+                  {fmt(price)} ₽
+                </span>
+              </div>
+              <input
+                type="range" min={2000} max={10000} step={500}
+                value={price}
+                onChange={e => setPrice(Number(e.target.value))}
+                style={sliderStyle}
+              />
+              <div style={{
+                display: 'flex', justifyContent: 'space-between',
+                fontSize: 11, color: 'var(--secondary)', marginTop: 6,
+              }}>
+                <span>2 000 ₽</span><span>10 000 ₽</span>
+              </div>
+            </div>
+
+            {/* Глубина скидки */}
+            <div>
+              <div style={{
+                display: 'flex', justifyContent: 'space-between',
+                alignItems: 'baseline', marginBottom: 10,
+              }}>
+                <label style={{ fontSize: 13, color: 'var(--secondary)' }}>
+                  Глубина скидки на пустые окна
+                </label>
+                <span style={{
+                  fontFamily: 'Playfair Display,serif',
+                  fontSize: 22, color: 'var(--dark)',
+                }}>
+                  {discount}%
+                </span>
+              </div>
+              <input
+                type="range" min={10} max={40} step={5}
+                value={discount}
+                onChange={e => setDiscount(Number(e.target.value))}
+                style={sliderStyle}
+              />
+              <div style={{
+                display: 'flex', justifyContent: 'space-between',
+                fontSize: 11, color: 'var(--secondary)', marginTop: 6,
+              }}>
+                <span>10%</span><span>40%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Правая колонка — результат */}
+        <div style={{
+          display: 'flex', flexDirection: 'column', gap: 16,
+          position: isMobile ? 'static' : 'sticky',
+          top: isMobile ? 'auto' : 100,
+        }}>
+          <div style={{
+            background: 'var(--dark)',
+            borderRadius: 20,
+            padding: isMobile ? '24px 22px' : '32px 28px',
+            color: '#fff',
+          }}>
+            <div style={{
+              fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)',
+              marginBottom: 14,
+            }}>
+              Потенциальная выручка
+            </div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 16 }}>
+              <span style={{
+                fontFamily: 'Playfair Display,serif',
+                fontSize: isMobile ? 40 : 52, fontWeight: 400,
+                color: 'var(--accent)', lineHeight: 1,
+              }}>
+                {fmt(revenue)} ₽
+              </span>
+              <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.55)' }}>в месяц</span>
+            </div>
+
+            <div style={{
+              display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14,
+              paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.1)',
+            }}>
+              <div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: 4 }}>
+                  Заполненных окон
+                </div>
+                <div style={{ fontSize: 16, fontWeight: 500 }}>
+                  {filled} из {slotsMonth}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: 4 }}>
+                  Средний чек со скидкой
+                </div>
+                <div style={{ fontSize: 16, fontWeight: 500 }}>
+                  {fmt(avgCheck)} ₽
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p style={{
+            fontSize: 12, color: 'var(--secondary)',
+            lineHeight: 1.55, margin: 0,
+          }}>
+            Расчёт исходит из 70% заполняемости пустых окон на стабильной фазе работы «Лови».
+            В первые 1–2 месяца после запуска приложения заполняемость может быть ниже.
+            Цифры — потенциал, а не обещание выручки.
+          </p>
+
+          <BtnPrimary
+            onClick={() => onApply(null)}
+            style={{ width: '100%' }}
+          >
+            Подать заявку на подключение
+          </BtnPrimary>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function NavBar({ isMobile }) {
   return (
     <div style={{
@@ -866,13 +1290,13 @@ function NavBar({ isMobile }) {
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
     }}>
       <a href="/" style={{ textDecoration: 'none' }}>
-        <img src="/logo.svg" alt="Лови" style={{ height: isMobile ? 22 : 26 }} />
+        <img src="/logo.svg" alt="«Лови»" style={{ height: isMobile ? 22 : 26 }} />
       </a>
     </div>
   )
 }
 
-function Hero({ isMobile, onSubscribe }) {
+function Hero({ isMobile, onApply }) {
   return (
     <div style={{
       maxWidth: 1200, margin: '0 auto',
@@ -883,37 +1307,37 @@ function Hero({ isMobile, onSubscribe }) {
         textTransform: 'uppercase', color: 'var(--accent)',
         marginBottom: 20,
       }}>
-        Лови · ЮЗАО · Москва
+        «Лови» · для салонов ЮЗАО
       </div>
 
       <h1 style={{
         fontFamily: 'Playfair Display,serif', fontWeight: 400,
-        fontSize: isMobile ? 40 : 'clamp(44px, 6vw, 80px)',
+        fontSize: isMobile ? 38 : 'clamp(44px, 6vw, 72px)',
         lineHeight: 1.08, color: 'var(--dark)',
-        margin: '0 0 28px', maxWidth: 800,
+        margin: '0 0 28px', maxWidth: 820,
       }}>
-        Премиальный массаж
+        Пустое окно — это{isMobile ? ' ' : <br />}
+        <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>не отмена,</em>
         {isMobile ? ' ' : <br />}
-        по цене обычного.
-        {isMobile ? ' ' : <br />}
-        <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>Сегодня.</em>
+        а упущенная выручка.
       </h1>
 
       <p style={{
         fontSize: isMobile ? 15 : 18, lineHeight: 1.65,
         color: 'var(--secondary)', margin: '0 0 36px',
-        maxWidth: 560,
+        maxWidth: 580,
       }}>
-        Когда у салона пустой час — мы публикуем его с реальной скидкой.
-        Вы экономите, мастер работает. Честный обмен.
+        Когда мастер сидит без клиента — он уходит работать в другие места.
+        Когда клиенты приходят редко — вы поднимаете цены, чтобы салон выезжал.
+        «Лови» превращает пустые окна в записи, не трогая ваш основной прайс.
       </p>
 
       <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
         <BtnPrimary
-          onClick={onSubscribe}
+          onClick={() => onApply(null)}
           style={{ width: isMobile ? '100%' : 'auto' }}
         >
-          Записаться на запуск
+          Подать заявку
         </BtnPrimary>
         <a
           href="#how"
@@ -1052,25 +1476,36 @@ function LiveDemo({ isMobile, onSubscribe }) {
                 </div>
               </div>
               <div style={{
-                background: 'rgba(249,115,22,0.18)', color: 'var(--accent)',
-                padding: '8px 14px', borderRadius: 12,
-                fontSize: 13, fontWeight: 600,
-              }}>
-                −{s.discount_pct}%
-              </div>
-              <div style={{
                 marginLeft: isMobile ? 0 : 'auto',
                 width: isMobile ? '100%' : 'auto',
                 display: 'flex', flexDirection: 'column',
                 alignItems: isMobile ? 'stretch' : 'flex-end',
                 gap: 8,
               }}>
-                <BtnPrimary
-                  onClick={onSubscribe}
-                  style={{ width: isMobile ? '100%' : 'auto' }}
-                >
-                  Забронировать за {fmt(s.lovi_price)} ₽
-                </BtnPrimary>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'stretch',
+                  gap: 8,
+                  width: isMobile ? '100%' : 'auto',
+                }}>
+                  <div style={{
+                    background: 'rgba(249,115,22,0.18)',
+                    color: 'var(--accent)',
+                    padding: '0 14px',
+                    borderRadius: 18,
+                    fontSize: 14, fontWeight: 600,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    −{s.discount_pct}%
+                  </div>
+                  <BtnPrimary
+                    onClick={onSubscribe}
+                    style={{ flex: isMobile ? 1 : '0 0 auto' }}
+                  >
+                    Поймать за {fmt(s.lovi_price)} ₽
+                  </BtnPrimary>
+                </div>
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap',
                   justifyContent: isMobile ? 'flex-start' : 'flex-end',
@@ -1286,6 +1721,8 @@ function PartnerCallout({ isMobile, onApply, zoneData = {} }) {
           borderRadius: isMobile ? 20 : 24,
           padding: isMobile ? '24px 20px' : '28px 28px',
           color: '#fff',
+          minWidth: 0,
+          overflow: 'hidden',
         }}>
           {/* Заголовок карточки */}
           <div style={{
@@ -1458,16 +1895,11 @@ function DistrictCell({ district, onClick, loading }) {
       {/* Полоски заполненности зон */}
       <div style={{ display: 'flex', gap: 4, marginTop: 'auto', flexWrap: 'wrap' }}>
         {district.zones.map(z => {
-          const full = z.taken.length >= z.slotsPerZone && z.slotsPerZone > 0
-          const partial = z.taken.length > 0 && !full
+          const hasTaken = z.taken.length > 0
           return (
             <div key={z.id} style={{
               flex: '1 1 0', minWidth: 18, height: 6, borderRadius: 3,
-              background: full
-                ? 'var(--accent)'
-                : partial
-                  ? 'rgba(249,115,22,0.45)'
-                  : 'rgba(255,255,255,0.1)',
+              background: hasTaken ? 'var(--accent)' : 'rgba(255,255,255,0.1)',
             }} />
           )
         })}
@@ -1495,15 +1927,18 @@ function ZoneRow({ zone, onClick }) {
         borderRadius: 12, padding: '12px 14px',
         cursor: 'pointer', textAlign: 'left',
         transition: 'all 0.2s',
-        display: 'flex', alignItems: 'center', gap: 14,
+        display: 'flex', alignItems: 'center', gap: 10,
         fontFamily: 'inherit', color: 'inherit',
+        width: '100%', boxSizing: 'border-box',
+        overflow: 'hidden',
       }}
     >
       {/* Название и якорь */}
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ flex: '1 1 0', minWidth: 0, overflow: 'hidden' }}>
         <div style={{
           fontSize: 13, fontWeight: 600, color: '#fff',
           marginBottom: 2, lineHeight: 1.3,
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}>
           {zone.name}
         </div>
@@ -1521,12 +1956,12 @@ function ZoneRow({ zone, onClick }) {
       </div>
 
       {/* Кружки слотов */}
-      <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+      <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
         {Array.from({ length: zone.slotsPerZone }).map((_, i) => {
           const taken = zone.taken.find(t => t.index === i)
           return (
             <div key={i} style={{
-              width: 14, height: 14, borderRadius: '50%',
+              width: 12, height: 12, borderRadius: '50%',
               background: taken ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
               border: taken ? 'none' : '1px solid rgba(255,255,255,0.14)',
             }} />
@@ -1538,7 +1973,8 @@ function ZoneRow({ zone, onClick }) {
       <div style={{
         fontSize: 10, color: isFull ? 'rgba(255,255,255,0.4)' : 'var(--accent)',
         fontWeight: 600, letterSpacing: '0.04em',
-        textTransform: 'uppercase', flexShrink: 0, minWidth: 42, textAlign: 'right',
+        textTransform: 'uppercase', flexShrink: 0,
+        whiteSpace: 'nowrap',
       }}>
         {isFull ? 'занято' : `${left} своб.`}
       </div>
@@ -1812,7 +2248,7 @@ function Footer({ isMobile }) {
         gap: isMobile ? 16 : 24,
         fontSize: 12,
       }}>
-        <div>© 2026 Lovi.today · ОГРН 324774600002041 · ИП Васин Д. В.</div>
+        <div>© 2026 Lovi.today · ОГРН 324774600002041</div>
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
           <a href="/privacy" style={{ color: 'inherit', textDecoration: 'none' }}>
             Политика конфиденциальности
@@ -1859,10 +2295,13 @@ export default function Home() {
       `}</style>
 
       <NavBar isMobile={isMobile} />
-      <Hero isMobile={isMobile} onSubscribe={() => setWaitlistOpen(true)} />
+      <Hero isMobile={isMobile} onApply={openPartner} />
+      <ClientPromise isMobile={isMobile} />
+      <EarningsCalculator isMobile={isMobile} onApply={openPartner} />
       <LiveDemo isMobile={isMobile} onSubscribe={() => setWaitlistOpen(true)} />
       <PullQuote isMobile={isMobile} />
       <PartnerCallout isMobile={isMobile} onApply={openPartner} zoneData={zoneData} />
+      <FAQ isMobile={isMobile} />
       <SecondaryCTA isMobile={isMobile} onSubscribe={() => setWaitlistOpen(true)} />
       <Footer isMobile={isMobile} />
 
