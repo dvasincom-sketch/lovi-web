@@ -2,19 +2,41 @@
 
 Status: runtime
 Owner: Dmitry Vasin
-Last Updated: 2026-05-13
+Last Updated: 2026-05-14
 
-## Active Tasks
+## Следующая сессия — UI Library
 
-- Fix payroll filters
-- Validate payroll notes parser
-- Improve shift reconciliation
-- Finalize visit_records integration
-- Reduce frontend inconsistencies
+Цель: расширить /ui до полной библиотеки компонентов.
+Все новые страницы конструировать из готовых блоков.
 
-## Upcoming
+### Что добавить в /ui
+- Hero-блоки (тёмный с фото, светлый с градиентом)
+- Секции с сеткой (2/3/4 колонки)
+- Калькулятор (Counter +/−, блок результата)
+- Логотип-строка партнёров
+- Отзывы (без карточек)
+- Шаги 01/02/03 с крупными цифрами
+- Feature-блоки (светлый и тёмный варианты)
+- CTA-секции
+- Форма заявки (expanded и свёрнутая)
+- Таймер с urgent-состоянием
+- Pill/Tag статусные бейджи
+- Toggle published/draft
+- Drawer (slideRight и slideUp)
 
-- Utilization heatmap
-- Multi-level P&L
-- Forecasting
-- Auto synchronization
+## Backlog P0
+- [ ] YooKassa refund при отмене клиентом
+- [ ] Баланс Lovi в /my-bookings
+
+## Backlog P1
+- [ ] Скрытие дублей услуг в dashboard
+- [ ] Статистика броней и выручки в кабинете партнёра
+- [ ] Lazy loading страниц
+- [ ] Автотесты booking flow
+
+## Backlog P2
+- [ ] Масштабирование: убрать хардкод COMPANY_ID
+- [ ] Поиск и фильтры в HeroNew
+- [ ] Telegram бот — алерты горящих окошек
+- [ ] Geolocation — расстояние до салона
+- [ ] Cron email триггеры
