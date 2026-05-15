@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   MapPin, ArrowRight, Check, Clock, Lock, Sparkles, X,
 } from 'lucide-react'
@@ -856,6 +856,179 @@ function PartnerModal({ open, onClose, preselectedZone = null, preselectedSalon 
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // ─── ClientPromise — откуда клиенты ─────────────────────────────────────────
+// ─── ProblemSolution — почему текущие решения не работают ──────────────────
+function ProblemSolution({ isMobile }) {
+  const [visible, setVisible] = useState(false)
+  const containerRef = useRef(null)
+
+  useEffect(() => {
+    if (!containerRef.current) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+    )
+    observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  // Карточка — слева светлая, справа тёмная, но одинакового объёма
+  const cardStyle = (delay, tone) => ({
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'translateY(0)' : 'translateY(24px)',
+    transition: `opacity 0.6s ease-out ${delay}ms, transform 0.6s ease-out ${delay}ms`,
+    padding: isMobile ? '20px 22px' : '24px 26px',
+    borderRadius: 16,
+    background: tone === 'dark' ? 'var(--dark)' : 'var(--bg)',
+    border: tone === 'dark'
+      ? '1px solid var(--dark)'
+      : '1px solid var(--border)',
+  })
+
+  const eyebrowStyle = {
+    fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
+    textTransform: 'uppercase', color: 'var(--secondary)',
+    marginBottom: 12,
+  }
+
+  const titleStyle = (tone) => ({
+    fontSize: isMobile ? 16 : 17, fontWeight: 600,
+    color: tone === 'dark' ? '#fff' : 'var(--dark)',
+    marginBottom: 10, lineHeight: 1.3,
+  })
+
+  const bodyStyle = (tone) => ({
+    fontSize: isMobile ? 13 : 14, lineHeight: 1.6,
+    color: tone === 'dark' ? 'rgba(255,255,255,0.7)' : 'var(--secondary)',
+    margin: 0,
+  })
+
+  return (
+    <div ref={containerRef} style={{
+      maxWidth: 1200, margin: '0 auto',
+      padding: isMobile ? '32px 20px 40px' : '56px 32px 72px',
+    }}>
+      {/* Eyebrow + заголовок */}
+      <div style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(16px)',
+        transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
+        marginBottom: isMobile ? 28 : 40,
+      }}>
+        <div style={{
+          fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
+          textTransform: 'uppercase', color: 'var(--secondary)',
+          marginBottom: 12,
+        }}>
+          Как сейчас работают пустые окна
+        </div>
+        <h2 style={{
+          fontFamily: 'Playfair Display,serif', fontWeight: 400,
+          fontSize: isMobile ? 26 : 'clamp(28px, 3.2vw, 40px)',
+          lineHeight: 1.15, color: 'var(--dark)',
+          margin: 0, maxWidth: 720,
+        }}>
+          Привычные способы{isMobile ? ' ' : <br />}
+          не приводят новых клиентов
+        </h2>
+      </div>
+
+      {/* Две колонки — симметричные */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: isMobile ? 28 : 40,
+        alignItems: 'stretch',
+      }}>
+        {/* ЛЕВАЯ КОЛОНКА — обычный подход */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateY(0)' : 'translateY(16px)',
+            transition: 'opacity 0.5s ease-out 100ms, transform 0.5s ease-out 100ms',
+            ...eyebrowStyle, marginBottom: 0,
+          }}>
+            Обычный подход
+          </div>
+
+          <div style={cardStyle(200, 'light')}>
+            <div style={titleStyle('light')}>Публикация в соцсетях</div>
+            <p style={bodyStyle('light')}>
+              Салон публикует пустое окно в сторис, каналах, в чате с клиентами.
+              Видят только те, кто уже клиент. Новых клиентов бизнес не получает,
+              выручка не растёт.
+            </p>
+          </div>
+
+          <div style={cardStyle(350, 'light')}>
+            <div style={titleStyle('light')}>Велкам-скидка для новых</div>
+            <p style={bodyStyle('light')}>
+              Некоторые добавляют «15% на первый визит» для привлечения новых клиентов.
+              Клиент приходит по скидке и не возвращается — не хочет платить полную цену.
+              Привлечение есть, удержания нет.
+            </p>
+          </div>
+        </div>
+
+        {/* ПРАВАЯ КОЛОНКА — Лови */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateY(0)' : 'translateY(16px)',
+            transition: 'opacity 0.5s ease-out 250ms, transform 0.5s ease-out 250ms',
+            ...eyebrowStyle, marginBottom: 0,
+          }}>
+            Подход «Лови»
+          </div>
+
+          <div style={cardStyle(400, 'dark')}>
+            <div style={titleStyle('dark')}>Целевая новая аудитория</div>
+            <p style={bodyStyle('dark')}>
+              Пустое окно появляется в приложении — его видят пользователи,
+              которые сами ищут массаж в вашем районе именно сейчас.
+              Не ваши подписчики, а новые клиенты района.
+            </p>
+          </div>
+
+          <div style={cardStyle(550, 'dark')}>
+            <div style={titleStyle('dark')}>Привычка к скидочной модели</div>
+            <p style={bodyStyle('dark')}>
+              Наша аудитория осознанно приходит на горящие окна со скидкой —
+              это их формат. Они возвращаются в следующее пустое окно,
+              без ожидания скидок на основной прайс.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom-line — крупный центрированный финал в Playfair */}
+      <div style={{
+        marginTop: isMobile ? 36 : 56,
+        maxWidth: 760, marginLeft: 'auto', marginRight: 'auto',
+        textAlign: 'center',
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(16px)',
+        transition: 'opacity 0.7s ease-out 750ms, transform 0.7s ease-out 750ms',
+      }}>
+        <div style={{
+          fontFamily: 'Playfair Display,serif', fontWeight: 400,
+          fontSize: isMobile ? 22 : 'clamp(24px, 2.6vw, 32px)',
+          lineHeight: 1.3, color: 'var(--dark)',
+        }}>
+          Вы получаете новых клиентов, которые приходят регулярно —{' '}
+          <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>
+            именно туда, где у вас простой.
+          </em>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ClientPromise({ isMobile }) {
   return (
     <div style={{
@@ -1327,9 +1500,7 @@ function Hero({ isMobile, onApply }) {
         color: 'var(--secondary)', margin: '0 0 36px',
         maxWidth: 580,
       }}>
-        Когда мастер сидит без клиента — он уходит работать в другие места.
-        Когда клиенты приходят редко — вы поднимаете цены, чтобы салон выезжал.
-        «Лови» превращает пустые окна в записи, не трогая ваш основной прайс.
+      Сервис «Лови» превращает пустые окна в записи, не трогая ваш основной прайс.
       </p>
 
       <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
@@ -2296,6 +2467,7 @@ export default function Home() {
 
       <NavBar isMobile={isMobile} />
       <Hero isMobile={isMobile} onApply={openPartner} />
+      <ProblemSolution isMobile={isMobile} />
       <ClientPromise isMobile={isMobile} />
       <EarningsCalculator isMobile={isMobile} onApply={openPartner} />
       <LiveDemo isMobile={isMobile} onSubscribe={() => setWaitlistOpen(true)} />
