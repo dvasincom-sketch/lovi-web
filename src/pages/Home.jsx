@@ -856,6 +856,17 @@ function PartnerModal({ open, onClose, preselectedZone = null, preselectedSalon 
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // ─── ClientPromise — откуда клиенты ─────────────────────────────────────────
+// ─── Переиспользуемый градиент для тёмных плашек ────────────────────────────
+// Оранжевое свечение в правом верхнем углу — из UI.jsx
+const DarkGlow = () => (
+  <div style={{
+    position: 'absolute', top: -40, right: -40,
+    width: 160, height: 160, borderRadius: '50%',
+    background: 'radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%)',
+    pointerEvents: 'none',
+  }} />
+)
+
 // ─── ProblemSolution — почему текущие решения не работают ──────────────────
 function ProblemSolution({ isMobile }) {
   const [visible, setVisible] = useState(false)
@@ -864,46 +875,42 @@ function ProblemSolution({ isMobile }) {
   useEffect(() => {
     if (!containerRef.current) return
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true)
-          observer.disconnect()
-        }
-      },
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect() } },
       { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
     )
     observer.observe(containerRef.current)
     return () => observer.disconnect()
   }, [])
 
-  // Карточка — слева светлая, справа тёмная, но одинакового объёма
-  const cardStyle = (delay, tone) => ({
+  const anim = (delay) => ({
     opacity: visible ? 1 : 0,
     transform: visible ? 'translateY(0)' : 'translateY(24px)',
     transition: `opacity 0.6s ease-out ${delay}ms, transform 0.6s ease-out ${delay}ms`,
+  })
+
+  const card = (delay, tone) => ({
+    ...anim(delay),
     padding: isMobile ? '20px 22px' : '24px 26px',
     borderRadius: 16,
     background: tone === 'dark' ? 'var(--dark)' : 'var(--bg)',
-    border: tone === 'dark'
-      ? '1px solid var(--dark)'
-      : '1px solid var(--border)',
+    border: `1px solid ${tone === 'dark' ? 'rgba(255,255,255,0.08)' : 'var(--border)'}`,
+    position: 'relative', overflow: 'hidden',
   })
 
-  const eyebrowStyle = {
+  const eyebrow = {
     fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
     textTransform: 'uppercase', color: 'var(--secondary)',
-    marginBottom: 12,
   }
 
-  const titleStyle = (tone) => ({
-    fontSize: isMobile ? 16 : 17, fontWeight: 600,
+  const ttl = (tone) => ({
+    fontSize: isMobile ? 15 : 16, fontWeight: 600,
     color: tone === 'dark' ? '#fff' : 'var(--dark)',
-    marginBottom: 10, lineHeight: 1.3,
+    marginBottom: 8, lineHeight: 1.3,
   })
 
-  const bodyStyle = (tone) => ({
-    fontSize: isMobile ? 13 : 14, lineHeight: 1.6,
-    color: tone === 'dark' ? 'rgba(255,255,255,0.7)' : 'var(--secondary)',
+  const body = (tone) => ({
+    fontSize: isMobile ? 13 : 14, lineHeight: 1.65,
+    color: tone === 'dark' ? 'rgba(255,255,255,0.68)' : 'var(--secondary)',
     margin: 0,
   })
 
@@ -912,91 +919,84 @@ function ProblemSolution({ isMobile }) {
       maxWidth: 1200, margin: '0 auto',
       padding: isMobile ? '32px 20px 40px' : '56px 32px 72px',
     }}>
-      {/* Eyebrow + заголовок */}
-      <div style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(16px)',
-        transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
-        marginBottom: isMobile ? 28 : 40,
-      }}>
-        <div style={{
-          fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
-          textTransform: 'uppercase', color: 'var(--secondary)',
-          marginBottom: 12,
-        }}>
+      <div style={{ ...anim(0), marginBottom: isMobile ? 28 : 40 }}>
+        <div style={{ ...eyebrow, marginBottom: 12 }}>
           Как сейчас работают пустые окна
         </div>
         <h2 style={{
           fontFamily: 'Playfair Display,serif', fontWeight: 400,
           fontSize: isMobile ? 26 : 'clamp(28px, 3.2vw, 40px)',
-          lineHeight: 1.15, color: 'var(--dark)',
-          margin: 0, maxWidth: 720,
+          lineHeight: 1.15, color: 'var(--dark)', margin: 0, maxWidth: 720,
         }}>
-          Привычные способы{isMobile ? ' ' : <br />}
-          не приводят новых клиентов
+          Привычные способы{isMobile ? ' ' : <br />}не приводят новых клиентов
         </h2>
       </div>
 
-      {/* Две колонки — симметричные */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-        gap: isMobile ? 28 : 40,
-        alignItems: 'stretch',
+        gap: isMobile ? 28 : 40, alignItems: 'stretch',
       }}>
-        {/* ЛЕВАЯ КОЛОНКА — обычный подход */}
+        {/* ЛЕВАЯ — обычный подход */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(16px)',
-            transition: 'opacity 0.5s ease-out 100ms, transform 0.5s ease-out 100ms',
-            ...eyebrowStyle, marginBottom: 0,
-          }}>
-            Обычный подход
-          </div>
+          <div style={{ ...anim(100), ...eyebrow }}>Обычный подход</div>
 
-          <div style={cardStyle(200, 'light')}>
-            <div style={titleStyle('light')}>Публикация в соцсетях</div>
-            <p style={bodyStyle('light')}>
+          <div style={card(200, 'light')}>
+            <div style={ttl('light')}>Публикация в соцсетях</div>
+            <p style={body('light')}>
               Салон публикует пустое окно в сторис, каналах, в чате с клиентами.
               Видят только те, кто уже клиент. Новых клиентов бизнес не получает,
               выручка не растёт.
             </p>
           </div>
 
-          <div style={cardStyle(350, 'light')}>
-            <div style={titleStyle('light')}>Велкам-скидка для новых</div>
-            <p style={bodyStyle('light')}>
-              Некоторые добавляют «15% на первый визит» для привлечения новых клиентов.
-              Клиент приходит по скидке и не возвращается — не хочет платить полную цену.
-              Привлечение есть, удержания нет.
+          <div style={card(300, 'light')}>
+            <div style={ttl('light')}>Лист ожидания</div>
+            <p style={body('light')}>
+              Клиентов записывают в список на желаемое время. Когда окно
+              освобождается — звонят по списку. Окно открывается в последний
+              момент, связаться успевают не всегда. Системного решения нет.
+            </p>
+          </div>
+
+          <div style={card(400, 'light')}>
+            <div style={ttl('light')}>Велкам-скидка для новых</div>
+            <p style={body('light')}>
+              Некоторые добавляют «15% на первый визит» для привлечения новых
+              клиентов. Клиент приходит по скидке и не возвращается — не хочет
+              платить полную цену. Привлечение есть, удержания нет.
             </p>
           </div>
         </div>
 
-        {/* ПРАВАЯ КОЛОНКА — Лови */}
+        {/* ПРАВАЯ — Лови */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(16px)',
-            transition: 'opacity 0.5s ease-out 250ms, transform 0.5s ease-out 250ms',
-            ...eyebrowStyle, marginBottom: 0,
-          }}>
-            Подход «Лови»
-          </div>
+          <div style={{ ...anim(250), ...eyebrow }}>Подход «Лови»</div>
 
-          <div style={cardStyle(400, 'dark')}>
-            <div style={titleStyle('dark')}>Целевая новая аудитория</div>
-            <p style={bodyStyle('dark')}>
-              Пустое окно появляется в приложении — его видят пользователи,
-              которые сами ищут массаж в вашем районе именно сейчас.
-              Не ваши подписчики, а новые клиенты района.
+          <div style={card(350, 'dark')}>
+            <DarkGlow />
+            <div style={ttl('dark')}>Мгновенное заполнение</div>
+            <p style={body('dark')}>
+              Окно появляется в приложении сразу — не нужно обзванивать список.
+              Клиент видит предложение, бронирует и оплачивает за минуты,
+              пока окно ещё актуально.
             </p>
           </div>
 
-          <div style={cardStyle(550, 'dark')}>
-            <div style={titleStyle('dark')}>Привычка к скидочной модели</div>
-            <p style={bodyStyle('dark')}>
+          <div style={card(500, 'dark')}>
+            <DarkGlow />
+            <div style={ttl('dark')}>Целевая новая аудитория</div>
+            <p style={body('dark')}>
+              Пустое окно видят пользователи, которые сами ищут массаж
+              в вашем районе именно сейчас. Не ваши подписчики —
+              новые клиенты района.
+            </p>
+          </div>
+
+          <div style={card(650, 'dark')}>
+            <DarkGlow />
+            <div style={ttl('dark')}>Привычка к скидочной модели</div>
+            <p style={body('dark')}>
               Наша аудитория осознанно приходит на горящие окна со скидкой —
               это их формат. Они возвращаются в следующее пустое окно,
               без ожидания скидок на основной прайс.
@@ -1005,14 +1005,12 @@ function ProblemSolution({ isMobile }) {
         </div>
       </div>
 
-      {/* Bottom-line — крупный центрированный финал в Playfair */}
+      {/* Финал */}
       <div style={{
+        ...anim(800),
         marginTop: isMobile ? 36 : 56,
         maxWidth: 760, marginLeft: 'auto', marginRight: 'auto',
         textAlign: 'center',
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(16px)',
-        transition: 'opacity 0.7s ease-out 750ms, transform 0.7s ease-out 750ms',
       }}>
         <div style={{
           fontFamily: 'Playfair Display,serif', fontWeight: 400,
@@ -1043,7 +1041,9 @@ function ClientPromise({ isMobile }) {
         gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
         gap: isMobile ? 24 : 56,
         alignItems: 'center',
+        position: 'relative', overflow: 'hidden',
       }}>
+        <DarkGlow />
         <div>
           <div style={{
             fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
@@ -1109,7 +1109,7 @@ function FAQ({ isMobile }) {
     },
     {
       q: 'Как именно происходит механика, когда клиент приходит?',
-      a: 'У вас в YCLIENTS появилось свободное окно — «Лови» видит это через интеграцию. Окно публикуется в приложении со скидкой, которую вы установили. Клиент бронирует и оплачивает 100% сразу. Бронь автоматически появляется в вашем YCLIENTS как обычная запись. Вы получаете выплату после визита клиента.',
+      a: 'У вас в CRM появилось свободное окно — «Лови» видит это через интеграцию. Окно публикуется в приложении со скидкой, которую вы установили. Клиент бронирует и оплачивает 100% сразу. Бронь автоматически появляется в вашей CRM как обычная запись. Вы получаете выплату после визита клиента.',
     },
     {
       q: 'Какие скидки и кто их устанавливает?',
@@ -1132,8 +1132,12 @@ function FAQ({ isMobile }) {
       a: 'Отключение в один клик в кабинете партнёра. Никаких штрафов, договоров с обязательствами и периодов уведомления. Активные брони доводятся до конца, новые слоты не публикуются.',
     },
     {
-      q: 'Как технически работает интеграция с YCLIENTS?',
-      a: 'Подключение занимает 5 минут: вы выдаёте «Лови» доступ к вашему YCLIENTS через стандартный механизм партнёров. Никакого нового софта устанавливать не нужно. После подключения «Лови» работает в фоне, ваш персонал ничего не меняет в привычной работе.',
+      q: 'Какие данные вы получаете при интеграции? Не будет ли утечки?',
+      a: 'Лови получает только одно: наличие свободных временных окон в вашем расписании. Мы не собираем финансовую информацию, данные о клиентах, историю записей или любые другие чувствительные данные. Интеграция работает через стандартный API вашей CRM — это тот же механизм, который используют другие партнёрские сервисы.',
+    },
+    {
+      q: 'Как технически работает интеграция с CRM?',
+      a: 'Сейчас первоочередная интеграция — YCLIENTS. Dikidi и другие популярные CRM в разработке. Подключение занимает 5 минут: вы выдаёте «Лови» доступ через стандартный механизм партнёров. Никакого нового софта устанавливать не нужно. После подключения «Лови» работает в фоне, ваш персонал ничего не меняет в привычной работе.',
     },
   ]
 
@@ -1389,7 +1393,9 @@ function EarningsCalculator({ isMobile, onApply }) {
             borderRadius: 20,
             padding: isMobile ? '24px 22px' : '32px 28px',
             color: '#fff',
+            position: 'relative', overflow: 'hidden',
           }}>
+            <DarkGlow />
             <div style={{
               fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',
               textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)',
@@ -1856,7 +1862,7 @@ function PartnerCallout({ isMobile, onApply, zoneData = {} }) {
           }}>
             {[
               'Эксклюзив: 1 слот на каждые 4 конкурента в зоне',
-              'Бесплатное подключение и интеграция с YCLIENTS',
+              'Бесплатное подключение и интеграция с CRM',
               'Нулевая комиссия первые 3 месяца',
               'Прямая связь с основателем, без отделов поддержки',
             ].map(item => (
@@ -1894,7 +1900,9 @@ function PartnerCallout({ isMobile, onApply, zoneData = {} }) {
           color: '#fff',
           minWidth: 0,
           overflow: 'hidden',
+          position: 'relative',
         }}>
+          <DarkGlow />
           {/* Заголовок карточки */}
           <div style={{
             display: 'flex', justifyContent: 'space-between',
