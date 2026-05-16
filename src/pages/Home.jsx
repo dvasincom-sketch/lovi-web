@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import {
-  MapPin, ArrowRight, Check, Clock, Lock, Sparkles, X,
+  MapPin, ArrowRight, Check, Clock, Lock, Sparkles, X, MessageCircle, Tag,
 } from 'lucide-react'
 
 // ─── Icon helper ────────────────────────────────────────────────────────────
@@ -860,8 +860,8 @@ function PartnerModal({ open, onClose, preselectedZone = null, preselectedSalon 
 // Оранжевое свечение в правом верхнем углу — из UI.jsx
 const DarkGlow = () => (
   <div style={{
-    position: 'absolute', top: -40, right: -40,
-    width: 160, height: 160, borderRadius: '50%',
+    position: 'absolute', top: -60, right: -60,
+    width: 240, height: 240, borderRadius: '50%',
     background: 'radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%)',
     pointerEvents: 'none',
   }} />
@@ -942,29 +942,32 @@ function ProblemSolution({ isMobile }) {
           <div style={{ ...anim(100), ...eyebrow }}>Обычный подход</div>
 
           <div style={card(200, 'light')}>
-            <div style={ttl('light')}>Публикация в соцсетях</div>
-            <p style={body('light')}>
-              Салон публикует пустое окно в сторис, каналах, в чате с клиентами.
-              Видят только те, кто уже клиент. Новых клиентов бизнес не получает,
-              выручка не растёт.
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <Icon i={MessageCircle} size={18} color="var(--secondary)" stroke={1.5} />
+              <div style={ttl('light')}>Публикация в соцсетях</div>
+            </div>
+            <p style={{ ...body('light'), fontStyle: 'italic' }}>
+              Видят только лояльные — новых клиентов нет
             </p>
           </div>
 
           <div style={card(300, 'light')}>
-            <div style={ttl('light')}>Лист ожидания</div>
-            <p style={body('light')}>
-              Клиентов записывают в список на желаемое время. Когда окно
-              освобождается — звонят по списку. Окно открывается в последний
-              момент, связаться успевают не всегда. Системного решения нет.
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <Icon i={Clock} size={18} color="var(--secondary)" stroke={1.5} />
+              <div style={ttl('light')}>Лист ожидания</div>
+            </div>
+            <p style={{ ...body('light'), fontStyle: 'italic' }}>
+              Окно открылось, но дозвониться уже некогда
             </p>
           </div>
 
           <div style={card(400, 'light')}>
-            <div style={ttl('light')}>Велкам-скидка для новых</div>
-            <p style={body('light')}>
-              Некоторые добавляют «15% на первый визит» для привлечения новых
-              клиентов. Клиент приходит по скидке и не возвращается — не хочет
-              платить полную цену. Привлечение есть, удержания нет.
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <Icon i={Tag} size={18} color="var(--secondary)" stroke={1.5} />
+              <div style={ttl('light')}>Велкам-скидка для новых</div>
+            </div>
+            <p style={{ ...body('light'), fontStyle: 'italic' }}>
+              Приходят раз и не возвращаются
             </p>
           </div>
         </div>
@@ -975,31 +978,34 @@ function ProblemSolution({ isMobile }) {
 
           <div style={card(350, 'dark')}>
             <DarkGlow />
-            <div style={ttl('dark')}>Мгновенное заполнение</div>
-            <p style={body('dark')}>
-              Окно появляется в приложении сразу — не нужно обзванивать список.
-              Клиент видит предложение, бронирует и оплачивает за минуты,
-              пока окно ещё актуально.
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <Icon i={Sparkles} size={18} color="var(--accent)" stroke={1.5} />
+              <div style={ttl('dark')}>Мгновенное заполнение</div>
+            </div>
+            <p style={{ ...body('dark'), fontStyle: 'italic' }}>
+              Клиент видит, бронирует и платит за минуты
             </p>
           </div>
 
           <div style={card(500, 'dark')}>
             <DarkGlow />
-            <div style={ttl('dark')}>Целевая новая аудитория</div>
-            <p style={body('dark')}>
-              Пустое окно видят пользователи, которые сами ищут массаж
-              в вашем районе именно сейчас. Не ваши подписчики —
-              новые клиенты района.
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <Icon i={MapPin} size={18} color="var(--accent)" stroke={1.5} />
+              <div style={ttl('dark')}>Новая аудитория района</div>
+            </div>
+            <p style={{ ...body('dark'), fontStyle: 'italic' }}>
+              Не подписчики — те, кто ищет массаж рядом прямо сейчас
             </p>
           </div>
 
           <div style={card(650, 'dark')}>
             <DarkGlow />
-            <div style={ttl('dark')}>Привычка к скидочной модели</div>
-            <p style={body('dark')}>
-              Наша аудитория осознанно приходит на горящие окна со скидкой —
-              это их формат. Они возвращаются в следующее пустое окно,
-              без ожидания скидок на основной прайс.
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <Icon i={ArrowRight} size={18} color="var(--accent)" stroke={1.5} />
+              <div style={ttl('dark')}>Возвращаются в пустые окна</div>
+            </div>
+            <p style={{ ...body('dark'), fontStyle: 'italic' }}>
+              Их формат — горящие слоты, а не скидка на прайс
             </p>
           </div>
         </div>
@@ -1133,7 +1139,7 @@ function FAQ({ isMobile }) {
     },
     {
       q: 'Какие данные вы получаете при интеграции? Не будет ли утечки?',
-      a: 'Лови получает только одно: наличие свободных временных окон в вашем расписании. Мы не собираем финансовую информацию, данные о клиентах, историю записей или любые другие чувствительные данные. Интеграция работает через стандартный API вашей CRM — это тот же механизм, который используют другие партнёрские сервисы.',
+      a: '«Лови» получает только одно: наличие свободных временных окон в вашем расписании. Мы не собираем финансовую информацию, данные о клиентах, историю записей или любые другие чувствительные данные. Интеграция работает через стандартный API вашей CRM — это тот же механизм, который используют другие партнёрские сервисы.',
     },
     {
       q: 'Как технически работает интеграция с CRM?',
@@ -1486,7 +1492,7 @@ function Hero({ isMobile, onApply }) {
         textTransform: 'uppercase', color: 'var(--accent)',
         marginBottom: 20,
       }}>
-        «Лови» · для салонов ЮЗАО
+        «Лови» · для салонов ЮЗАО Москвы
       </div>
 
       <h1 style={{
