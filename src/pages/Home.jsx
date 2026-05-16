@@ -941,73 +941,61 @@ function ProblemSolution({ isMobile }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={{ ...anim(100), ...eyebrow }}>Обычный подход</div>
 
-          <div style={card(200, 'light')}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-              <Icon i={MessageCircle} size={18} color="var(--secondary)" stroke={1.5} />
-              <div style={ttl('light')}>Публикация в соцсетях</div>
+          {[
+            { icon: MessageCircle, title: 'Публикация в соцсетях',  text: 'Видят только лояльные — новых клиентов нет',       delay: 200 },
+            { icon: Clock,         title: 'Лист ожидания',           text: 'Окно открылось, но дозвониться уже некогда',       delay: 300 },
+            { icon: Tag,           title: 'Велкам-скидка для новых', text: 'Приходят раз и не возвращаются',                   delay: 400 },
+          ].map(({ icon: I, title, text, delay }) => (
+            <div key={title} style={{
+              ...card(delay, 'light'),
+              display: 'flex', alignItems: 'stretch',
+              gap: 0, padding: 0, overflow: 'hidden',
+            }}>
+              <div style={{ flex: 1, padding: isMobile ? '20px 22px' : '24px 26px' }}>
+                <div style={ttl('light')}>{title}</div>
+                <p style={{ ...body('light'), fontStyle: 'italic' }}>{text}</p>
+              </div>
+              <div style={{
+                width: isMobile ? 56 : 72, flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                borderLeft: '1px solid var(--border)',
+                background: 'rgba(18,26,18,0.02)',
+              }}>
+                <Icon i={I} size={isMobile ? 22 : 28} color="var(--secondary)" stroke={1.2} />
+              </div>
             </div>
-            <p style={{ ...body('light'), fontStyle: 'italic' }}>
-              Видят только лояльные — новых клиентов нет
-            </p>
-          </div>
-
-          <div style={card(300, 'light')}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-              <Icon i={Clock} size={18} color="var(--secondary)" stroke={1.5} />
-              <div style={ttl('light')}>Лист ожидания</div>
-            </div>
-            <p style={{ ...body('light'), fontStyle: 'italic' }}>
-              Окно открылось, но дозвониться уже некогда
-            </p>
-          </div>
-
-          <div style={card(400, 'light')}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-              <Icon i={Tag} size={18} color="var(--secondary)" stroke={1.5} />
-              <div style={ttl('light')}>Велкам-скидка для новых</div>
-            </div>
-            <p style={{ ...body('light'), fontStyle: 'italic' }}>
-              Приходят раз и не возвращаются
-            </p>
-          </div>
+          ))}
         </div>
 
         {/* ПРАВАЯ — Лови */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={{ ...anim(250), ...eyebrow }}>Подход «Лови»</div>
 
-          <div style={card(350, 'dark')}>
-            <DarkGlow />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-              <Icon i={Sparkles} size={18} color="var(--accent)" stroke={1.5} />
-              <div style={ttl('dark')}>Мгновенное заполнение</div>
+          {[
+            { icon: Sparkles,   title: 'Мгновенное заполнение',     text: 'Клиент видит, бронирует и платит за минуты',                delay: 350 },
+            { icon: MapPin,     title: 'Новая аудитория района',     text: 'Не подписчики — те, кто ищет массаж рядом прямо сейчас',  delay: 500 },
+            { icon: ArrowRight, title: 'Возвращаются в пустые окна', text: 'Их формат — горящие слоты, а не скидка на прайс',         delay: 650 },
+          ].map(({ icon: I, title, text, delay }) => (
+            <div key={title} style={{
+              ...card(delay, 'dark'),
+              display: 'flex', alignItems: 'stretch',
+              gap: 0, padding: 0, overflow: 'hidden',
+            }}>
+              <DarkGlow />
+              <div style={{ flex: 1, padding: isMobile ? '20px 22px' : '24px 26px' }}>
+                <div style={ttl('dark')}>{title}</div>
+                <p style={{ ...body('dark'), fontStyle: 'italic' }}>{text}</p>
+              </div>
+              <div style={{
+                width: isMobile ? 56 : 72, flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                borderLeft: '1px solid rgba(255,255,255,0.06)',
+                background: 'rgba(249,115,22,0.04)',
+              }}>
+                <Icon i={I} size={isMobile ? 22 : 28} color="var(--accent)" stroke={1.2} />
+              </div>
             </div>
-            <p style={{ ...body('dark'), fontStyle: 'italic' }}>
-              Клиент видит, бронирует и платит за минуты
-            </p>
-          </div>
-
-          <div style={card(500, 'dark')}>
-            <DarkGlow />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-              <Icon i={MapPin} size={18} color="var(--accent)" stroke={1.5} />
-              <div style={ttl('dark')}>Новая аудитория района</div>
-            </div>
-            <p style={{ ...body('dark'), fontStyle: 'italic' }}>
-              Не подписчики — те, кто ищет массаж рядом прямо сейчас
-            </p>
-          </div>
-
-          <div style={card(650, 'dark')}>
-            <DarkGlow />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-              <Icon i={ArrowRight} size={18} color="var(--accent)" stroke={1.5} />
-              <div style={ttl('dark')}>Возвращаются в пустые окна</div>
-            </div>
-            <p style={{ ...body('dark'), fontStyle: 'italic' }}>
-              Их формат — горящие слоты, а не скидка на прайс
-            </p>
-          </div>
+          ))}
         </div>
       </div>
 
